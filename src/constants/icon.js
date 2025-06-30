@@ -1,0 +1,15 @@
+import Pokerface from '../assets/EmojiPokerface.png';
+import Sad from '../assets/EmojiSad.png';
+import Smile from '../assets/EmojiSmile.png';
+import Heart from '../assets/Heart.png';
+import HeartEmpty from '../assets/HeartEmpty.png';
+import logo from '../assets/logo.png';
+
+export default {
+    Pokerface,
+    Sad,
+    Smile,
+    Heart,
+    HeartEmpty,
+    logo
+}
