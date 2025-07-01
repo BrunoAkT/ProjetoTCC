@@ -1,13 +1,13 @@
+
 const Colors = {
     gray: '#D9D9D9',
     dark_gray: '#404040',
     green: '#81C784',
     white_blue: '#4CB7B3'
 
-
 }
 const Fonts_Size = {
-    title: 36,
+    title: 32,
     subtitle: 15,
     xl: 24,
     lg: 20,
@@ -16,4 +16,11 @@ const Fonts_Size = {
 
 }
 
-export {Colors, Fonts_Size}
+const Fonts_Styles = {
+    PoppinsRegular: 'Poppins_400Regular',
+    PoppinsSemiBold: 'Poppins_600SemiBold',
+    PoppinsExtraBold: 'Poppins_800ExtraBold',
+    PoppinsItalic: 'Poppins_300Light_Italic',
+}
+
+export {Colors, Fonts_Size, Fonts_Styles}
