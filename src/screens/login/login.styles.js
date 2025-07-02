@@ -9,17 +9,16 @@ export const styles = {
         justifyContent: 'center',
         alignItems: 'center',
         width: 350,
-        paddingTop: 50,
-        backgroundColor: Colors.gray,
+        paddingTop: 80,
     },
     title: {
-        fontFamily: Fonts_Styles.PoppinsRegular,
+        fontFamily: Fonts_Styles.PoppinsSemiBold,
         fontSize: Fonts_Size.title,
     },
     container: {
         flex: 1,
         alignItems: 'center',
-        justifyContent:'center',
+        justifyContent: 'center',
     },
     input: {
         width: 300,
@@ -30,8 +29,8 @@ export const styles = {
         paddingBottom: 0,
         paddingTop: 0,
         marginTop: 20,
-        fontFamily: Fonts_Styles.PoppinsRegular,
-        fontSize: Fonts_Size.sm
+        fontFamily: Fonts_Styles.PoppinsSemiBold,
+        fontSize: Fonts_Size.md
     },
     button: {
         backgroundColor: Colors.green,
@@ -43,25 +42,40 @@ export const styles = {
         justifyContent: 'center'
     },
     buttonText: {
-        fontFamily: Fonts_Styles.PoppinsExtraBold,
+        fontFamily: Fonts_Styles.PoppinsSemiBold,
+        fontSize: Fonts_Size.md,
     },
     containerfooter: {
         marginTop: 15,
         flexDirection: 'row',
         gap: 5,
         width: 300,
-        justifyContent: 'center'
+        justifyContent: 'center',
     },
     containerfootertext: {
-        color: Colors.gray
+        color: Colors.gray,
+        fontSize: Fonts_Size.md,
+        fontFamily: Fonts_Styles.PoppinsSemiBold,
+
     },
     link: {
         color: Colors.green,
+        fontSize: Fonts_Size.md,
+        fontFamily: Fonts_Styles.PoppinsSemiBold,
     },
     footer: {
         backgroundColor: Colors.gray,
         height: 100,
         borderTopLeftRadius: 50,
         borderTopRightRadius: 50,
+    },
+    animatedContainer: {
+        width: '100%',
+        height: 650,
+        position: 'absolute',
+        backgroundColor: Colors.gray,
+        borderRadius: 50,
+        alignItems: 'center',
+        justifyContent: 'center',
     }
 }

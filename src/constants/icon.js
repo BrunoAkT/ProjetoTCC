@@ -4,6 +4,7 @@ import Smile from '../assets/EmojiSmile.png';
 import Heart from '../assets/Heart.png';
 import HeartEmpty from '../assets/HeartEmpty.png';
 import logo from '../assets/logo.png';
+import next from '../assets/navigate_next.png';
 
 export default {
     Pokerface,
@@ -11,5 +12,6 @@ export default {
     Smile,
     Heart,
     HeartEmpty,
-    logo
+    logo,
+    next
 }
