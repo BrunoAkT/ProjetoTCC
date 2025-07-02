@@ -21,7 +21,7 @@ function Login() {
     const showRegister = () => {
         setIsRegisterVisible(true);
         Animated.timing(slideAnim, {
-            toValue: height - 650, // altura onde vai parar (ajuste como quiser)
+            toValue: height - 600, // altura onde vai parar (ajuste como quiser)
             duration: 500,
             useNativeDriver: false,
         }).start();
@@ -62,9 +62,10 @@ function Login() {
                     </View>
                 </View>
             </View>
+            <View style={styles.footer}></View>
             {isRegisterVisible && (
                 <Animated.View style={[styles.animatedContainer, { top: slideAnim }]}>
-                    <Account></Account>
+                    <Account hideRegister={hideRegister}></Account>
                 </Animated.View>)}
         </View>
     );

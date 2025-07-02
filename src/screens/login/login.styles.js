@@ -71,7 +71,7 @@ export const styles = {
     },
     animatedContainer: {
         width: '100%',
-        height: 650,
+        height: 600,
         position: 'absolute',
         backgroundColor: Colors.gray,
         borderRadius: 50,

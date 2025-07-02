@@ -1,45 +1,34 @@
 import { Colors, Fonts_Size, Fonts_Styles } from '../../constants/theme';
 
 export const styles = {
-    mainContainer: {
-        flex: 1,
-        backgroundColor: Colors.dark_gray,
-    },
-    header: {
-        justifyContent: 'center',
+    maincontainer: {
+        width: '100%',
+        height: 600,
         alignItems: 'center',
-        width: 350,
-        paddingTop: 80,
+        marginTop: 150,
     },
-    title: {
-        fontFamily: Fonts_Styles.PoppinsSemiBold,
-        fontSize: Fonts_Size.title,
-    },
-    container: {
-        flex: 1,
-        alignItems: 'center',
-        justifyContent: 'center',
+    footer:{
+        marginTop: 80,
     },
     input: {
         width: 300,
         height: 40,
         borderRadius: 30,
-        backgroundColor: Colors.gray,
         paddingLeft: 30,
         paddingBottom: 0,
         paddingTop: 0,
         marginTop: 20,
         fontFamily: Fonts_Styles.PoppinsSemiBold,
-        fontSize: Fonts_Size.md
+        fontSize: Fonts_Size.md,
+        borderWidth: 2,
     },
     button: {
         backgroundColor: Colors.green,
         width: 300,
         height: 40,
         borderRadius: 30,
-        marginTop: 100,
         alignItems: 'center',
-        justifyContent: 'center'
+        justifyContent: 'center',
     },
     buttonText: {
         fontFamily: Fonts_Styles.PoppinsSemiBold,
@@ -53,7 +42,6 @@ export const styles = {
         justifyContent: 'center',
     },
     containerfootertext: {
-        color: Colors.gray,
         fontSize: Fonts_Size.md,
         fontFamily: Fonts_Styles.PoppinsSemiBold,
 
@@ -63,19 +51,63 @@ export const styles = {
         fontSize: Fonts_Size.md,
         fontFamily: Fonts_Styles.PoppinsSemiBold,
     },
-    footer: {
-        backgroundColor: Colors.gray,
-        height: 100,
-        borderTopLeftRadius: 50,
-        borderTopRightRadius: 50,
-    },
-    animatedContainer: {
-        width: '100%',
-        height: 650,
+    iconbutton: {
         position: 'absolute',
-        backgroundColor: Colors.gray,
-        borderRadius: 50,
+        zIndex: 1,
+        top: -50,
+        left: -10,
+    },
+    container: {
+        flexDirection: 'row',
+        alignItems: 'center',
+    },
+    avatar: {
+        borderWidth: 0,
+        width: 130,
+        height: 130,
+        borderRadius: 100,
         alignItems: 'center',
         justifyContent: 'center',
-    }
+        elevation: 5,
+        backgroundColor: Colors.gray,
+    },
+    avatarinput: {
+        marginLeft: 20,
+    },
+    iconedit:{
+        position: 'absolute', 
+        right:-5,
+        top:-5,
+    },
+    inputsm: {
+        width: 180,
+        height: 40,
+        borderRadius: 30,
+        paddingLeft: 20,
+        paddingBottom: 0,
+        paddingTop: 0,
+        fontFamily: Fonts_Styles.PoppinsSemiBold,
+        fontSize: Fonts_Size.md,
+        borderWidth: 2,
+    },
+    text: {
+        fontFamily: Fonts_Styles.PoppinsSemiBold,
+        fontSize: Fonts_Size.md,
+        marginTop: 10,
+        marginLeft: 20,
+    },
+    register:{
+        margin:20,
+    },
+    textreg: {
+        fontFamily: Fonts_Styles.PoppinsSemiBold,
+        fontSize: Fonts_Size.md,
+    },
+    buttonregister: {
+        backgroundColor: Colors.green,
+        width: 210,
+        height: 70,
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
 }
