@@ -54,7 +54,7 @@ export const styles = {
     iconbutton: {
         position: 'absolute',
         zIndex: 1,
-        top: -50,
+        top: -40,
         left: -10,
     },
     container: {

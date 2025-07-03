@@ -11,6 +11,7 @@ import { styles } from "./account.styles";
 import icon from "../../constants/icon";
 import { useRef, useState } from 'react';
 import { TextInputMask } from 'react-native-masked-text';
+import { useNavigation } from '@react-navigation/native';
 
 
 function Account({ hideRegister }) {
@@ -24,6 +25,8 @@ function Account({ hideRegister }) {
     const goToPreviousStep = () => {
         setRegisterStep(1); // volta para etapa anterior
     };
+    const navigation = useNavigation();
+
     return (
         <View>
             {registerStep === 1 ? (
@@ -84,19 +87,20 @@ function Account({ hideRegister }) {
                         </TouchableOpacity>
                     </View>
                     <View style={styles.footer}>
-                        <TouchableOpacity style={styles.button} onPress={hideRegister}>
+                        <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Bai')}>
                             <Text style={styles.buttonText}>Finalizar Cadastro</Text>
                         </TouchableOpacity>
-                        <View style={styles.containerfooter}>
-                            <Text style={styles.containerfootertext}>Já possui conta?</Text>
-                            <TouchableOpacity onPress={hideRegister}>
-                                <Text style={styles.link}>Faça seu Login!</Text>
-                            </TouchableOpacity>
-                        </View>
+                    <View style={styles.containerfooter}>
+                        <Text style={styles.containerfootertext}>Já possui conta?</Text>
+                        <TouchableOpacity onPress={hideRegister}>
+                            <Text style={styles.link}>Faça seu Login!</Text>
+                        </TouchableOpacity>
                     </View>
                 </View>
-            )}
-        </View>
+                </View>
+    )
+}
+        </View >
     );
 
 }
