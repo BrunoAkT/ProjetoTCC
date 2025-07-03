@@ -9,10 +9,21 @@ const { width } = Dimensions.get('window');
 
 function BaiQuestionario() {
     const [currentIndex, setCurrentIndex] = useState(0);
-    const currentQuestion = questions[currentIndex];
+    const [Answers, setAnswers] = useState({});
     const progress = (currentIndex + 1) / questions.length;
 
     const returnToPrevious = () => setCurrentIndex(currentIndex - 1);
+
+    const handleAnswer = (value) => {
+        const currentQuestion = questions[currentIndex];
+        setAnswers({ ...Answers, [currentQuestion.id]: value })
+
+        if (currentIndex + 1 < questions.length) {
+            setCurrentIndex(currentIndex + 1);
+        }
+    }
+    const currentQuestion = questions[currentIndex];
+
 
     return (
         <View style={styles.mainContainer}>
@@ -44,7 +55,7 @@ function BaiQuestionario() {
                         <TouchableOpacity
                             key={index}
                             style={styles.optionButton}
-                            onPress={() => setCurrentIndex(currentIndex + 1)}
+                            onPress={() => handleAnswer(option.value)}
                         >
                             <Text style={styles.optionText}>{option.label}</Text>
                         </TouchableOpacity>
