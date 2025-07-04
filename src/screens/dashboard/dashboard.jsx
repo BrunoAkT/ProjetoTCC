@@ -3,23 +3,35 @@ import { View, Text, TouchableOpacity, StyleSheet, Platform } from 'react-native
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { styles } from './dashboard.styles'; // Adjust the import path as necessary
+import Topcurve from '../../components/Topmidcurve';
 
 const Tab = createBottomTabNavigator();
 
 function HomeScreen() {
-    return <Text>Home</Text>;
+    return <View>
+        <Topcurve></Topcurve>
+        <Text>Home</Text>
+    </View>;
 }
 function HistoryScreen() {
-    return <Text>Histórico</Text>;
+    return <View>
+        <Text>Histórico</Text>
+    </View>;
 }
 function ProfileScreen() {
-    return <Text>Perfil</Text>;
+    return <View>
+        <Text>Perfil</Text>
+    </View>;
 }
 function SettingsScreen() {
-    return <Text>Configurações</Text>;
+    return <View>
+        <Text>Configurações</Text>
+    </View>;
 }
 function CenterActionScreen() {
-    return <Text>Ação Central</Text>;
+    return <View>
+        <Text>Ação Central</Text>
+    </View>;
 }
 
 function CustomTabHeartButton({ children, onPress }) {
