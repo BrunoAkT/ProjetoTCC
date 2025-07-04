@@ -10,7 +10,6 @@ const { width } = Dimensions.get('window');
 function BaiQuestionario() {
     const [currentIndex, setCurrentIndex] = useState(0);
     const [Answers, setAnswers] = useState({});
-    const progress = (currentIndex + 1) / questions.length;
 
     const returnToPrevious = () => setCurrentIndex(currentIndex - 1);
 
@@ -18,11 +17,40 @@ function BaiQuestionario() {
         const currentQuestion = questions[currentIndex];
         setAnswers({ ...Answers, [currentQuestion.id]: value })
 
-        if (currentIndex + 1 < questions.length) {
+        if (currentIndex + 1 <= questions.length) {
             setCurrentIndex(currentIndex + 1);
         }
     }
+
+    if (currentIndex >= questions.length) {
+        const total = Object.values(Answers).reduce((sum, val) => sum + val, 0);
+        let interpretation = "";
+
+        if (total < 10) interpretation = "Ansiedade mínima";
+        else if (total < 19) interpretation = "Ansiedade leve";
+        else if (total < 29) interpretation = "Ansiedade moderada";
+        else interpretation = "Ansiedade grave";
+
+        return (
+            <View style={styles.mainContainer}>
+                <Text style={styles.text}>Resultado</Text>
+                <Text style={styles.text}>Pontuação: {total}</Text>
+                <Text style={styles.text}>{interpretation}</Text>
+                <View style={styles.answersContainer}>
+                    {Object.entries(Answers).map(([questionId, value]) => (
+                        <View key={questionId} style={styles.answerItem}>
+                            <Text style={styles.text}>
+                                Pergunta {questionId}: {value}
+                            </Text>
+                        </View>
+                    ))}
+                </View>
+            </View>
+        );
+    }
+
     const currentQuestion = questions[currentIndex];
+    const progress = (currentIndex + 1) / questions.length;
 
 
     return (

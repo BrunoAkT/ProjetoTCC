@@ -1,6 +1,12 @@
-import { Text } from "react-native";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import Dashboard from "../screens/dashboard/dashboard";
 
-function RoutesPrivated(){
-    return <Text>Rotas Privadas</Text>
+const Stack = createNativeStackNavigator();
+
+
+function RoutesOpen(){
+    return <Stack.Navigator>
+        <Stack.Screen name="Dashboard" component={Dashboard} options={{headerShown: false}}/>
+    </Stack.Navigator>;
 }
-export default RoutesPrivated;
+export default RoutesOpen;
