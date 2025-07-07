@@ -13,7 +13,7 @@ function Topcurve() {
                 >
                     <Path
                         d="M0,0V7.23C0,65.52,268.63,112.77,600,112.77S1200,65.52,1200,7.23V0Z"
-                        fill= {Colors.dark_gray} // ou a cor que desejar
+                        fill={Colors.dark_gray} // ou a cor que desejar
                     />
                 </Svg>
             </View>
@@ -25,10 +25,10 @@ const styles = StyleSheet.create({
     topcurve: {
         position: 'absolute',
         top: 0,
-        left: -250,
-        right: 0,
-        width: 700,
+        left: '-10%', // compensa o excesso de largura para centralizar
+        width: '120%', // maior que 100%
         height: 120,
+        alignSelf: 'center',
     },
 });
 export default Topcurve;

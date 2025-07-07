@@ -2,37 +2,14 @@ import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Platform } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import { styles } from './dashboard.styles'; // Adjust the import path as necessary
-import Topcurve from '../../components/Topmidcurve';
+import { styles } from './dashboard.styles';
+import Home from '../home/home'; 
+import Profile from '../profile/profile';
+import Configuration from '../configuration/configuration';
+import History from '../history/history';
+import Frequency from '../frequency/frequency';
 
 const Tab = createBottomTabNavigator();
-
-function HomeScreen() {
-    return <View>
-        <Topcurve></Topcurve>
-        <Text>Home</Text>
-    </View>;
-}
-function HistoryScreen() {
-    return <View>
-        <Text>Histórico</Text>
-    </View>;
-}
-function ProfileScreen() {
-    return <View>
-        <Text>Perfil</Text>
-    </View>;
-}
-function SettingsScreen() {
-    return <View>
-        <Text>Configurações</Text>
-    </View>;
-}
-function CenterActionScreen() {
-    return <View>
-        <Text>Ação Central</Text>
-    </View>;
-}
 
 function CustomTabHeartButton({ children, onPress }) {
     return (
@@ -68,7 +45,7 @@ function Dashboard() {
         >
             <Tab.Screen
                 name="Home"
-                component={HomeScreen}
+                component={Home}
                 options={{
                     tabBarIcon: ({ focused }) => (
                         <Ionicons style={styles.tabIcon} name="home-outline" size={24} color={focused ? '#fff' : '#aaa'} />
@@ -79,7 +56,7 @@ function Dashboard() {
             />
             <Tab.Screen
                 name="History"
-                component={HistoryScreen}
+                component={History}
                 options={{
                     tabBarIcon: ({ focused }) => (
                         <Ionicons name="time-outline" size={24} color={focused ? '#fff' : '#aaa'} />
@@ -90,7 +67,7 @@ function Dashboard() {
             />
             <Tab.Screen
                 name="Center"
-                component={CenterActionScreen}
+                component={Frequency}
                 options={{
                     tabBarIcon: () => (
                         <Ionicons name="heart" size={28} color="#fff" />
@@ -100,7 +77,7 @@ function Dashboard() {
             />
             <Tab.Screen
                 name="Profile"
-                component={ProfileScreen}
+                component={Profile}
                 options={{
                     tabBarIcon: ({ focused }) => (
                         <Ionicons name="person-outline" size={24} color={focused ? '#fff' : '#aaa'} />
@@ -109,8 +86,8 @@ function Dashboard() {
                 }}
             />
             <Tab.Screen
-                name="Settings"
-                component={SettingsScreen}
+                name="Configuration"
+                component={Configuration}
                 options={{
                     tabBarIcon: ({ focused }) => (
                         <Ionicons name="settings-outline" size={24} color={focused ? '#fff' : '#aaa'} />

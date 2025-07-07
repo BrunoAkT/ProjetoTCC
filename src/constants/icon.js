@@ -7,6 +7,7 @@ import logo from '../assets/logo.png';
 import next from '../assets/navigate_next.png';
 import avatarplaceholder from '../assets/AvatarPlaceholder.png';
 import edit from '../assets/Edit.png';
+import thinking from '../assets/Thinking.png'
 
 export default {
     Pokerface,
@@ -17,5 +18,6 @@ export default {
     logo,
     next,
     avatarplaceholder,
-    edit
+    edit,
+    thinking
 }
