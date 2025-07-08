@@ -31,15 +31,44 @@ function Configuration() {
                 </View>
             </View>
             <View style={styles.container}>
-                <TouchableOpacity style={styles.button}>
-                    <Text style={styles.buttontext}>Registro cardíaco</Text>
-                    <View style={styles.iconcase}>
-                        <Image
-                            source={icon.next}
-                            style={styles.icon}
-                        />
-                    </View>
-                </TouchableOpacity>
+                <View>
+                    <TouchableOpacity style={styles.button}>
+                        <Text style={styles.buttontext}>Tipo de monitoramento</Text>
+                        <View style={styles.iconcase}>
+                            <Image
+                                source={icon.next}
+                                style={styles.icon}
+                            />
+                        </View>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={styles.button}>
+                        <Text style={styles.buttontext}>Permissões</Text>
+                        <View style={styles.iconcase}>
+                            <Image
+                                source={icon.next}
+                                style={styles.icon}
+                            />
+                        </View>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={styles.button}>
+                        <Text style={styles.buttontext}>Desativar conta</Text>
+                        <View style={styles.iconcase}>
+                            <Image
+                                source={icon.next}
+                                style={styles.icon}
+                            />
+                        </View>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={styles.button}>
+                        <Text style={styles.buttontext}>Sair</Text>
+                        <View style={styles.iconcase}>
+                            <Image
+                                source={icon.next}
+                                style={styles.icon}
+                            />
+                        </View>
+                    </TouchableOpacity>
+                </View>
             </View>
         </View>
     )

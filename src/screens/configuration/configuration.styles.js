@@ -22,7 +22,7 @@ export const styles = {
     container: {
         flex: 1,
         alignItems: 'center',
-        margin: 40,
+        justifyContent: 'center',
     },
     text: {
         fontFamily: Fonts_Styles.PoppinsSemiBold,
@@ -52,6 +52,7 @@ export const styles = {
         alignItems: 'center',
         justifyContent: 'center',
         elevation: 10,
+        marginTop:10,
     },
     buttontext: {
         fontFamily: Fonts_Styles.PoppinsSemiBold,
