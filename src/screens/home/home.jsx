@@ -3,6 +3,7 @@ import Topcurve from '../../components/Topmidcurve';
 import { styles } from './home.styles'
 import icon from '../../constants/icon';
 import { useState } from 'react';
+import { useNavigation } from '@react-navigation/native';
 
 function Home() {
     const [selectedEmoji, setSelectedEmoji] = useState(null);
@@ -11,6 +12,8 @@ function Home() {
         console.log("Emoji pressionado!", index);
     };
     const Nome = "Bruno";
+
+    const navigation = useNavigation();
     return (
         <View style={styles.mainContainer}>
             <Topcurve />
@@ -47,7 +50,7 @@ function Home() {
                 <View style={styles.BAIcontainer}>
 
                 </View>
-                <TouchableOpacity style={styles.exercises}>
+                <TouchableOpacity style={styles.exercises} onPress={() => navigation.navigate('Frequency')}>
                     <Text style={styles.text}>
                         Iniciar Exercícios
                     </Text>

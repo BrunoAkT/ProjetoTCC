@@ -3,19 +3,21 @@ import { View, Text, TouchableOpacity, StyleSheet, Platform } from 'react-native
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { styles } from './dashboard.styles';
-import Home from '../home/home'; 
+import Home from '../home/home';
 import Profile from '../profile/profile';
 import Configuration from '../configuration/configuration';
 import History from '../history/history';
-import Frequency from '../frequency/frequency';
+import { useNavigation } from '@react-navigation/native';
 
 const Tab = createBottomTabNavigator();
 
-function CustomTabHeartButton({ children, onPress }) {
+
+function CustomTabHeartButton({ children }) {
+    const navigation = useNavigation();
     return (
         <TouchableOpacity
             style={styles.customHeartButton}
-            onPress={onPress}
+            onPress={() => navigation.navigate('Frequency')}
             activeOpacity={0.9}
         >
             <View style={styles.customHeartButtonInner}>{children}</View>
@@ -66,15 +68,17 @@ function Dashboard() {
                 }}
             />
             <Tab.Screen
-                name="Center"
-                component={Frequency}
+                name="Heart"
                 options={{
                     tabBarIcon: () => (
                         <Ionicons name="heart" size={28} color="#fff" />
                     ),
-                    tabBarButton: (props) => <CustomTabHeartButton {...props} />,
+                    tabBarButton: (props) =>
+                        <CustomTabHeartButton {...props} />,
                 }}
-            />
+            >
+                {() => null}
+            </Tab.Screen>
             <Tab.Screen
                 name="Profile"
                 component={Profile}

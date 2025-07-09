@@ -1,4 +1,5 @@
 
+import { BaseRouter } from "@react-navigation/native"
 import { Colors, Fonts_Size, Fonts_Styles } from "../../constants/theme"
 export const styles = {
     mainContainer: {
@@ -20,9 +21,9 @@ export const styles = {
         fontFamily: Fonts_Styles.PoppinsRegular,
     },
     container: {
-        flex: 1,
         alignItems: 'center',
         justifyContent: 'center',
+        height:500,
     },
     text: {
         fontFamily: Fonts_Styles.PoppinsSemiBold,
