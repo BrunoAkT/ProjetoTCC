@@ -1,72 +1,97 @@
 
 import { Colors, Fonts_Size, Fonts_Styles } from "../../constants/theme"
+
 export const styles = {
     mainContainer: {
         flex: 1,
     },
     header: {
-        paddingTop: 50,
+        paddingTop: 30,
         paddingHorizontal: 20,
         alignItems: 'center',
     },
-    title: {
-        color: Colors.gray,
-        fontSize: Fonts_Size.title,
-        fontFamily: Fonts_Styles.PoppinsSemiBold
-    },
-    subtitle: {
-        color: Colors.gray,
-        fontSize: Fonts_Size.subtitle,
+    headerText: {
         fontFamily: Fonts_Styles.PoppinsRegular,
+        fontSize: Fonts_Size.md
     },
-    emojis: {
+    container: {
+        flex: 1,
+        backgroundColor: Colors.dark_gray,
+        padding: 20,
+    },
+    averageContainer: {
         flexDirection: 'row',
-        justifyContent: 'space-between',
-        width: 150,
-        backgroundColor: Colors.gray,
-        borderRadius: 20,
-        padding: 10,
-        marginTop: 10,
+        alignItems: 'center'
     },
-    emojitouched: {
-        backgroundColor: Colors.green,
-        borderRadius: 20,
-        elevation: 10,
+    averageText: {
+        fontSize: 80,
+        fontFamily: Fonts_Styles.PoppinsSemiBold,
+        color: Colors.gray,
+        lineHeight: 80,
     },
-    frase: {
-        fontFamily: Fonts_Styles.PoppinsItalic,
+    BPMText: {
+        fontFamily: Fonts_Styles.PoppinsSemiBold,
         color: Colors.gray,
         fontSize: Fonts_Size.xl,
-        marginTop: 20,
-        borderColor: Colors.dark_gray,
-        textShadowColor: Colors.dark_gray,
-        textShadowOffset: { width: 1, height: 1 },
-        textShadowRadius: 2,
     },
-    container:{
-        flex: 1,
-        alignItems: 'center',
-        margin:40,
-    },
-    BAIcontainer:{
-        backgroundColor: Colors.green,
-        width:350,
-        height:300,
-        borderRadius: 20,
-        elevation:10,
-    },
-    exercises:{
-        backgroundColor: Colors.green,
-        height:100,
-        width:350,
-        marginTop: 50,
-        elevation: 10,
-        padding: 20,
+    FrequencyNumberFormat: {
         flexDirection: 'row',
-        justifyContent: 'space-between',
     },
-    text:{
+    frequencyFormat: {
+        margin: 10
+    },
+    text: {
+        fontFamily: Fonts_Styles.PoppinsSemiBold,
+        fontSize: Fonts_Size.lg,
+        color: Colors.gray,
+        marginLeft: 10,
+    },
+    functionContainers:{
+        marginTop:20,
+    },
+    recomendationContainer: {
+        marginLeft: 50,
+        marginTop: 20,
+    },
+    recomendationText: {
+        fontSize: Fonts_Size.title,
+        color: Colors.gray,
+        fontFamily: Fonts_Styles.PoppinsRegular,
+    },
+    exerciciesContainer: {
+        width: 100,
+        height: 100,
+        backgroundColor: Colors.gray,
+        position: 'absolute',
+        right: 30,
+        top: -70,
+        borderRadius: 10,
+        elevation: 10,
+        zIndex:1,
+    },
+    stressContainer: {
+        width: '100%',
+        backgroundColor: Colors.green,
+        height: 100,
+        borderRadius: 10,
+        elevation: 10,
+        alignItems: 'center',
+        justifyContent: 'center'
+    },
+    stressText:{
         fontFamily:Fonts_Styles.PoppinsSemiBold,
-        fontSize: Fonts_Size.lg
+        fontSize: Fonts_Size.md
+    },
+    infContainer:{
+        backgroundColor: Colors.gray,
+        borderRadius: 50,
+        height:'100%',
+        width:'100%',
+        marginTop: 30,
+        padding:40,
+    },
+    infInput:{
+        fontFamily: Fonts_Styles.PoppinsRegular,
+        fontSize: Fonts_Size.md
     }
 }

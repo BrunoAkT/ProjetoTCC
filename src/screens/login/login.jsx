@@ -16,7 +16,7 @@ const { height } = Dimensions.get('window');
 
 function Login() {
     const [isRegisterVisible, setIsRegisterVisible] = useState(false);
-    const slideAnim = useRef(new Animated.Value(height)).current; // começa fora da tela
+    const slideAnim = useRef(new Animated.Value(height)).current;
 
     const showRegister = () => {
         setIsRegisterVisible(true);
