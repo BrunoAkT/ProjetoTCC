@@ -34,6 +34,11 @@ export const styles = {
     scrollCategory:{
         padding:20
     },
+    scrollExercicies:{
+        padding:20,
+        height:500,
+
+    },
     container: {
         flex: 1,
         backgroundColor: Colors.dark_gray,

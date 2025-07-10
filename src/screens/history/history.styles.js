@@ -69,5 +69,17 @@ export const styles = {
     text: {
         fontFamily: Fonts_Styles.PoppinsSemiBold,
         fontSize: Fonts_Size.lg
+    },
+    inputContainer:{
+        flexDirection:'row',
+        justifyContent:'flex-end',
+        marginTop:20,
+        marginRight:20,
+    },
+    inputsm:{
+        backgroundColor: Colors.gray,
+        width:100,
+        height:40,
+        borderRadius:10,
     }
 }

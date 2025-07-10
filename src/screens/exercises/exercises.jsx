@@ -32,7 +32,10 @@ function Exercises() {
             </View>
             <View>
                 <Text style={styles.text}>Metodos</Text>
-                <ScrollView style={styles.scrollCategory}>
+                <ScrollView style={styles.scrollExercicies}>
+                    <Exercise></Exercise>
+                    <Exercise></Exercise>
+                    <Exercise></Exercise>
                     <Exercise></Exercise>
                 </ScrollView>
             </View>

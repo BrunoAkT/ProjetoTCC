@@ -3,6 +3,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { View, Text, Dimensions, Image, TouchableOpacity, TextInput, Animated, TouchableWithoutFeedback, Keyboard } from 'react-native';
 import FrequencyGraph from '../../components/FrequencyGraph';
 import icon from '../../constants/icon';
+import { useNavigation } from '@react-navigation/native';
 
 
 
@@ -31,6 +32,7 @@ function Frequency() {
     }).start(() => setIsVisibleTab(false));
   }
 
+  const navigation = useNavigation();
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <View style={styles.mainContainer}>
@@ -55,7 +57,7 @@ function Frequency() {
           </View>
 
           <View style={styles.functionContainers}>
-            <TouchableOpacity style={styles.exerciciesContainer}>
+            <TouchableOpacity style={styles.exerciciesContainer} onPress={() => navigation.navigate('Exercises')}>
               <Image></Image>
             </TouchableOpacity>
 

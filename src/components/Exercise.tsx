@@ -16,7 +16,7 @@ function Exercise() {
 
             </View>
             <TouchableOpacity style={styles.information}>
-                <Ionicons name="information-circle" size={40} />
+                <Ionicons name="help-circle-outline" size={40} />
             </TouchableOpacity>
         </TouchableOpacity>
     )
@@ -31,7 +31,9 @@ const styles = StyleSheet.create({
         paddingTop: 15,
         flexDirection: 'row',
         justifyContent: 'space-between',
-        alignItems: 'center'
+        alignItems: 'center',
+        elevation: 10,
+        marginBottom:30,
     },
     text: {
         fontFamily: Fonts_Styles.PoppinsSemiBold,
@@ -56,12 +58,12 @@ const styles = StyleSheet.create({
         width: 100,
         height: 100,
         borderWidth: 1,
-        right:15,
+        right: 15,
     },
-    information:{
+    information: {
         position: 'absolute',
-        right:5,
-        top:5,
+        right: 5,
+        top: 5,
     }
 })
 
