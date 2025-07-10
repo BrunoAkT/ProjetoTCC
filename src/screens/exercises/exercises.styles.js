@@ -6,16 +6,33 @@ export const styles = {
         flex: 1,
         position: 'relative',
         backgroundColor: Colors.gray
-
+    },
+    headerContainer: {
+        paddingTop: 30,
+        paddingLeft: 30,
     },
     header: {
-        paddingTop: 30,
-        paddingHorizontal: 20,
-        alignItems: 'center',
+        flexDirection: 'row',
+        justifyContent: 'space-between',
     },
     headerText: {
-        fontFamily: Fonts_Styles.PoppinsRegular,
-        fontSize: Fonts_Size.md
+        fontFamily: Fonts_Styles.PoppinsSemiBold,
+        fontSize: Fonts_Size.title
+    },
+    headersubText: {
+        fontFamily: Fonts_Styles.PoppinsItalic,
+        fontSize: Fonts_Size.md,
+        lineHeight: Fonts_Size.md
+    },
+    logo:{
+        margin: 'auto'
+    },
+    categoryItens:{
+        flexDirection: 'row',
+        gap: 10,
+    },
+    scrollCategory:{
+        padding:20
     },
     container: {
         flex: 1,
@@ -45,9 +62,8 @@ export const styles = {
     },
     text: {
         fontFamily: Fonts_Styles.PoppinsSemiBold,
-        fontSize: Fonts_Size.lg,
-        color: Colors.gray,
-        marginLeft: 10,
+        fontSize: Fonts_Size.xl,
+        marginLeft: 30,
     },
     functionContainers: {
         marginTop: 20,
@@ -92,7 +108,7 @@ export const styles = {
         height: '100%',
         width: '90%',
         padding: 30,
-        marginHorizontal: 20,
+        marginHorizontal:20,
     },
 
     infInput: {
@@ -107,6 +123,6 @@ export const styles = {
         borderTopLeftRadius: 30,
         borderTopRightRadius: 30,
         zIndex: 10,
-
+       
     }
 }

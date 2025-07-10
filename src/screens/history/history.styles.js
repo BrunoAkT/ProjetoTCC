@@ -3,6 +3,7 @@ import { Colors, Fonts_Size, Fonts_Styles } from "../../constants/theme"
 export const styles = {
     mainContainer: {
         flex: 1,
+        backgroundColor: Colors.gray
     },
     header: {
         paddingTop: 50,
@@ -43,30 +44,30 @@ export const styles = {
         textShadowOffset: { width: 1, height: 1 },
         textShadowRadius: 2,
     },
-    container:{
+    container: {
         flex: 1,
         alignItems: 'center',
-        margin:40,
+        margin: 40,
     },
-    BAIcontainer:{
+    BAIcontainer: {
         backgroundColor: Colors.green,
-        width:350,
-        height:300,
+        width: 350,
+        height: 300,
         borderRadius: 20,
-        elevation:10,
+        elevation: 10,
     },
-    exercises:{
+    exercises: {
         backgroundColor: Colors.green,
-        height:100,
-        width:350,
+        height: 100,
+        width: 350,
         marginTop: 50,
         elevation: 10,
         padding: 20,
         flexDirection: 'row',
         justifyContent: 'space-between',
     },
-    text:{
-        fontFamily:Fonts_Styles.PoppinsSemiBold,
+    text: {
+        fontFamily: Fonts_Styles.PoppinsSemiBold,
         fontSize: Fonts_Size.lg
     }
 }

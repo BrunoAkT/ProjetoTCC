@@ -3,6 +3,8 @@ import { Colors, Fonts_Size, Fonts_Styles } from "../../constants/theme"
 export const styles = {
     mainContainer: {
         flex: 1,
+        backgroundColor: Colors.gray
+
     },
     header: {
         paddingTop: 50,
@@ -24,7 +26,7 @@ export const styles = {
         alignItems: 'center',
         margin: 40,
         justifyContent: 'space-between',
-        height:350,
+        height: 350,
     },
     text: {
         fontFamily: Fonts_Styles.PoppinsSemiBold,
@@ -54,7 +56,7 @@ export const styles = {
         justifyContent: 'center',
         elevation: 10,
     },
-    tabIcon:{
+    tabIcon: {
         position: 'absolute',
         right: 30,
         top: -10

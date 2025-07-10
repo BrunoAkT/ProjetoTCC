@@ -50,7 +50,7 @@ function Home() {
                 <View style={styles.BAIcontainer}>
 
                 </View>
-                <TouchableOpacity style={styles.exercises} onPress={() => navigation.navigate('Frequency')}>
+                <TouchableOpacity style={styles.exercises} onPress={() => navigation.navigate('Exercises')}>
                     <Text style={styles.text}>
                         Iniciar Exercícios
                     </Text>

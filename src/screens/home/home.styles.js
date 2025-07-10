@@ -2,6 +2,7 @@ import { Colors, Fonts_Size, Fonts_Styles } from "../../constants/theme"
 export const styles = {
     mainContainer: {
         flex: 1,
+        backgroundColor: Colors.gray
     },
     header: {
         paddingTop: 50,

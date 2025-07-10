@@ -4,6 +4,8 @@ import { Colors, Fonts_Size, Fonts_Styles } from "../../constants/theme"
 export const styles = {
     mainContainer: {
         flex: 1,
+        backgroundColor: Colors.gray
+
     },
     header: {
         paddingTop: 50,
@@ -23,7 +25,7 @@ export const styles = {
     container: {
         alignItems: 'center',
         justifyContent: 'center',
-        height:500,
+        height: 500,
     },
     text: {
         fontFamily: Fonts_Styles.PoppinsSemiBold,
@@ -53,7 +55,7 @@ export const styles = {
         alignItems: 'center',
         justifyContent: 'center',
         elevation: 10,
-        marginTop:10,
+        marginTop: 10,
     },
     buttontext: {
         fontFamily: Fonts_Styles.PoppinsSemiBold,

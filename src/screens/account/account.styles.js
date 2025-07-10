@@ -6,8 +6,9 @@ export const styles = {
         height: 600,
         alignItems: 'center',
         marginTop: 150,
+        backgroundColor: Colors.gray
     },
-    footer:{
+    footer: {
         marginTop: 80,
     },
     input: {
@@ -74,10 +75,10 @@ export const styles = {
     avatarinput: {
         marginLeft: 20,
     },
-    iconedit:{
-        position: 'absolute', 
-        right:-5,
-        top:-5,
+    iconedit: {
+        position: 'absolute',
+        right: -5,
+        top: -5,
     },
     inputsm: {
         width: 180,
@@ -96,8 +97,8 @@ export const styles = {
         marginTop: 10,
         marginLeft: 20,
     },
-    register:{
-        margin:20,
+    register: {
+        margin: 20,
     },
     textreg: {
         fontFamily: Fonts_Styles.PoppinsSemiBold,
