@@ -6,8 +6,22 @@ import icon from '../../constants/icon';
 import { useNavigation } from '@react-navigation/native';
 
 
+const dataAtual = new Date();
+const dataFormatada = dataAtual.toLocaleDateString('pt-BR', {
+  day: 'numeric',
+  month: 'long',
+  year: 'numeric',
+  timeZone: 'America/Sao_Paulo'
+});
+const horarioFormatado = dataAtual.toLocaleTimeString('pt-BR', {
+  hour: '2-digit',
+  minute: '2-digit',
+  second: '2-digit',
+  timeZone: 'America/Sao_Paulo'
+});
 
-function Frequency() {
+function Frequency({ route }) {
+
   const [averageFrequency, setaverageFrequency] = useState();
   const [timenow, setTimenow] = useState("15:40");
 
@@ -37,7 +51,7 @@ function Frequency() {
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <View style={styles.mainContainer}>
         <View style={styles.header}>
-          <Text style={styles.headerText}>14 de Março 2025</Text>
+          <Text style={styles.headerText}>{dataFormatada ?? 'Erro na Data'}</Text>
         </View>
         <FrequencyGraph onAverageChange={setaverageFrequency}></FrequencyGraph>
         <View style={styles.container}>
@@ -48,7 +62,7 @@ function Frequency() {
                 <Text style={styles.averageText}>{averageFrequency}</Text>
                 <Text style={styles.BPMText}>BPM</Text>
               </View>
-              <Text style={styles.text}>valor de {timenow}</Text>
+              <Text style={styles.text}>valor de {horarioFormatado ?? 'Erro no Horario'}</Text>
             </View>
           </View>
 

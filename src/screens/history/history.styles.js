@@ -81,5 +81,6 @@ export const styles = {
         width:100,
         height:40,
         borderRadius:10,
+        textAlign:'center'
     }
 }

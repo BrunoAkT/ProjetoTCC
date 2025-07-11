@@ -4,12 +4,14 @@ import { styles } from './home.styles'
 import icon from '../../constants/icon';
 import { useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
+import BaiSmoll from '../BAI/baiSmoll';
+
 
 function Home() {
     const [selectedEmoji, setSelectedEmoji] = useState(null);
     const handlePressEmoji = (index) => {
         setSelectedEmoji(index);
-        console.log("Emoji pressionado!", index);
+        console.log("Emoji pressionado!");
     };
     const Nome = "Bruno";
 
@@ -48,7 +50,7 @@ function Home() {
             </View>
             <View style={styles.container}>
                 <View style={styles.BAIcontainer}>
-
+                    <BaiSmoll></BaiSmoll>
                 </View>
                 <TouchableOpacity style={styles.exercises} onPress={() => navigation.navigate('Exercises')}>
                     <Text style={styles.text}>
