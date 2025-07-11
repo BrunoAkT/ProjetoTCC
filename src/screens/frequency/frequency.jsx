@@ -23,7 +23,6 @@ const horarioFormatado = dataAtual.toLocaleTimeString('pt-BR', {
 function Frequency({ route }) {
 
   const [averageFrequency, setaverageFrequency] = useState();
-  const [timenow, setTimenow] = useState("15:40");
 
   const [isVisibleTab, setIsVisibleTab] = useState(false);
 
