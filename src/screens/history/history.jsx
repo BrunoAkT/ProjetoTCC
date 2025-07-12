@@ -1,9 +1,10 @@
-import { Text, View } from "react-native"
+import { FlatList, Text, TouchableOpacity, View } from "react-native"
 import { styles } from './history.styles'
 import Topcurve from "../../components/Topmidcurve"
 import HistoryValues from "../../components/HistoryValues"
 import { TextInputMask } from "react-native-masked-text"
 import { useState } from "react"
+import { savedHistory } from '../../constants/dataTest'
 
 function History() {
     const [classification, setClassification] = useState();
@@ -30,7 +31,17 @@ function History() {
                 />
             </View>
             <View style={styles.container}>
-                <HistoryValues></HistoryValues>
+                <FlatList
+                    data={savedHistory}
+                    keyExtractio={(item) => item.id}
+                    renderItem={({ item }) => (
+                        <HistoryValues
+                            date={item.date}
+                            emoji={item.emoji}
+                        ></HistoryValues>
+                    )}
+                >
+                </FlatList>
             </View>
         </View>
     )

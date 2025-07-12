@@ -3,12 +3,12 @@ import { Colors, Fonts_Size, Fonts_Styles } from "../constants/theme"
 import icon from "../constants/icon"
 
 
-function HistoryValues() {
+function HistoryValues(params) {
     return (
         <TouchableOpacity style={styles.container}>
             <Image source={icon.logo}></Image>
             <View>
-                <Text style={styles.text}>Terça-feira, 13 de maio, 2025</Text>
+                <Text style={styles.text}>{params.date}</Text>
                 <Image source={icon.Sad}></Image>
             </View>
             <View style={styles.buttonnext}>
@@ -18,6 +18,7 @@ function HistoryValues() {
                         source={icon.next}
                         style={styles.icon}
                     />
+                    <Text>{params.emoji}</Text>
                 </View>
             </View>
         </TouchableOpacity>
