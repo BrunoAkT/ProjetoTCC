@@ -47,7 +47,10 @@ export const styles = {
     container: {
         flex: 1,
         alignItems: 'center',
-        margin: 40,
+    },
+    flatListContainer:{
+        width: '100%',
+        padding: 40,
     },
     BAIcontainer: {
         backgroundColor: Colors.green,

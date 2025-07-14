@@ -9,7 +9,17 @@ function HistoryValues(params) {
             <Image source={icon.logo}></Image>
             <View>
                 <Text style={styles.text}>{params.date}</Text>
-                <Image source={icon.Sad}></Image>
+                {
+                    params.emoji === 0 ? (
+                        <Image source={icon.Sad}></Image>
+                    ) : params.emoji === 1 ? (
+                        <Image source={icon.Pokerface}></Image>
+                    ) : params.emoji === 2 ? (
+                        <Image source={icon.Smile}></Image>
+                    ) : (
+                        <Image source={icon.thinking}></Image>
+                    )
+                }
             </View>
             <View style={styles.buttonnext}>
                 <Text style={styles.textnext}>Estatísticas</Text>
@@ -18,7 +28,6 @@ function HistoryValues(params) {
                         source={icon.next}
                         style={styles.icon}
                     />
-                    <Text>{params.emoji}</Text>
                 </View>
             </View>
         </TouchableOpacity>
@@ -34,7 +43,8 @@ const styles = StyleSheet.create({
         elevation: 10,
         flexDirection: 'row',
         padding: 10,
-        alignItems: 'center'
+        alignItems: 'center',
+        position: 'relative',
     },
     buttonnext: {
         flexDirection: 'row',
@@ -50,12 +60,12 @@ const styles = StyleSheet.create({
     textnext: {
         fontFamily: Fonts_Styles.PoppinsItalic,
         fontSize: Fonts_Size.sm,
-        marginRight:10
+        marginRight: 10
     },
     iconcase: {
         backgroundColor: Colors.dark_gray,
         borderRadius: 30,
-        elevation:10,
+        elevation: 10,
     },
     icon: {
         transform: [{ scaleX: -1 }],

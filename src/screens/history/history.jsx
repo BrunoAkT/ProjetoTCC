@@ -40,6 +40,7 @@ function History() {
                             emoji={item.emoji}
                         ></HistoryValues>
                     )}
+                    style={styles.flatListContainer}
                 >
                 </FlatList>
             </View>
