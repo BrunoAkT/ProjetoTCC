@@ -1,11 +1,13 @@
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native"
 import { Colors, Fonts_Size, Fonts_Styles } from "../constants/theme"
 import icon from "../constants/icon"
+import { useNavigation } from "@react-navigation/native"
 
 
 function HistoryValues(params) {
+    const navigation = useNavigation();
     return (
-        <TouchableOpacity style={styles.container}>
+        <TouchableOpacity style={styles.container} onPress={() => navigation.navigate('Statistics')}>
             <Image source={icon.logo}></Image>
             <View>
                 <Text style={styles.text}>{params.date}</Text>
