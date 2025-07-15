@@ -6,11 +6,20 @@ import { useNavigation } from "@react-navigation/native"
 
 function HistoryValues(params) {
     const navigation = useNavigation();
+
+    const dataAtual = new Date(params.date);
+    const dataFormatada = dataAtual.toLocaleDateString('pt-BR', {
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric',
+        timeZone: 'America/Sao_Paulo'
+    });
+
     return (
-        <TouchableOpacity style={styles.container} onPress={() => navigation.navigate('Statistics')}>
+        <TouchableOpacity style={styles.container} onPress={() => navigation.navigate('Statistics', params)}>
             <Image source={icon.logo}></Image>
             <View>
-                <Text style={styles.text}>{params.date}</Text>
+                <Text style={styles.text}>{dataFormatada}</Text>
                 {
                     params.emoji === 0 ? (
                         <Image source={icon.Sad}></Image>
@@ -47,6 +56,7 @@ const styles = StyleSheet.create({
         padding: 10,
         alignItems: 'center',
         position: 'relative',
+        marginBottom: 15,
     },
     buttonnext: {
         flexDirection: 'row',

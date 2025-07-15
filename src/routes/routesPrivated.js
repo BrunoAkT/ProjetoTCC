@@ -36,7 +36,6 @@ function RoutesOpen() {
             headerTitle: () => (
                 <View>
                     <Text style={{ fontSize: Fonts_Size.lg, fontFamily: Fonts_Styles.PoppinsRegular, color: Colors.gray }}>Estatísticas</Text>
-                    <Text style={{ fontSize: Fonts_Size.sm, fontFamily: Fonts_Styles.PoppinsRegular, color: Colors.gray }}>Atual</Text>
                 </View>
             ),
         }} />

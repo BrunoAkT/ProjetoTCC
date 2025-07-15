@@ -33,11 +33,16 @@ function History() {
             <View style={styles.container}>
                 <FlatList
                     data={savedHistory}
-                    keyExtractio={(item) => item.id}
+                    keyExtractior={(item) => item.id}
                     renderItem={({ item }) => (
                         <HistoryValues
                             date={item.date}
                             emoji={item.emoji}
+                            hight_frequency={item.hight_frequency}
+                            hight_frequency_time={item.hight_frequency_time}
+                            anotation={item.anotation}
+                            avg_frequency={item.avg_frequency}
+                            frequency={item.frequency}
                         ></HistoryValues>
                     )}
                     style={styles.flatListContainer}

@@ -14,7 +14,7 @@ export const styles = {
         alignItems: 'center',
     },
     headerText: {
-        fontFamily: Fonts_Styles.PoppinsRegular,
+        fontFamily: Fonts_Styles.PoppinsSemiBold,
         fontSize: Fonts_Size.md
     },
     container: {

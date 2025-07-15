@@ -1,27 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, Dimensions } from 'react-native';
+import { View, Dimensions } from 'react-native';
 import { LineChart } from 'react-native-chart-kit';
 import { Colors, Fonts_Styles, Fonts_Size } from '../constants/theme'
 
-function FrequencyGraph({ onAverageChange }) {
-    const [data, setData] = useState([80, 82, 85, 81, 84]);
+function HistoryGraph({ data }) {
     const [average, setAverage] = useState(0);
 
-    useEffect(() => {
-        const interval = setInterval(() => {
-            const newValue = Math.floor(75 + Math.random() * 20);
-            const newData = [...data, newValue].slice(-20);
-            setData(newData);
-
-            const avg = newData.reduce((sum, val) => sum + val, 0) / newData.length;
-            setAverage(avg.toFixed(1));
-        }, 1000);
-
-        if (onAverageChange) {
-            onAverageChange(average);
-        }
-        return () => clearInterval(interval);
-    }, [data]);
     return (
         <View style={{ margin: 10, justifyContent: 'center', alignItems: 'center' }}>
             <LineChart
@@ -43,7 +27,7 @@ function FrequencyGraph({ onAverageChange }) {
                     propsForDots: { r: '6', strokeWidth: '2', stroke: Colors.green },
                     propsForLabels: {
                         fontSize: Fonts_Size.md,
-                        fontFamily: Fonts_Styles.PoppinsRegular, 
+                        fontFamily: Fonts_Styles.PoppinsRegular,
                     },
                 }}
                 style={{ marginVertical: 8, borderRadius: 16 }}
@@ -52,4 +36,4 @@ function FrequencyGraph({ onAverageChange }) {
         </View>
     )
 }
-export default FrequencyGraph
+export default HistoryGraph;
