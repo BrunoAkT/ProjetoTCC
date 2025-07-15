@@ -1,5 +1,6 @@
-import { Image, Text, View, ScrollView } from 'react-native'
+import { Image, Text, View, ScrollView, FlatList } from 'react-native'
 import { styles } from './exercises.styles'
+import { exercises } from '../../constants/dataTest'
 import icon from '../../constants/icon'
 import Category from '../../components/Category'
 import Exercise from '../../components/Exercise'
@@ -32,14 +33,23 @@ function Exercises() {
             </View>
             <View>
                 <Text style={styles.text}>Metodos</Text>
-                <ScrollView style={styles.scrollExercicies}>
-                    <Exercise></Exercise>
-                    <Exercise></Exercise>
-                    <Exercise></Exercise>
-                    <Exercise></Exercise>
-                </ScrollView>
+                <FlatList
+                    data={exercises}
+                    keyExtractor={(item) => item.id.toString()}
+                    renderItem={({ item }) => (
+                        <Exercise
+                            nome={item.nome}
+                            descricao={item.descricao}
+                            icone={item.icone}
+                            duracao={item.duracao}
+                            rota={item.rota}
+                        />
+                    )}
+                    style={styles.scrollExercicies}
+                >
+                </FlatList>
             </View>
-        </View>
+        </View >
     )
 }
 

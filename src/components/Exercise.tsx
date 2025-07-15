@@ -2,14 +2,14 @@ import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native"
 import { Colors, Fonts_Size, Fonts_Styles } from "../constants/theme"
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
-function Exercise() {
+function Exercise(params) {
     return (
         <TouchableOpacity style={styles.container}>
-            <View>
-                <Text style={styles.text}>Respiracão {'\n'}Guiada</Text>
+            <View style={styles.containerText}>
+                <Text style={styles.text}>{params.nome}</Text>
                 <View style={styles.buttonplay}>
                     <Ionicons name="caret-forward-sharp" size={30} />
-                    <Text style={styles.textbutton}>2-5 min</Text>
+                    <Text style={styles.textbutton}>{params.duracao} min</Text>
                 </View>
             </View>
             <View style={styles.image}>
@@ -28,16 +28,16 @@ const styles = StyleSheet.create({
         height: 150,
         backgroundColor: Colors.green,
         padding: 20,
-        paddingTop: 15,
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
         elevation: 10,
-        marginBottom:30,
+        marginBottom: 30,
     },
     text: {
         fontFamily: Fonts_Styles.PoppinsSemiBold,
         fontSize: Fonts_Size.xl,
+        flexWrap: 'wrap',
     },
     buttonplay: {
         backgroundColor: Colors.gray,
@@ -64,6 +64,10 @@ const styles = StyleSheet.create({
         position: 'absolute',
         right: 5,
         top: 5,
+    },
+    containerText: {
+        marginRight: 10,
+        width: '60%',
     }
 })
 
