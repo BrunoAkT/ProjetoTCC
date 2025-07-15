@@ -1,8 +1,45 @@
-import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native"
+import { ActivityIndicator, Image, StyleSheet, Text, TouchableOpacity, View } from "react-native"
 import { Colors, Fonts_Size, Fonts_Styles } from "../constants/theme"
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import { useState } from "react";
+
+const SUA_CHAVE_GEMINI = ''
 
 function Exercise(params) {
+
+    const [resposta, setResposta] = useState('');
+    const [carregando, setCarregando] = useState(false);
+
+    async function gerarExplicacaoIA() {
+        setCarregando(true);
+        try {
+            const prompt = `Explique de forma clara e breve o que é a atividade "${params.nome}" e quais são seus benefícios para reduzir estresse e ansiedade.`;
+
+            const respostaAPI = await fetch(
+                `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${SUA_CHAVE_GEMINI}`,
+                {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        contents: [{ parts: [{ text: prompt }] }],
+                    }),
+                }
+            );
+
+            const data = await respostaAPI.json();
+            console.log('Resposta da API:', data);
+            const textoGerado = data.candidates?.[0]?.content?.parts?.[0]?.text;
+            console.log(textoGerado);
+            setResposta(textoGerado || 'Nenhuma resposta gerada.');
+        } catch (err) {
+            console.error('Erro ao gerar explicação:', err);
+            setResposta('Erro ao gerar explicação.');
+        }
+        setCarregando(false);
+    }
+
     return (
         <TouchableOpacity style={styles.container}>
             <View style={styles.containerText}>
@@ -15,9 +52,17 @@ function Exercise(params) {
             <View style={styles.image}>
 
             </View>
-            <TouchableOpacity style={styles.information}>
+            <TouchableOpacity style={styles.information} onPress={gerarExplicacaoIA}>
                 <Ionicons name="help-circle-outline" size={40} />
+
             </TouchableOpacity>
+            {carregando && <ActivityIndicator style={{ marginTop: 16 }} />}
+
+            {resposta !== '' && (
+                <View style={styles.answerContainer}>
+                    <Text style={styles.answer}>{resposta}</Text>
+                </View>
+            )}
         </TouchableOpacity>
     )
 }
@@ -68,6 +113,16 @@ const styles = StyleSheet.create({
     containerText: {
         marginRight: 10,
         width: '60%',
+    },
+    answerContainer: {
+        backgroundColor: Colors.gray,
+        padding: 10,
+        width: 300,
+        position: 'absolute',
+        zIndex: 9999,
+    },
+    answer: {
+
     }
 })
 

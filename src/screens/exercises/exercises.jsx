@@ -4,8 +4,12 @@ import { exercises } from '../../constants/dataTest'
 import icon from '../../constants/icon'
 import Category from '../../components/Category'
 import Exercise from '../../components/Exercise'
+import { useState } from 'react'
 
 function Exercises() {
+    
+
+
     return (
         <View style={styles.mainContainer}>
             <View style={styles.headerContainer}>

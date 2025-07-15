@@ -24,19 +24,21 @@ export const styles = {
         fontSize: Fonts_Size.md,
         lineHeight: Fonts_Size.md
     },
-    logo:{
+    logo: {
         margin: 'auto'
     },
-    categoryItens:{
+    categoryItens: {
         flexDirection: 'row',
         gap: 10,
     },
-    scrollCategory:{
-        padding:20
+    scrollCategory: {
+        padding: 20
     },
-    scrollExercicies:{
-        padding:20,
+    scrollExercicies: {
+        padding: 20,
         height: 500,
+        position: 'relative', // muito importante para sobreposição funcionar
+        overflow: 'visible',  // garantir que não corte o filho
     },
     container: {
         flex: 1,
@@ -112,7 +114,7 @@ export const styles = {
         height: '100%',
         width: '90%',
         padding: 30,
-        marginHorizontal:20,
+        marginHorizontal: 20,
     },
 
     infInput: {
@@ -127,6 +129,6 @@ export const styles = {
         borderTopLeftRadius: 30,
         borderTopRightRadius: 30,
         zIndex: 10,
-       
+
     }
 }
