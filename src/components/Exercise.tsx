@@ -1,4 +1,4 @@
-import { ActivityIndicator, Image, StyleSheet, Text, TouchableOpacity, View } from "react-native"
+import { ActivityIndicator, Image, Modal, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native"
 import { Colors, Fonts_Size, Fonts_Styles } from "../constants/theme"
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useState } from "react";
@@ -9,6 +9,10 @@ function Exercise(params) {
 
     const [resposta, setResposta] = useState('');
     const [carregando, setCarregando] = useState(false);
+    const [visible, setVisible] = useState(true);
+    const onClose = () => {
+        setVisible(false);
+    };
 
     async function gerarExplicacaoIA() {
         setCarregando(true);
@@ -29,9 +33,8 @@ function Exercise(params) {
             );
 
             const data = await respostaAPI.json();
-            console.log('Resposta da API:', data);
             const textoGerado = data.candidates?.[0]?.content?.parts?.[0]?.text;
-            console.log(textoGerado);
+            setVisible(true);
             setResposta(textoGerado || 'Nenhuma resposta gerada.');
         } catch (err) {
             console.error('Erro ao gerar explicação:', err);
@@ -56,14 +59,31 @@ function Exercise(params) {
                 <Ionicons name="help-circle-outline" size={40} />
 
             </TouchableOpacity>
-            {carregando && <ActivityIndicator style={{ marginTop: 16 }} />}
+
+            {carregando && <ActivityIndicator/>}
 
             {resposta !== '' && (
-                <View style={styles.answerContainer}>
-                    <Text style={styles.answer}>{resposta}</Text>
-                </View>
-            )}
-        </TouchableOpacity>
+                <Modal
+                    transparent
+                    visible={visible}
+                    animationType="fade"
+                    onRequestClose={onClose}
+                >
+                    <View style={styles.overlay}>
+                        <View style={styles.content}>
+                            <TouchableOpacity style={styles.close} onPress={onClose}>
+                                <Ionicons name="close" size={24} />
+                            </TouchableOpacity>
+                            <ScrollView>
+                                <Text style={styles.textAnwser}>{resposta}</Text>
+                            </ScrollView>
+                        </View>
+                    </View>
+
+                </Modal>
+            )
+            }
+        </TouchableOpacity >
     )
 }
 
@@ -119,10 +139,27 @@ const styles = StyleSheet.create({
         padding: 10,
         width: 300,
         position: 'absolute',
-        zIndex: 9999,
+        zIndex: 999,
     },
-    answer: {
-
+    textAnwser: {
+        fontFamily: Fonts_Styles.PoppinsRegular,
+        fontSize: Fonts_Size.md,
+    },
+    overlay: {
+        flex: 1,
+        backgroundColor: 'rgba(0,0,0,0.5)',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    content: {
+        backgroundColor: 'white',
+        padding: 20,
+        borderRadius: 12,
+        width: '90%',
+        height: '90%',
+    },
+    close:{
+        alignItems: 'flex-end',
     }
 })
 

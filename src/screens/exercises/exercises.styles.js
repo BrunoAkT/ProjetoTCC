@@ -37,8 +37,8 @@ export const styles = {
     scrollExercicies: {
         padding: 20,
         height: 500,
-        position: 'relative', // muito importante para sobreposição funcionar
-        overflow: 'visible',  // garantir que não corte o filho
+        position: 'relative', 
+        overflow: 'visible', 
     },
     container: {
         flex: 1,

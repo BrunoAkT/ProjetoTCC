@@ -17,13 +17,13 @@ import { useNavigation } from '@react-navigation/native';
 function Account({ hideRegister }) {
     const [birthDate, setBirthDate] = useState('');
 
-    const [registerStep, setRegisterStep] = useState(1); // etapa do cadastro
+    const [registerStep, setRegisterStep] = useState(1); 
     const goToNextStep = () => {
-        setRegisterStep(2); // muda para próxima etapa
+        setRegisterStep(2); 
     };
 
     const goToPreviousStep = () => {
-        setRegisterStep(1); // volta para etapa anterior
+        setRegisterStep(1); 
     };
     const navigation = useNavigation();
 

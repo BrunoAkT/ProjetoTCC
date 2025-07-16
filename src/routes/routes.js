@@ -3,7 +3,7 @@ import RoutesOpen from "./routesOpen.js";
 
 function Routes(){
     const user = {
-        id_user: true // Simulating user state, replace with actual user state management
+        id_user: false
     };
     return  user.id_user ? <RoutesPrivated /> : <RoutesOpen />;
 }
