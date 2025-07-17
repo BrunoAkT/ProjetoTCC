@@ -134,9 +134,24 @@ export const styles = {
     close: {
         alignItems: 'flex-end',
     },
-    checkboxContainer:{
+    checkboxContainer: {
         flexDirection: 'row',
         alignItems: 'center',
         marginTop: 10,
-    }
+        gap: 5,
+    },
+    checklabel: {
+        fontFamily: Fonts_Styles.PoppinsSemiBold,
+        fontSize: Fonts_Size.md,
+    },
+    checkboxDescription: {
+        height: 100,
+        borderRadius: 15,
+        borderWidth: 2,
+        marginTop: 20,
+    },
+    checkInput: {
+        fontFamily: Fonts_Styles.PoppinsSemiBold,
+        fontSize: Fonts_Size.md,
+    },
 }

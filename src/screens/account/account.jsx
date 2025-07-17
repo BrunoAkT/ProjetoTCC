@@ -4,7 +4,8 @@ import {
     TextInput,
     TouchableOpacity,
     Image,
-    Modal
+    Modal,
+    ScrollView
 } from 'react-native';
 import { styles } from "./account.styles";
 import icon from "../../constants/icon";
@@ -87,6 +88,28 @@ function Account({ hideRegister }) {
         }
     }
 
+    const [clinicalConditions, setClinicalConditions] = useState({
+        diabetes: false,
+        asma: false,
+        outra: false,
+    })
+    const [otherClinicalCondition, setOtherClinicalCondition] = useState('');
+    const [noClinicalCondition, setNoClinicalCondition] = useState(false);
+    const toggleClinicalCondition = (condition) => {
+        if (noClinicalCondition) setNoClinicalCondition(false);
+        setClinicalConditions((prev) => ({...prev, [condition]: !prev[condition]}))
+    }
+    const toggleNoClinicalCondition = () =>{
+        const newValue = !noClinicalCondition;
+        setNoClinicalCondition(newValue);
+        if (newValue) {
+            setClinicalConditions({
+                diabetes:false,
+                asma:false,
+            });
+            setOtherClinicalCondition('');
+        }
+    }
 
     return (
         <View>
@@ -173,60 +196,101 @@ function Account({ hideRegister }) {
                                 <TouchableOpacity style={styles.close} onPress={onClose}>
                                     <Ionicons name="close" size={24} />
                                 </TouchableOpacity>
-                                <Text style={styles.text}>Você tem alguma condição cardíaca diagnosticada?</Text>
-                                <View style={styles.checkboxContainer}>
-                                    <Checkbox value={conditions.hipertensao} onValueChange={() => toggleCondition('hipertensao')} />
-                                    <Text style={styles.label}>Hipertensão</Text>
-                                </View>
+                                <ScrollView>
+                                    <View>
+                                        <Text style={styles.text}>Você tem alguma condição cardíaca diagnosticada?</Text>
+                                        <View style={styles.checkboxContainer}>
+                                            <Checkbox value={conditions.hipertensao} onValueChange={() => toggleCondition('hipertensao')} />
+                                            <Text style={styles.checklabel}>Hipertensão</Text>
+                                        </View>
 
-                                <View style={styles.checkboxContainer}>
-                                    <Checkbox value={conditions.arritmia} onValueChange={() => toggleCondition('arritmia')} />
-                                    <Text style={styles.label}>Arritmia</Text>
-                                </View>
+                                        <View style={styles.checkboxContainer}>
+                                            <Checkbox value={conditions.arritmia} onValueChange={() => toggleCondition('arritmia')} />
+                                            <Text style={styles.checklabel}>Arritmia</Text>
+                                        </View>
 
-                                <View style={styles.checkboxContainer}>
-                                    <Checkbox value={conditions.insuficiencia} onValueChange={() => toggleCondition('insuficiencia')} />
-                                    <Text style={styles.label}>Insuficiência cardíaca</Text>
-                                </View>
+                                        <View style={styles.checkboxContainer}>
+                                            <Checkbox value={conditions.insuficiencia} onValueChange={() => toggleCondition('insuficiencia')} />
+                                            <Text style={styles.checklabel}>Insuficiência cardíaca</Text>
+                                        </View>
 
-                                <View style={styles.checkboxContainer}>
-                                    <Checkbox value={conditions.marcapasso} onValueChange={() => toggleCondition('marcapasso')} />
-                                    <Text style={styles.label}>Marcapasso</Text>
-                                </View>
+                                        <View style={styles.checkboxContainer}>
+                                            <Checkbox value={conditions.marcapasso} onValueChange={() => toggleCondition('marcapasso')} />
+                                            <Text style={styles.checklabel}>Marcapasso</Text>
+                                        </View>
 
-                                <View style={styles.checkboxContainer}>
-                                    <Checkbox value={conditions.taquicardia} onValueChange={() => toggleCondition('taquicardia')} />
-                                    <Text style={styles.label}>Taquicardia / Bradicardia</Text>
-                                </View>
+                                        <View style={styles.checkboxContainer}>
+                                            <Checkbox value={conditions.taquicardia} onValueChange={() => toggleCondition('taquicardia')} />
+                                            <Text style={styles.checklabel}>Taquicardia / Bradicardia</Text>
+                                        </View>
 
-                                <View style={styles.checkboxContainer}>
-                                    <Checkbox value={conditions.historicoInfarto} onValueChange={() => toggleCondition('historicoInfarto')} />
-                                    <Text style={styles.label}>Histórico de infarto</Text>
-                                </View>
+                                        <View style={styles.checkboxContainer}>
+                                            <Checkbox value={conditions.historicoInfarto} onValueChange={() => toggleCondition('historicoInfarto')} />
+                                            <Text style={styles.checklabel}>Histórico de infarto</Text>
+                                        </View>
 
-                                <View style={styles.checkboxContainer}>
-                                    <Checkbox value={conditions.betabloqueadores} onValueChange={() => toggleCondition('betabloqueadores')} />
-                                    <Text style={styles.label}>Uso de betabloqueadores</Text>
-                                </View>
+                                        <View style={styles.checkboxContainer}>
+                                            <Checkbox value={conditions.betabloqueadores} onValueChange={() => toggleCondition('betabloqueadores')} />
+                                            <Text style={styles.checklabel}>Uso de betabloqueadores</Text>
+                                        </View>
 
-                                <View style={styles.checkboxContainer}>
-                                    <Checkbox value={conditions.outra} onValueChange={() => toggleCondition('outra')} />
-                                    <Text style={styles.label}>Outra condição cardíaca</Text>
-                                </View>
+                                        <View style={styles.checkboxContainer}>
+                                            <Checkbox value={conditions.outra} onValueChange={() => toggleCondition('outra')} />
+                                            <Text style={styles.checklabel}>Outra condição cardíaca</Text>
+                                        </View>
 
-                                {conditions.outra && (
-                                    <TextInput
-                                        style={styles.input}
-                                        placeholder="Descreva a condição"
-                                        value={otherCondition}
-                                        onChangeText={setOtherCondition}
-                                    />
-                                )}
+                                        {conditions.outra && (
+                                            <View style={styles.checkboxDescription}>
+                                                <TextInput
+                                                    style={styles.checkInput}
+                                                    placeholder="Descreva a condição"
+                                                    value={otherCondition}
+                                                    onChangeText={setOtherCondition}
+                                                    multiline
+                                                />
+                                            </View>
+                                        )}
 
-                                <View style={styles.checkboxContainer}>
-                                    <Checkbox value={noCondition} onValueChange={toggleNoCondition} />
-                                    <Text style={styles.label}>Não possuo nenhuma condição cardíaca</Text>
-                                </View>
+                                        <View style={styles.checkboxContainer}>
+                                            <Checkbox value={noCondition} onValueChange={toggleNoCondition} />
+                                            <Text style={styles.checklabel}>Não possuo nenhuma condição cardíaca</Text>
+                                        </View>
+                                    </View>
+                                    <View>
+                                        <Text style={styles.text}>Condição clinica diagnosticada?</Text>
+                                        <View style={styles.checkboxContainer}>
+                                            <Checkbox value={clinicalConditions.diabetes} onValueChange={() => toggleClinicalCondition('diabetes')} />
+                                            <Text style={styles.checklabel}>Diabetes</Text>
+                                        </View>
+
+                                        <View style={styles.checkboxContainer}>
+                                            <Checkbox value={clinicalConditions.asma} onValueChange={() => toggleClinicalCondition('asma')} />
+                                            <Text style={styles.checklabel}>Asma</Text>
+                                        </View>
+
+                                        <View style={styles.checkboxContainer}>
+                                            <Checkbox value={clinicalConditions.outra} onValueChange={() => toggleClinicalCondition('outra')} />
+                                            <Text style={styles.checklabel}>Outra condição cardíaca</Text>
+                                        </View>
+
+                                        {clinicalConditions.outra && (
+                                            <View style={styles.checkboxDescription}>
+                                                <TextInput
+                                                    style={styles.checkInput}
+                                                    placeholder="Descreva a condição"
+                                                    value={otherClinicalCondition}
+                                                    onChangeText={setOtherClinicalCondition}
+                                                    multiline
+                                                />
+                                            </View>
+                                        )}
+
+                                        <View style={styles.checkboxContainer}>
+                                            <Checkbox value={noClinicalCondition} onValueChange={toggleNoClinicalCondition} />
+                                            <Text style={styles.checklabel}>Não possuo nenhuma condição {'\n'}clinica</Text>
+                                        </View>
+                                    </View>
+                                </ScrollView>
                             </View>
                         </View>
 
