@@ -75,10 +75,16 @@ export const styles = {
     avatarinput: {
         marginLeft: 20,
     },
+    avatarplace:{
+        width: 130,
+        height: 130,
+        borderRadius: 100,
+    },
     iconedit: {
         position: 'absolute',
         right: -5,
         top: -5,
+        zIndex: 1,
     },
     inputsm: {
         width: 180,
