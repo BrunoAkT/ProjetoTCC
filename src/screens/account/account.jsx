@@ -4,6 +4,7 @@ import {
     TextInput,
     TouchableOpacity,
     Image,
+    Modal
 } from 'react-native';
 import { styles } from "./account.styles";
 import icon from "../../constants/icon";
@@ -11,6 +12,8 @@ import { useState } from 'react';
 import { TextInputMask } from 'react-native-masked-text';
 import { useNavigation } from '@react-navigation/native';
 import * as ImagePicker from 'expo-image-picker';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import Checkbox from 'expo-checkbox';
 
 function Account({ hideRegister }) {
     const [birthDate, setBirthDate] = useState('');
@@ -19,15 +22,12 @@ function Account({ hideRegister }) {
     const goToNextStep = () => {
         setRegisterStep(2);
     };
-
     const goToPreviousStep = () => {
         setRegisterStep(1);
     };
 
     const selectImage = async () => {
-
         const permissions = await ImagePicker.requestMediaLibraryPermissionsAsync();
-
         if (permissions.granted === false) {
             alert('Você precisa permitir o acesso à galeria para selecionar uma imagem.');
             return;
@@ -37,15 +37,56 @@ function Account({ hideRegister }) {
             allowsEditing: true,
             quality: 1,
         });
-
-        console.log('Resultado da seleção de imagem:', result)
-
         if (!result.canceled) {
             setImage(result.assets[0].uri);
-            console.log('Imagem selecionada:', result.assets[0].uri);
         }
     };
+
     const navigation = useNavigation();
+
+    const [visible, setVisible] = useState(false);
+    const OpenModalRegister = () => {
+        setVisible(true);
+    }
+    const onClose = () => {
+        setVisible(false)
+    }
+
+    const [conditions, setConditions] = useState({
+        hipertensao: false,
+        arritmia: false,
+        insuficiencia: false,
+        marcapasso: false,
+        taquicardia: false,
+        historicoInfarto: false,
+        betabloqueadores: false,
+        outra: false,
+    });
+    const [otherCondition, setOtherCondition] = useState('');
+    const [noCondition, setNoCondition] = useState(false);
+
+    const toggleCondition = (condition) => {
+        if (noCondition) setNoCondition(false);
+        setConditions((prev) => ({ ...prev, [condition]: !prev[condition] }))
+    }
+    const toggleNoCondition = () => {
+        const newValue = !noCondition;
+        setNoCondition(newValue);
+        if (newValue) {
+            setConditions({
+                hipertensao: false,
+                arritmia: false,
+                insuficiencia: false,
+                marcapasso: false,
+                taquicardia: false,
+                historicoInfarto: false,
+                betabloqueadores: false,
+                outra: false,
+            });
+            setOtherCondition('');
+        }
+    }
+
 
     return (
         <View>
@@ -106,7 +147,7 @@ function Account({ hideRegister }) {
                         <Text style={styles.text}>
                             Informe:
                         </Text>
-                        <TouchableOpacity style={styles.buttonregister}>
+                        <TouchableOpacity style={styles.buttonregister} onPress={OpenModalRegister}>
                             <Text style={styles.textreg}>Registro cardíaco</Text>
                         </TouchableOpacity>
                     </View>
@@ -121,7 +162,77 @@ function Account({ hideRegister }) {
                             </TouchableOpacity>
                         </View>
                     </View>
+                    <Modal
+                        transparent
+                        visible={visible}
+                        animationType="fade"
+                        onRequestClose={onClose}
+                    >
+                        <View style={styles.overlay}>
+                            <View style={styles.content}>
+                                <TouchableOpacity style={styles.close} onPress={onClose}>
+                                    <Ionicons name="close" size={24} />
+                                </TouchableOpacity>
+                                <Text style={styles.text}>Você tem alguma condição cardíaca diagnosticada?</Text>
+                                <View style={styles.checkboxContainer}>
+                                    <Checkbox value={conditions.hipertensao} onValueChange={() => toggleCondition('hipertensao')} />
+                                    <Text style={styles.label}>Hipertensão</Text>
+                                </View>
+
+                                <View style={styles.checkboxContainer}>
+                                    <Checkbox value={conditions.arritmia} onValueChange={() => toggleCondition('arritmia')} />
+                                    <Text style={styles.label}>Arritmia</Text>
+                                </View>
+
+                                <View style={styles.checkboxContainer}>
+                                    <Checkbox value={conditions.insuficiencia} onValueChange={() => toggleCondition('insuficiencia')} />
+                                    <Text style={styles.label}>Insuficiência cardíaca</Text>
+                                </View>
+
+                                <View style={styles.checkboxContainer}>
+                                    <Checkbox value={conditions.marcapasso} onValueChange={() => toggleCondition('marcapasso')} />
+                                    <Text style={styles.label}>Marcapasso</Text>
+                                </View>
+
+                                <View style={styles.checkboxContainer}>
+                                    <Checkbox value={conditions.taquicardia} onValueChange={() => toggleCondition('taquicardia')} />
+                                    <Text style={styles.label}>Taquicardia / Bradicardia</Text>
+                                </View>
+
+                                <View style={styles.checkboxContainer}>
+                                    <Checkbox value={conditions.historicoInfarto} onValueChange={() => toggleCondition('historicoInfarto')} />
+                                    <Text style={styles.label}>Histórico de infarto</Text>
+                                </View>
+
+                                <View style={styles.checkboxContainer}>
+                                    <Checkbox value={conditions.betabloqueadores} onValueChange={() => toggleCondition('betabloqueadores')} />
+                                    <Text style={styles.label}>Uso de betabloqueadores</Text>
+                                </View>
+
+                                <View style={styles.checkboxContainer}>
+                                    <Checkbox value={conditions.outra} onValueChange={() => toggleCondition('outra')} />
+                                    <Text style={styles.label}>Outra condição cardíaca</Text>
+                                </View>
+
+                                {conditions.outra && (
+                                    <TextInput
+                                        style={styles.input}
+                                        placeholder="Descreva a condição"
+                                        value={otherCondition}
+                                        onChangeText={setOtherCondition}
+                                    />
+                                )}
+
+                                <View style={styles.checkboxContainer}>
+                                    <Checkbox value={noCondition} onValueChange={toggleNoCondition} />
+                                    <Text style={styles.label}>Não possuo nenhuma condição cardíaca</Text>
+                                </View>
+                            </View>
+                        </View>
+
+                    </Modal>
                 </View>
+
             )
             }
         </View >

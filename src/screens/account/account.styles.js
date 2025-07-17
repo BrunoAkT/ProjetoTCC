@@ -75,7 +75,7 @@ export const styles = {
     avatarinput: {
         marginLeft: 20,
     },
-    avatarplace:{
+    avatarplace: {
         width: 130,
         height: 130,
         borderRadius: 100,
@@ -117,4 +117,26 @@ export const styles = {
         alignItems: 'center',
         justifyContent: 'center',
     },
+
+    overlay: {
+        flex: 1,
+        backgroundColor: 'rgba(0,0,0,0.5)',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    content: {
+        backgroundColor: Colors.gray,
+        padding: 20,
+        borderRadius: 12,
+        width: '90%',
+        height: '90%',
+    },
+    close: {
+        alignItems: 'flex-end',
+    },
+    checkboxContainer:{
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginTop: 10,
+    }
 }
