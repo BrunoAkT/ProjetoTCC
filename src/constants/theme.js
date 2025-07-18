@@ -4,6 +4,7 @@ const Colors = {
     dark_gray: '#404040',
     green: '#81C784',
     white_blue: '#4CB7B3',
+    white: '#FFFFFF',
 }
 const Fonts_Size = {
     title: 32,
