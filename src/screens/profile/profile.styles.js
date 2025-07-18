@@ -77,18 +77,18 @@ export const styles = {
         width: 200,
         height: 50,
         position: 'absolute',
-        borderWidth:2,
+        borderWidth: 2,
         zIndex: 1,
         right: 60,
-        alignItems:'center',
+        alignItems: 'center',
         justifyContent: 'center',
         borderRadius: 10,
     },
-    modalContent:{
+    modalContent: {
         flex: 1,
         padding: 20,
     },
-    textInput:{
+    textInput: {
         backgroundColor: Colors.white,
         borderWidth: 1,
         fontFamily: Fonts_Styles.PoppinsRegular,
@@ -96,7 +96,42 @@ export const styles = {
         borderColor: Colors.green,
         padding: 15,
     },
-    editContainer:{
-        marginBottom:20,
-    }
+    editContainer: {
+        marginBottom: 20,
+    },
+    headerModal: {
+        alignItems: 'center',
+        marginBottom: 20,
+    },
+    iconedit: {
+        position: 'absolute',
+        right: -5,
+        top: -5,
+        zIndex: 1,
+    },
+    avatarplace: {
+        width: 130,
+        height: 130,
+        borderRadius: 100,
+    },
+    checkboxContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginTop: 10,
+        gap: 5,
+    },
+    checklabel: {
+        fontFamily: Fonts_Styles.PoppinsSemiBold,
+        fontSize: Fonts_Size.md,
+    },
+    checkboxDescription: {
+        height: 100,
+        borderRadius: 15,
+        borderWidth: 2,
+        marginTop: 20,
+    },
+    checkInput: {
+        fontFamily: Fonts_Styles.PoppinsSemiBold,
+        fontSize: Fonts_Size.md,
+    },
 }
