@@ -90,5 +90,41 @@ export const styles = {
     resultText: {
         fontFamily: Fonts_Styles.PoppinsSemiBold,
         fontSize: Fonts_Size.md,
-    }
+    },
+    overlay: {
+        flex: 1,
+        backgroundColor: 'rgba(0,0,0,0.5)',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    content: {
+        backgroundColor: 'white',
+        padding: 20,
+        borderRadius: 12,
+        width: '90%',
+    },
+    close:{
+        alignItems: 'flex-end',
+    },
+    modalTitle:{
+         fontFamily: Fonts_Styles.PoppinsSemiBold,
+        fontSize: Fonts_Size.xl,
+        color: Colors.dark_gray,
+        textAlign: 'center',
+    },
+    modalSubTitle:{
+         fontFamily: Fonts_Styles.PoppinsSemiBold,
+        fontSize: Fonts_Size.lg,
+        color: Colors.dark_gray,
+        textAlign: 'center',
+    },
+    emojiSection:{
+        alignItems:'center',
+    },
+    modalText:{
+        fontFamily: Fonts_Styles.PoppinsSemiBold,
+        fontSize: Fonts_Size.md,
+        color: Colors.dark_gray,
+        textAlign: 'center',
+    },
 }

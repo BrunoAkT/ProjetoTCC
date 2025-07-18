@@ -76,7 +76,7 @@ function BaiQuestionario() {
             <View>
                 <Text style={styles.question}>{currentQuestion.text}</Text>
                 <View>
-                    <Text style={styles.text}>Quanto isso te incomodou nos últimos {"\n"}7 dias?</Text>
+                    <Text style={styles.text}>Quando você se sente ansioso, o quanto esse sintoma te incomoda?</Text>
                 </View>
                 <View style={styles.optionsContainer}>
                     {currentQuestion.options.map((option, index) => (

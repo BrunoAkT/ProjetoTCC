@@ -43,6 +43,8 @@ function History() {
                             anotation={item.anotation}
                             avg_frequency={item.avg_frequency}
                             frequency={item.frequency}
+                            BAI_points={item.BAI_points}
+                            BAI_interpretation={item.BAI_interpretation}
                         ></HistoryValues>
                     )}
                     style={styles.flatListContainer}

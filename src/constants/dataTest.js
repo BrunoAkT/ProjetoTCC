@@ -8,7 +8,9 @@ const savedHistory = [
         hight_frequency_time: '12:34',
         anotation: '10:30 - tive uma discussão com o meu chefe no trabalho',
         avg_frequency: 91,
-        frequency: [80, 82, 85, 81, 84, 100, 124, 94, 95, 114]
+        frequency: [80, 82, 85, 81, 84, 100, 124, 94, 95, 114],
+        BAI_points: 15,
+        BAI_interpretation: "Ansiedade leve"
     },
     {
         id: 2,
@@ -18,7 +20,9 @@ const savedHistory = [
         hight_frequency_time: '11:04',
         anotation: '15:22 - tomei energético e fui para a academia, não fiz cardio',
         avg_frequency: 91,
-        frequency: [69, 81, 85, 81, 84, 89, 75, 80, 90, 84, 85, 83, 77, 69, 70]
+        frequency: [69, 81, 85, 81, 84, 89, 75, 80, 90, 84, 85, 83, 77, 69, 70],
+        BAI_points: 3,
+        BAI_interpretation: "Ansiedade minima"
     },
     {
         id: 3,
@@ -28,7 +32,9 @@ const savedHistory = [
         hight_frequency_time: '11:04',
         anotation: '15:22 - tomei energético e fui para a academia, não fiz cardio',
         avg_frequency: 91,
-        frequency: [69, 81, 85, 81, 84, 89, 75, 80, 90, 84, 85, 83, 77, 69, 70]
+        frequency: [69, 81, 85, 81, 84, 89, 75, 80, 90, 84, 85, 83, 77, 69, 70],
+        BAI_points: 31,
+        BAI_interpretation: "Ansiedade grave"
     },
     {
         id: 4,
@@ -38,7 +44,9 @@ const savedHistory = [
         hight_frequency_time: '11:04',
         anotation: '15:22 - tomei energético e fui para a academia, não fiz cardio',
         avg_frequency: 91,
-        frequency: [69, 81, 85, 81, 84, 89, 75, 80, 90, 84, 85, 83, 77, 69, 70]
+        frequency: [69, 81, 85, 81, 84, 89, 75, 80, 90, 84, 85, 83, 77, 69, 70],
+        BAI_points: 30,
+        BAI_interpretation: "Ansiedade moderada"
     }
 ];
 const exercises = [

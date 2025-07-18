@@ -10,7 +10,7 @@ function FrequencyGraph({ onAverageChange }) {
     useEffect(() => {
         const interval = setInterval(() => {
             const newValue = Math.floor(75 + Math.random() * 20);
-            const newData = [...data, newValue].slice(-20);
+            const newData = [...data, newValue].slice(-60);
             setData(newData);
 
             const avg = newData.reduce((sum, val) => sum + val, 0) / newData.length;
@@ -22,6 +22,7 @@ function FrequencyGraph({ onAverageChange }) {
         }
         return () => clearInterval(interval);
     }, [data]);
+    
     return (
         <View style={{ margin: 10, justifyContent: 'center', alignItems: 'center' }}>
             <LineChart
@@ -40,7 +41,7 @@ function FrequencyGraph({ onAverageChange }) {
                     color: (opacity = 1) => Colors.green,
                     labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
                     style: { borderRadius: 16 },
-                    propsForDots: { r: '6', strokeWidth: '2', stroke: Colors.green },
+                    propsForDots: { r: '3', strokeWidth: '2', stroke: Colors.green },
                     propsForLabels: {
                         fontSize: Fonts_Size.md,
                         fontFamily: Fonts_Styles.PoppinsRegular, 

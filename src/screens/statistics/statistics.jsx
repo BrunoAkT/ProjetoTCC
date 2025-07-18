@@ -1,7 +1,10 @@
-import { Image, Text, View } from "react-native";
+import { Image, Modal, SafeAreaView, Text, TouchableOpacity, View } from "react-native";
 import { styles } from "./statistics.styles";
 import icon from "../../constants/icon";
 import HistoryGraph from "../../components/HistoryGraph";
+import { useState } from "react";
+import Ionicons from 'react-native-vector-icons/Ionicons';
+
 
 function Statistics(params) {
     const { route } = params;
@@ -12,6 +15,14 @@ function Statistics(params) {
         year: 'numeric',
         timeZone: 'America/Sao_Paulo'
     });
+
+    const [visible, setVisible] = useState(false);
+    const onClose = () => {
+        setVisible(false);
+    }
+    const onOpen = () => {
+        setVisible(true);
+    }
 
     return (
         <View style={styles.mainContainer}>
@@ -29,7 +40,7 @@ function Statistics(params) {
                         </View>
                         <Text style={styles.text}>Valor de {route.params.hight_frequency_time}</Text>
                     </View>
-                    <View style={styles.summaryContainer}>
+                    <TouchableOpacity style={styles.summaryContainer} onPress={onOpen}>
                         <View style={styles.sumarryResult}>
                             <Text style={styles.resultText}>Resumo Diário</Text>
                             {
@@ -44,7 +55,7 @@ function Statistics(params) {
                                 )
                             }
                         </View>
-                    </View>
+                    </TouchableOpacity>
                 </View>
                 <View style={styles.infContainer}>
                     <Text style={styles.infTitle}>Anotações nesta Data</Text>
@@ -53,6 +64,49 @@ function Statistics(params) {
                     </View>
                 </View>
             </View>
+            <Modal
+                transparent={true}
+                animationType="fade"
+                onRequestClose={onClose}
+                visible={visible}
+            >
+                <View style={styles.overlay}>
+                    <SafeAreaView style={styles.content}>
+                        <TouchableOpacity style={styles.close} onPress={onClose}>
+                            <Ionicons name="close" size={24} />
+                        </TouchableOpacity>
+                        <View>
+                            <Text style={styles.modalTitle}>Resumo do Dia</Text>
+                            <View>
+                                <Text style={styles.modalSubTitle}>Estado Emocional Selecionado</Text>
+                                <View style={styles.emojiSection}>
+                                    <Image source={route.params.emoji === 0 ? icon.Sad : route.params.emoji === 1 ? icon.Pokerface : route.params.emoji === 2 ? icon.Smile : icon.thinking} />
+                                    <Text style={styles.modalText}>
+                                        {
+                                            route.params.emoji === 0 ? 'Triste' :
+                                                route.params.emoji === 1 ? 'Neutro' :
+                                                    route.params.emoji === 2 ? 'Feliz' : 'Indefinido'
+                                        }
+                                    </Text>
+                                </View>
+                            </View>
+                            <View>
+                                <Text style={styles.modalSubTitle}>Resultado BAI</Text>
+                                <Text style={styles.modalText}>Pontuação: {route.params.BAI_points}</Text>
+                                <Text style={styles.modalText}>Nivel: {route.params.BAI_interpretation}</Text>
+                            </View>
+                            <View>
+                                <Text style={styles.modalSubTitle}>Frequência Cardíaca</Text>
+                                <View>
+                                    <Text style={styles.modalText}>Máxima: {route.params.hight_frequency} BPM</Text>
+                                    <Text style={styles.modalText}>Média: {route.params.avg_frequency} BPM</Text>
+                                    <Text style={styles.modalText}>Hora Máxima: {route.params.hight_frequency_time}</Text>
+                                </View>
+                            </View>
+                        </View>
+                    </SafeAreaView>
+                </View>
+            </Modal>
         </View>
     )
 }
