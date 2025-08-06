@@ -11,7 +11,7 @@ export default function App() {
   useEffect(() => {
     setTimeout(() => {
       SplashScreen.hideAsync();
-    }, 2000); 
+    }, 1000); 
   }, []);
 
   let [fontsLoaded] = useFonts({

@@ -1,9 +1,14 @@
 import { styles } from './frequency.styles'
 import React, { useState, useEffect, useRef } from 'react';
-import { View, Text, Dimensions, Image, TouchableOpacity, TextInput, Animated, TouchableWithoutFeedback, Keyboard } from 'react-native';
+import { View, Text, Dimensions, Image, TouchableOpacity, TextInput, Animated, TouchableWithoutFeedback, Keyboard, StyleSheet } from 'react-native';
 import FrequencyGraph from '../../components/FrequencyGraph';
 import icon from '../../constants/icon';
 import { useNavigation } from '@react-navigation/native';
+import { Camera, useCameraDevice, useCameraFormat, useCameraPermission, useFrameProcessor } from 'react-native-vision-camera';
+import PermissionsPage from '../../components/Permission';
+import NoCameraDeviceError from '../../components/NoCameraDeviceError';
+import { Ppgtest } from '../../components/PPGConection';
+import { Worklets } from 'react-native-worklets-core';
 
 
 const dataAtual = new Date();
@@ -45,7 +50,32 @@ function Frequency({ route }) {
   }
 
   const navigation = useNavigation();
+
+  const device = useCameraDevice('back')
+  const { hasPermission } = useCameraPermission()
+  const format = useCameraFormat(device, [
+    { videoResolution: 'auto' },
+    { fps: 30 },
+    { autoFocusSystem: 'none' }
+  ])
+
+  const [data, setData] = useState();
+  const myFunctionJS = Worklets.createRunOnJS(setData);
+
+  const frameProcessor = useFrameProcessor((frame) => {
+    'worklet'
+    const heart = Ppgtest(frame)
+    if (heart && typeof heart.ac === 'number' && typeof heart.dc === 'number') {
+      myFunctionJS(heart)
+      console.log(heart)
+    }
+  }, [])
+
+  if (!hasPermission) return <PermissionsPage />
+  if (device == null) return <NoCameraDeviceError />
+
   return (
+
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <View style={styles.mainContainer}>
         <View style={styles.header}>
@@ -59,7 +89,7 @@ function Frequency({ route }) {
             <Text style={styles.text}>Coloque seu dedo na camera do celular</Text>
           </View>
           <View style={styles.averageContainer}>
-            
+
             <Image source={icon.HeartEmpty}></Image>
             <View style={styles.frequencyFormat}>
               <View style={styles.FrequencyNumberFormat}>
@@ -70,6 +100,14 @@ function Frequency({ route }) {
             </View>
 
             <View style={styles.camera}>
+              <Camera
+                style={styles.cameraVision}
+                device={device}
+                isActive={true}
+                frameProcessor={frameProcessor}
+                format={format}
+                fps={format?.maxFps}
+              />
             </View>
           </View>
 
