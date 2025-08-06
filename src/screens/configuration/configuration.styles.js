@@ -72,6 +72,35 @@ export const styles = {
         width: 30,
         height: 30,
         tintColor: Colors.green
-    }
-
+    },
+    overlay: {
+        flex: 1,
+        backgroundColor: 'rgba(0,0,0,0.5)',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    modalContainer: {
+        backgroundColor: Colors.gray,
+        padding: 10,
+        borderRadius: 10
+    },
+    option: {
+        backgroundColor: '#f2f2f2',
+        padding: 15,
+        borderRadius: 8,
+        marginBottom: 10,
+    },
+    optionTitle: {
+        fontFamily: Fonts_Styles.PoppinsRegular,
+        fontSize: Fonts_Size.lg,
+        fontWeight: '600',
+    },
+    optionDesc: {
+        fontFamily: Fonts_Styles.PoppinsRegular,
+        fontSize: Fonts_Size.md,
+        color: '#666',
+    },
+    active:{
+        backgroundColor: Colors.green,
+    },
 }

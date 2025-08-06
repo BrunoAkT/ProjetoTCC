@@ -24,15 +24,13 @@ export const styles = {
     },
     averageContainer: {
         flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        paddingHorizontal:10,
+        alignItems: 'center'
     },
     averageText: {
-        fontSize: 60,
+        fontSize: 80,
         fontFamily: Fonts_Styles.PoppinsSemiBold,
         color: Colors.gray,
-        lineHeight: 60,
+        lineHeight: 80,
     },
     BPMText: {
         fontFamily: Fonts_Styles.PoppinsSemiBold,
@@ -109,11 +107,6 @@ export const styles = {
         borderTopLeftRadius: 30,
         borderTopRightRadius: 30,
         zIndex: 10,
-    },
-    camera: {
-        backgroundColor: Colors.red,
-        width: 80,
-        height: 100,
-        borderRadius: 20,
+
     }
 }

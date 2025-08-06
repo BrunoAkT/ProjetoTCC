@@ -1,6 +1,7 @@
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Dashboard from "../screens/dashboard/dashboard";
 import Frequency from "../screens/frequency/frequency";
+import FrequencyBLE from "../screens/frequencyBLE/frequencyBLE";
 import Exercises from "../screens/exercises/exercises";
 import Statistics from "../screens/statistics/statistics";
 import { Colors, Fonts_Size, Fonts_Styles } from '../constants/theme'
@@ -21,6 +22,14 @@ function RoutesOpen() {
             headerTitle: () => (
                 <View>
                     <Text style={{ fontSize: Fonts_Size.lg, fontFamily: Fonts_Styles.PoppinsRegular, color: Colors.gray }}>Frequência Cardíaca</Text>
+                    <Text style={{ fontSize: Fonts_Size.sm, fontFamily: Fonts_Styles.PoppinsRegular, color: Colors.gray }}>Atual</Text>
+                </View>
+            ),
+        }} />
+        <Stack.Screen name="FrequencyBLE" component={FrequencyBLE} options={{
+            headerTitle: () => (
+                <View>
+                    <Text style={{ fontSize: Fonts_Size.lg, fontFamily: Fonts_Styles.PoppinsRegular, color: Colors.gray }}>Frequência Cardíaca2</Text>
                     <Text style={{ fontSize: Fonts_Size.sm, fontFamily: Fonts_Styles.PoppinsRegular, color: Colors.gray }}>Atual</Text>
                 </View>
             ),

@@ -1,4 +1,4 @@
-import { styles } from './frequency.styles'
+import { styles } from './frequencyBLE.styles'
 import React, { useState, useEffect, useRef } from 'react';
 import { View, Text, Dimensions, Image, TouchableOpacity, TextInput, Animated, TouchableWithoutFeedback, Keyboard } from 'react-native';
 import FrequencyGraph from '../../components/FrequencyGraph';
@@ -51,15 +51,9 @@ function Frequency({ route }) {
         <View style={styles.header}>
           <Text style={styles.headerText}>{dataFormatada ?? 'Erro na Data'}</Text>
         </View>
-
         <FrequencyGraph onAverageChange={setaverageFrequency}></FrequencyGraph>
-
         <View style={styles.container}>
-          <View>
-            <Text style={styles.text}>Coloque seu dedo na camera do celular</Text>
-          </View>
           <View style={styles.averageContainer}>
-            
             <Image source={icon.HeartEmpty}></Image>
             <View style={styles.frequencyFormat}>
               <View style={styles.FrequencyNumberFormat}>
@@ -67,9 +61,6 @@ function Frequency({ route }) {
                 <Text style={styles.BPMText}>BPM</Text>
               </View>
               <Text style={styles.text}>valor de {horarioFormatado ?? 'Erro no Horario'}</Text>
-            </View>
-
-            <View style={styles.camera}>
             </View>
           </View>
 
@@ -80,6 +71,11 @@ function Frequency({ route }) {
           <View style={styles.functionContainers}>
             <TouchableOpacity style={styles.exerciciesContainer} onPress={() => navigation.navigate('Exercises')}>
               <Image></Image>
+            </TouchableOpacity>
+
+            <TouchableOpacity style={styles.stressContainer}>
+              <Image source={icon.stress}></Image>
+              <Text style={styles.stressText}>Níveis de Estresse</Text>
             </TouchableOpacity>
           </View>
         </View>

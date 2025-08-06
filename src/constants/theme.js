@@ -5,6 +5,7 @@ const Colors = {
     green: '#81C784',
     white_blue: '#4CB7B3',
     white: '#FFFFFF',
+    red: '#FF0000'
 }
 const Fonts_Size = {
     title: 32,
@@ -23,4 +24,4 @@ const Fonts_Styles = {
     PoppinsItalic: 'Poppins_300Light_Italic',
 }
 
-export {Colors, Fonts_Size, Fonts_Styles}
+export { Colors, Fonts_Size, Fonts_Styles }

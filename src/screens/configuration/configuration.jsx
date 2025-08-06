@@ -1,13 +1,19 @@
-import { Image, Text, TouchableOpacity, View } from "react-native";
+import { Image, Modal, Text, TouchableOpacity, View } from "react-native";
 import { styles } from './configuration.styles'
 import Topcurve from "../../components/Topmidcurve";
 import icon from "../../constants/icon";
+import { useState } from "react";
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import { SafeAreaView } from "react-native-safe-area-context";
 
 function Configuration() {
 
     const Nome = 'Bruno'
     const idade = 20
     const Email = 'teste@gmail.com'
+    const [MonitoringBle, SetMonitoringBle] = useState(false);
+
+    const [popUpMonitoring, setPopUpMonitoring] = useState(false);
 
     return (
         <View style={styles.mainContainer}>
@@ -31,8 +37,31 @@ function Configuration() {
                 </View>
             </View>
             <View style={styles.container}>
+
+                <Modal
+                    transparent={true}
+                    visible={popUpMonitoring}
+                    animationType="fade"
+                    onRequestClose={() => setPopUpMonitoring(false)}>
+                    <View style={styles.overlay}>
+                        <SafeAreaView style={styles.modalContainer}>
+                            <TouchableOpacity style={styles.closeButton} onPress={() => setPopUpMonitoring(false)}>
+                                <Ionicons name="close" size={30} color="#000" />
+                            </TouchableOpacity>
+                            <TouchableOpacity style={[styles.option, MonitoringBle ? null : styles.active]} onPress={() => SetMonitoringBle(false)}>
+                                <Text style={styles.optionTitle}>📷 PPG via Câmera</Text>
+                                <Text style={styles.optionDesc}>Usa a câmera e o flash do celular</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity style={[styles.option, MonitoringBle ? styles.active : null]} onPress={() => SetMonitoringBle(true)}>
+                                <Text style={styles.optionTitle}>⌚ Smartwatch (BLE)</Text>
+                                <Text style={styles.optionDesc}>Conecte um relógio via Bluetooth</Text>
+                            </TouchableOpacity>
+                        </SafeAreaView>
+                    </View>
+                </Modal>
+
                 <View>
-                    <TouchableOpacity style={styles.button}>
+                    <TouchableOpacity style={styles.button} onPress={() => setPopUpMonitoring(true)}>
                         <Text style={styles.buttontext}>Tipo de monitoramento</Text>
                         <View style={styles.iconcase}>
                             <Image

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Platform } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -10,15 +10,14 @@ import History from '../history/history';
 import { useNavigation } from '@react-navigation/native';
 
 const Tab = createBottomTabNavigator();
-
-
+const MonitoringBle = false
 
 function CustomTabHeartButton({ children }) {
     const navigation = useNavigation();
     return (
         <TouchableOpacity
             style={styles.customHeartButton}
-            onPress={() => navigation.navigate('Frequency')}
+            onPress={MonitoringBle ? () => navigation.navigate('FrequencyBLE') : () => navigation.navigate('Frequency')}
             activeOpacity={0.9}
         >
             <View style={styles.customHeartButtonInner}>{children}</View>
