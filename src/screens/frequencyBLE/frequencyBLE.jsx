@@ -1,7 +1,7 @@
 import { styles } from './frequencyBLE.styles'
 import React, { useState, useEffect, useRef } from 'react';
 import { View, Text, Dimensions, Image, TouchableOpacity, TextInput, Animated, TouchableWithoutFeedback, Keyboard } from 'react-native';
-import FrequencyGraph from '../../components/FrequencyGraph';
+import FrequencyGraph from '../../components/FrequencyGraph_OLD';
 import icon from '../../constants/icon';
 import { useNavigation } from '@react-navigation/native';
 

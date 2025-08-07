@@ -118,5 +118,8 @@ export const styles =  StyleSheet.create({
     cameraVision:{
         flex:1,
         borderRadius:20,
+    },
+    alert:{
+        color:Colors.green,
     }
 })
