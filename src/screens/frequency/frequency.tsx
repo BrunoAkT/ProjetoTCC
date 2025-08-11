@@ -1,6 +1,6 @@
 import { styles } from './frequency.styles'
-import React, { useState, useEffect, useRef } from 'react';
-import { View, Text, Dimensions, Image, TouchableOpacity, TextInput, Animated, TouchableWithoutFeedback, Keyboard, StyleSheet } from 'react-native';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
+import { View, Text, Dimensions, Image, TouchableOpacity, TextInput, Animated, TouchableWithoutFeedback, Keyboard, StyleSheet, ActivityIndicator } from 'react-native';
 import icon from '../../constants/icon';
 import { useNavigation } from '@react-navigation/native';
 import { Camera, useCameraDevice, useCameraFormat, useCameraPermission, useFrameProcessor } from 'react-native-vision-camera';
@@ -9,6 +9,7 @@ import NoCameraDeviceError from '../../components/NoCameraDeviceError';
 import { Ppgtest } from '../../components/PPGConection';
 import { Worklets } from 'react-native-worklets-core';
 import { RealTimeGraph } from '../../components/RealTimeGraph';
+import { Use } from 'react-native-svg';
 
 // Entrada Da Data Atual
 const dataAtual = new Date();
@@ -23,6 +24,96 @@ const horarioFormatado = dataAtual.toLocaleTimeString('pt-BR', {
   minute: '2-digit',
   timeZone: 'America/Sao_Paulo'
 });
+
+
+//Filtro de Retirada de Ruido no Sinal Transmitido, Remove os Valores de Alta frequencia e Baixa frequencia
+//O resultado é um sinal mais "limpo", centralizado próximo de zero, e com uma forma de onda mais suave
+function bandpassFilter(data: number[], lowCutoff: number, highCutoff: number): number[] {
+  // Esta é uma implementação simplificada usando médias móveis
+  // Filtro Passa-Baixa (remove altas frequências)
+  const lowPassFiltered = movingAverage(data, lowCutoff);
+
+  // Filtro Passa-Alta (remove baixas frequências)
+  const highPassFiltered = movingAverage(data, highCutoff);
+
+  // O sinal final é o resultado do passa-baixa menos o passa-alta
+  const bandPassFiltered = lowPassFiltered.map((value, index) => {
+    return value - highPassFiltered[index];
+  });
+
+  return bandPassFiltered;
+}
+function movingAverage(data: number[], windowSize: number): number[] {
+  const result: number[] = [];
+  for (let i = 0; i < data.length; i++) {
+    // Para os primeiros elementos, a janela é menor
+    const start = Math.max(0, i - windowSize + 1);
+    const window = data.slice(start, i + 1);
+    const avg = window.reduce((a, b) => a + b, 0) / window.length;
+    result.push(avg);
+  }
+  return result;
+}
+
+// Função para calcular desvio padrão
+// Mede o nível de variação do conjunto de números em relação à média.
+function getStandardDeviation(array: number[]): number {
+  const n = array.length;
+  if (n === 0) return 0;
+  const mean = array.reduce((a, b) => a + b) / n;
+  const variance = array.reduce((a, b) => a + Math.pow(b - mean, 2), 0) / n;
+  return Math.sqrt(variance);
+}
+
+function detectPeaks(values: number[], minDistance: number, minProminence: number): number[] {
+  const peaks: number[] = [];
+  if (values.length < 3) return peaks;
+
+  for (let i = 1; i < values.length - 1; i++) {
+    const currentValue = values[i];
+    const prevValue = values[i - 1];
+    const nextValue = values[i + 1];
+
+    // É um pico local?
+    if (currentValue > prevValue && currentValue > nextValue) {
+      // Verifica a proeminência (quão alto é o pico em relação aos vales próximos)
+      let leftValley = currentValue;
+      for (let j = i - 1; j >= 0; j--) {
+        leftValley = Math.min(leftValley, values[j]);
+        if (values[j] > currentValue) break; // Parar se encontrarmos um pico maior
+      }
+
+      let rightValley = currentValue;
+      for (let j = i + 1; j < values.length; j++) {
+        rightValley = Math.min(rightValley, values[j]);
+        if (values[j] > currentValue) break;
+      }
+
+      const prominence = currentValue - Math.max(leftValley, rightValley);
+
+      if (prominence >= minProminence) {
+        // Verifica a distância do último pico encontrado
+        if (peaks.length === 0 || i - peaks[peaks.length - 1] >= minDistance) {
+          peaks.push(i);
+        }
+      }
+    }
+  }
+  return peaks;
+}
+function calculateBPM(timestamps: number[]): number {
+  if (timestamps.length < 2) return 0;
+
+  const intervals = [];
+  for (let i = 1; i < timestamps.length; i++) {
+    const delta = timestamps[i] - timestamps[i - 1]; // em ms
+    intervals.push(delta);
+  }
+
+  const avgInterval = intervals.reduce((a, b) => a + b, 0) / intervals.length;
+
+  return 60000 / avgInterval; // ms -> bpm
+}
 
 function Frequency({ route }) {
   const navigation = useNavigation();
@@ -54,8 +145,10 @@ function Frequency({ route }) {
     { fps: 30 },
     { autoFocusSystem: 'none' }
   ])
+  const [torch, setTorch] = useState<'on' | 'off'>('off');
   const [bpm, setBpm] = useState<number | null>(0);
   const [valores, setValores] = useState<number | null>(null);
+  const [cameraReady, setCameraReady] = useState<boolean>(false);
 
   const [data, setData] = useState<{ time: number; value: number }[]>([])
 
@@ -70,6 +163,12 @@ function Frequency({ route }) {
     isFingerDetectedRef.current = isFingerDetected;
     isCalibratedRef.current = isCalibrated;
   }, [isFingerDetected, isCalibrated]);
+
+  useEffect(() => {
+    if (cameraReady) {
+      setTorch('on');
+    }
+  }, [cameraReady]);
 
   const savePPGValue = (result: { ac: number, dc: number }) => {
     // 1. Portão de Qualidade: o dedo está na câmera?
@@ -128,95 +227,8 @@ function Frequency({ route }) {
     }
   }, [])
 
-  //Filtro de Retirada de Ruido no Sinal Transmitido, Remove os Valores de Alta frequencia e Baixa frequencia
-  //O resultado é um sinal mais "limpo", centralizado próximo de zero, e com uma forma de onda mais suave
-  function bandpassFilter(data: number[], lowCutoff: number, highCutoff: number): number[] {
-    // Esta é uma implementação simplificada usando médias móveis
-    // Filtro Passa-Baixa (remove altas frequências)
-    const lowPassFiltered = movingAverage(data, lowCutoff);
 
-    // Filtro Passa-Alta (remove baixas frequências)
-    const highPassFiltered = movingAverage(data, highCutoff);
-
-    // O sinal final é o resultado do passa-baixa menos o passa-alta
-    const bandPassFiltered = lowPassFiltered.map((value, index) => {
-      return value - highPassFiltered[index];
-    });
-
-    return bandPassFiltered;
-  }
-  function movingAverage(data: number[], windowSize: number): number[] {
-    const result: number[] = [];
-    for (let i = 0; i < data.length; i++) {
-      // Para os primeiros elementos, a janela é menor
-      const start = Math.max(0, i - windowSize + 1);
-      const window = data.slice(start, i + 1);
-      const avg = window.reduce((a, b) => a + b, 0) / window.length;
-      result.push(avg);
-    }
-    return result;
-  }
-
-  // Função para calcular desvio padrão
-  // Mede o nível de variação do conjunto de números em relação à média.
-  function getStandardDeviation(array: number[]): number {
-    const n = array.length;
-    if (n === 0) return 0;
-    const mean = array.reduce((a, b) => a + b) / n;
-    const variance = array.reduce((a, b) => a + Math.pow(b - mean, 2), 0) / n;
-    return Math.sqrt(variance);
-  }
-
-  function detectPeaks(values: number[], minDistance: number, minProminence: number): number[] {
-    const peaks: number[] = [];
-    if (values.length < 3) return peaks;
-
-    for (let i = 1; i < values.length - 1; i++) {
-      const currentValue = values[i];
-      const prevValue = values[i - 1];
-      const nextValue = values[i + 1];
-
-      // É um pico local?
-      if (currentValue > prevValue && currentValue > nextValue) {
-        // Verifica a proeminência (quão alto é o pico em relação aos vales próximos)
-        let leftValley = currentValue;
-        for (let j = i - 1; j >= 0; j--) {
-          leftValley = Math.min(leftValley, values[j]);
-          if (values[j] > currentValue) break; // Parar se encontrarmos um pico maior
-        }
-
-        let rightValley = currentValue;
-        for (let j = i + 1; j < values.length; j++) {
-          rightValley = Math.min(rightValley, values[j]);
-          if (values[j] > currentValue) break;
-        }
-
-        const prominence = currentValue - Math.max(leftValley, rightValley);
-
-        if (prominence >= minProminence) {
-          // Verifica a distância do último pico encontrado
-          if (peaks.length === 0 || i - peaks[peaks.length - 1] >= minDistance) {
-            peaks.push(i);
-          }
-        }
-      }
-    }
-    return peaks;
-  }
-  function calculateBPM(timestamps: number[]): number {
-    if (timestamps.length < 2) return 0;
-
-    const intervals = [];
-    for (let i = 1; i < timestamps.length; i++) {
-      const delta = timestamps[i] - timestamps[i - 1]; // em ms
-      intervals.push(delta);
-    }
-
-    const avgInterval = intervals.reduce((a, b) => a + b, 0) / intervals.length;
-
-    return 60000 / avgInterval; // ms -> bpm
-  }
-  useEffect(() => {
+  const bpm = useMemo(() => {
     // Processar apenas quando tivermos dados suficientes (ex: 5 segundos de dados a 30 FPS)
     const MIN_SAMPLES = 150;
     if (data.length < MIN_SAMPLES) {
@@ -249,14 +261,20 @@ function Frequency({ route }) {
     }
 
     const peakTimes = peakIndices.map((index) => times[index]);
-    const bpm = calculateBPM(peakTimes);
+    const calculatedBpm = calculateBPM(peakTimes);
 
     // 3. Validação do BPM
     // Se o BPM estiver fora de uma faixa razoável, ignore-o.
-    if (bpm > 40 && bpm < 200) {
-      setBpm(Math.round(bpm));
+    if (calculatedBpm > 40 && calculatedBpm < 200) {
+      return Math.round(calculatedBpm);
     }
+
+    return null
   }, [data]);
+  
+  useEffect(() => {
+    setBpm(bpm);
+  }, [bpm]);
 
   if (!hasPermission) return <PermissionsPage />
   if (device == null) return <NoCameraDeviceError />
@@ -268,17 +286,22 @@ function Frequency({ route }) {
         <View style={styles.header}>
           <Text style={styles.headerText}>{dataFormatada ?? 'Erro na Data'}</Text>
         </View>
-        <RealTimeGraph dataPoint={valores}></RealTimeGraph>
+        <View style={{ alignItems: 'center', justifyContent: 'center' }}>
+          <RealTimeGraph dataPoint={valores}></RealTimeGraph>
+        </View>
         <View style={styles.container}>
           <View>
             <Text style={[styles.text, styles.alert]}>Coloque seu dedo na camera do celular</Text>
           </View>
           <View style={styles.averageContainer}>
-
-            <Image source={icon.HeartEmpty}></Image>
+            {
+              data.length > 0 ? data[data.length - 1].value >= 0
+                ? <Image source={icon.Heart}></Image> :
+                <Image source={icon.HeartEmpty}></Image> : null
+            }
             <View style={styles.frequencyFormat}>
               <View style={styles.FrequencyNumberFormat}>
-                <Text style={styles.averageText}>{bpm}</Text>
+                {isCalibrated ? <Text style={styles.averageText}>{bpm}</Text> : <ActivityIndicator size={'large'} style={{ marginRight: 10 }} />}
                 <Text style={styles.BPMText}>BPM</Text>
               </View>
               <Text style={styles.text}>valor de {horarioFormatado ?? 'Erro no Horario'}</Text>
@@ -289,9 +312,11 @@ function Frequency({ route }) {
                 style={styles.cameraVision}
                 device={device}
                 isActive={true}
+                torch={torch}
                 frameProcessor={frameProcessor}
                 format={format}
                 fps={format?.maxFps}
+                onInitialized={() => setCameraReady(true)}
               />
             </View>
           </View>

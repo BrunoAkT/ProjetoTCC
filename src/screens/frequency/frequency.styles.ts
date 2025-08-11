@@ -98,7 +98,7 @@ export const styles =  StyleSheet.create({
 
     infInput: {
         fontFamily: Fonts_Styles.PoppinsRegular,
-        fontSize: Fonts_Size.lg
+        fontSize: Fonts_Size.lg,
     },
     animatedContainer: {
         position: 'absolute',
@@ -116,7 +116,8 @@ export const styles =  StyleSheet.create({
         borderRadius: 20,
     },
     cameraVision:{
-        flex:1,
+        width: '100%',
+        height: '100%',
         borderRadius:20,
     },
     alert:{

@@ -11,14 +11,10 @@ const chartConfig = {
     backgroundGradientTo: Colors.gray,
     backgroundGradientFromOpacity: 0,
     backgroundGradientToOpacity: 0,
-    decimalPlaces: 1,
     color: (opacity = 1) => Colors.green,
-    labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
     style: { borderRadius: 16 },
-    propsForDots: { r: '3', strokeWidth: '2', stroke: Colors.green },
-    propsForLabels: {
-        fontSize: Fonts_Size.md,
-        fontFamily: Fonts_Styles.PoppinsRegular,
+    propsForBackgroundLines: {
+        stroke: 'transparent',
     },
 };
 
@@ -37,14 +33,14 @@ export const RealTimeGraph: React.FC<Props> = ({ dataPoint }) => {
         ) {
             setDataPoints((prev) => {
                 const updated = [...prev, dataPoint];
-                if (updated.length > 10) updated.shift(); // mantém últimos 10 pontos
+                if (updated.length > 15) updated.shift(); // mantém últimos 15 pontos
                 return updated;
             });
         }
     }, [dataPoint]);
 
     return (
-        <View>
+        <View style={{ right: 20 }}>
             <LineChart
                 data={{
                     labels: [],
@@ -54,7 +50,9 @@ export const RealTimeGraph: React.FC<Props> = ({ dataPoint }) => {
                 height={220}
                 chartConfig={chartConfig}
                 bezier
-                style={{ marginVertical: 8, borderRadius: 16 }}
+                withDots={false}
+                withHorizontalLabels={false}
+                style={{ borderRadius: 16 }}
             />
         </View>
     );
