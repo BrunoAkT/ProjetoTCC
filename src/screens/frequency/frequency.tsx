@@ -26,7 +26,6 @@ const horarioFormatado = dataAtual.toLocaleTimeString('pt-BR', {
 
 function Frequency({ route }) {
   const navigation = useNavigation();
-  const [averageFrequency, setaverageFrequency] = useState(45);
 
   //Componente de Anotação
   const [isVisibleTab, setIsVisibleTab] = useState(false);
@@ -55,7 +54,7 @@ function Frequency({ route }) {
     { fps: 30 },
     { autoFocusSystem: 'none' }
   ])
-  const [bpm, setBpm] = useState<number | null>(null);
+  const [bpm, setBpm] = useState<number | null>(0);
   const [valores, setValores] = useState<number | null>(null);
 
   const [data, setData] = useState<{ time: number; value: number }[]>([])
@@ -204,6 +203,19 @@ function Frequency({ route }) {
     }
     return peaks;
   }
+  function calculateBPM(timestamps: number[]): number {
+    if (timestamps.length < 2) return 0;
+
+    const intervals = [];
+    for (let i = 1; i < timestamps.length; i++) {
+      const delta = timestamps[i] - timestamps[i - 1]; // em ms
+      intervals.push(delta);
+    }
+
+    const avgInterval = intervals.reduce((a, b) => a + b, 0) / intervals.length;
+
+    return 60000 / avgInterval; // ms -> bpm
+  }
   useEffect(() => {
     // Processar apenas quando tivermos dados suficientes (ex: 5 segundos de dados a 30 FPS)
     const MIN_SAMPLES = 150;
@@ -256,7 +268,7 @@ function Frequency({ route }) {
         <View style={styles.header}>
           <Text style={styles.headerText}>{dataFormatada ?? 'Erro na Data'}</Text>
         </View>
-        <RealTimeGraph dataPoint={0}></RealTimeGraph>
+        <RealTimeGraph dataPoint={valores}></RealTimeGraph>
         <View style={styles.container}>
           <View>
             <Text style={[styles.text, styles.alert]}>Coloque seu dedo na camera do celular</Text>
@@ -266,7 +278,7 @@ function Frequency({ route }) {
             <Image source={icon.HeartEmpty}></Image>
             <View style={styles.frequencyFormat}>
               <View style={styles.FrequencyNumberFormat}>
-                <Text style={styles.averageText}>{averageFrequency}</Text>
+                <Text style={styles.averageText}>{bpm}</Text>
                 <Text style={styles.BPMText}>BPM</Text>
               </View>
               <Text style={styles.text}>valor de {horarioFormatado ?? 'Erro no Horario'}</Text>
