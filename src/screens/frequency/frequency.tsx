@@ -1,5 +1,5 @@
 import { styles } from './frequency.styles'
-import React, { useState, useEffect, useRef, useMemo } from 'react';
+import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react';
 import { View, Text, Dimensions, Image, TouchableOpacity, TextInput, Animated, TouchableWithoutFeedback, Keyboard, StyleSheet, ActivityIndicator } from 'react-native';
 import icon from '../../constants/icon';
 import { useNavigation } from '@react-navigation/native';
@@ -146,11 +146,10 @@ function Frequency({ route }) {
     { autoFocusSystem: 'none' }
   ])
   const [torch, setTorch] = useState<'on' | 'off'>('off');
-  const [bpm, setBpm] = useState<number | null>(0);
-  const [valores, setValores] = useState<number | null>(null);
   const [cameraReady, setCameraReady] = useState<boolean>(false);
 
   const [data, setData] = useState<{ time: number; value: number }[]>([])
+  const [graphData, setGraphData] = useState<number[]>([]);
 
   const [isFingerDetected, setIsFingerDetected] = useState(false);
   const [isCalibrated, setIsCalibrated] = useState(false);
@@ -170,7 +169,7 @@ function Frequency({ route }) {
     }
   }, [cameraReady]);
 
-  const savePPGValue = (result: { ac: number, dc: number }) => {
+  const savePPGValue = useCallback((result: { ac: number, dc: number }) => {
     // 1. Portão de Qualidade: o dedo está na câmera?
     if (result.dc < 180) {
       if (isFingerDetectedRef.current) { // Apenas reseta se estava detectado antes
@@ -178,7 +177,6 @@ function Frequency({ route }) {
         setIsCalibrated(false);
         setCalibrationData([]);
         setData([]);
-        setBpm(null);
       }
       return;
     }
@@ -213,9 +211,13 @@ function Frequency({ route }) {
     if (isCalibratedRef.current) {
       const timestamp = Date.now();
       setData((prev) => [...prev.slice(-300), { time: timestamp, value: result.ac }]);
-      setValores(result.ac);
+      setGraphData(prev => {
+        const updated = [...prev, result.ac]
+        if (updated.length > 15) updated.shift();
+        return updated;
+      });
     }
-  };
+  }, []);
 
   const myFunctionJS = Worklets.createRunOnJS(savePPGValue);
   const frameProcessor = useFrameProcessor((frame) => {
@@ -232,8 +234,7 @@ function Frequency({ route }) {
     // Processar apenas quando tivermos dados suficientes (ex: 5 segundos de dados a 30 FPS)
     const MIN_SAMPLES = 150;
     if (data.length < MIN_SAMPLES) {
-      setBpm(null); // Sem dados suficientes
-      return;
+      return null; // Sem dados suficientes
     }
 
     const values = data.map((d) => d.value);
@@ -256,8 +257,7 @@ function Frequency({ route }) {
 
     if (peakIndices.length < 2) {
       console.log('Não há picos suficientes para calcular')
-      setBpm(null); // Não há picos suficientes para calcular
-      return;
+      return null; // Não há picos suficientes para calcular
     }
 
     const peakTimes = peakIndices.map((index) => times[index]);
@@ -271,11 +271,8 @@ function Frequency({ route }) {
 
     return null
   }, [data]);
-  
-  useEffect(() => {
-    setBpm(bpm);
-  }, [bpm]);
 
+  const [isLayoutReady, setIsLayoutReady] = useState(false); 
   if (!hasPermission) return <PermissionsPage />
   if (device == null) return <NoCameraDeviceError />
 
@@ -287,7 +284,7 @@ function Frequency({ route }) {
           <Text style={styles.headerText}>{dataFormatada ?? 'Erro na Data'}</Text>
         </View>
         <View style={{ alignItems: 'center', justifyContent: 'center' }}>
-          <RealTimeGraph dataPoint={valores}></RealTimeGraph>
+          <RealTimeGraph dataPoints={graphData}></RealTimeGraph>
         </View>
         <View style={styles.container}>
           <View>
@@ -307,17 +304,19 @@ function Frequency({ route }) {
               <Text style={styles.text}>valor de {horarioFormatado ?? 'Erro no Horario'}</Text>
             </View>
 
-            <View style={styles.camera}>
-              <Camera
-                style={styles.cameraVision}
-                device={device}
-                isActive={true}
-                torch={torch}
-                frameProcessor={frameProcessor}
-                format={format}
-                fps={format?.maxFps}
-                onInitialized={() => setCameraReady(true)}
-              />
+            <View style={styles.camera} onLayout={() => setTimeout(() => setIsLayoutReady(true), 2000)}>
+              {device != null && hasPermission && isLayoutReady && (
+                <Camera
+                  style={styles.cameraVision}
+                  device={device}
+                  isActive={true}
+                  torch={torch}
+                  frameProcessor={frameProcessor}
+                  format={format}
+                  fps={format?.maxFps}
+                  onInitialized={() => setCameraReady(true)}
+                />
+              )}
             </View>
           </View>
 
@@ -347,4 +346,4 @@ function Frequency({ route }) {
     </TouchableWithoutFeedback>
   )
 }
-export default Frequency 
+export default Frequency

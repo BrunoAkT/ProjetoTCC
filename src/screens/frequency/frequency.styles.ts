@@ -1,7 +1,7 @@
 import { StyleSheet } from "react-native"
 import { Colors, Fonts_Size, Fonts_Styles } from "../../constants/theme"
 
-export const styles =  StyleSheet.create({
+export const styles = StyleSheet.create({
     mainContainer: {
         flex: 1,
         position: 'relative' as const,
@@ -24,7 +24,7 @@ export const styles =  StyleSheet.create({
     averageContainer: {
         flexDirection: 'row',
         justifyContent: 'space-between',
-        paddingHorizontal:10,
+        paddingHorizontal: 10,
         alignItems: 'center',
     },
     averageText: {
@@ -114,13 +114,17 @@ export const styles =  StyleSheet.create({
         width: 80,
         height: 100,
         borderRadius: 20,
+        position: 'relative', 
+        overflow: 'hidden',
     },
-    cameraVision:{
+    cameraVision: {
+        position: 'absolute',
+        top: 0,
+        left: 0,
         width: '100%',
         height: '100%',
-        borderRadius:20,
     },
-    alert:{
-        color:Colors.green,
+    alert: {
+        color: Colors.green,
     }
 })

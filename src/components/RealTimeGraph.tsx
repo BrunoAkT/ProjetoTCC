@@ -19,32 +19,16 @@ const chartConfig = {
 };
 
 interface Props {
-    dataPoint: number | null;
+    dataPoints: number[];
 }
 
-export const RealTimeGraph: React.FC<Props> = ({ dataPoint }) => {
-    const [dataPoints, setDataPoints] = useState<number[]>([0, 0, 0, 0, 0, 0]);
-
-    useEffect(() => {
-        if (
-            typeof dataPoint === 'number' &&
-            !isNaN(dataPoint) &&
-            isFinite(dataPoint)
-        ) {
-            setDataPoints((prev) => {
-                const updated = [...prev, dataPoint];
-                if (updated.length > 15) updated.shift(); // mantém últimos 15 pontos
-                return updated;
-            });
-        }
-    }, [dataPoint]);
-
+export const RealTimeGraph: React.FC<Props> = ({ dataPoints }) => {
     return (
         <View style={{ right: 20 }}>
             <LineChart
                 data={{
                     labels: [],
-                    datasets: [{ data: dataPoints }],
+                    datasets: [{ data: dataPoints.length > 0 ? dataPoints : [0] }],
                 }}
                 width={screenWidth}
                 height={220}
