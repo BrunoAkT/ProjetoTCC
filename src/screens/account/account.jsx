@@ -9,12 +9,14 @@ import {
 } from 'react-native';
 import { styles } from "./account.styles";
 import icon from "../../constants/icon";
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { TextInputMask } from 'react-native-masked-text';
 import { useNavigation } from '@react-navigation/native';
 import * as ImagePicker from 'expo-image-picker';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Checkbox from 'expo-checkbox';
+import CheckBox2 from '../../components/CheckBox';
+import api from '../../constants/api';
 
 function Account({ hideRegister }) {
     const [birthDate, setBirthDate] = useState('');
@@ -46,13 +48,6 @@ function Account({ hideRegister }) {
     const navigation = useNavigation();
 
     const [visible, setVisible] = useState(false);
-    const OpenModalRegister = () => {
-        setVisible(true);
-    }
-    const onClose = () => {
-        setVisible(false)
-    }
-
     const [conditions, setConditions] = useState({
         hipertensao: false,
         arritmia: false,
@@ -88,28 +83,19 @@ function Account({ hideRegister }) {
         }
     }
 
-    const [clinicalConditions, setClinicalConditions] = useState({
-        diabetes: false,
-        asma: false,
-        outra: false,
-    })
-    const [otherClinicalCondition, setOtherClinicalCondition] = useState('');
-    const [noClinicalCondition, setNoClinicalCondition] = useState(false);
-    const toggleClinicalCondition = (condition) => {
-        if (noClinicalCondition) setNoClinicalCondition(false);
-        setClinicalConditions((prev) => ({...prev, [condition]: !prev[condition]}))
-    }
-    const toggleNoClinicalCondition = () =>{
-        const newValue = !noClinicalCondition;
-        setNoClinicalCondition(newValue);
-        if (newValue) {
-            setClinicalConditions({
-                diabetes:false,
-                asma:false,
-            });
-            setOtherClinicalCondition('');
+    async function LoadData() {
+        try {
+            const response = await api.get('/conditions');
+            if (response.data) {
+                console.log(response.data);
+            }
+        } catch (error) {
+            console.error("Erro ao carregar dados do usuário:", error);
         }
     }
+    useEffect(() => {
+        LoadData();
+    }, []);
 
     return (
         <View>
@@ -170,7 +156,9 @@ function Account({ hideRegister }) {
                         <Text style={styles.text}>
                             Informe:
                         </Text>
-                        <TouchableOpacity style={styles.buttonregister} onPress={OpenModalRegister}>
+                        <TouchableOpacity style={styles.buttonregister} onPress={() => {
+                            setVisible(true);
+                        }}>
                             <Text style={styles.textreg}>Registro cardíaco</Text>
                         </TouchableOpacity>
                     </View>
@@ -189,16 +177,23 @@ function Account({ hideRegister }) {
                         transparent
                         visible={visible}
                         animationType="fade"
-                        onRequestClose={onClose}
+                        onRequestClose={() => {
+                            setVisible(false);
+                        }}
                     >
                         <View style={styles.overlay}>
                             <View style={styles.content}>
-                                <TouchableOpacity style={styles.close} onPress={onClose}>
+                                <TouchableOpacity style={styles.close} onPress={() => {
+                                    setVisible(false);
+                                }}>
                                     <Ionicons name="close" size={24} />
                                 </TouchableOpacity>
                                 <ScrollView>
                                     <View>
                                         <Text style={styles.text}>Você tem alguma condição cardíaca diagnosticada?</Text>
+
+                                        <CheckBox2 label="Hipertensão" value={conditions.hipertensao} onValueChange={() => toggleCondition('hipertensao')} />
+
                                         <View style={styles.checkboxContainer}>
                                             <Checkbox value={conditions.hipertensao} onValueChange={() => toggleCondition('hipertensao')} />
                                             <Text style={styles.checklabel}>Hipertensão</Text>
@@ -254,40 +249,6 @@ function Account({ hideRegister }) {
                                         <View style={styles.checkboxContainer}>
                                             <Checkbox value={noCondition} onValueChange={toggleNoCondition} />
                                             <Text style={styles.checklabel}>Não possuo nenhuma condição cardíaca</Text>
-                                        </View>
-                                    </View>
-                                    <View>
-                                        <Text style={styles.text}>Condição clinica diagnosticada?</Text>
-                                        <View style={styles.checkboxContainer}>
-                                            <Checkbox value={clinicalConditions.diabetes} onValueChange={() => toggleClinicalCondition('diabetes')} />
-                                            <Text style={styles.checklabel}>Diabetes</Text>
-                                        </View>
-
-                                        <View style={styles.checkboxContainer}>
-                                            <Checkbox value={clinicalConditions.asma} onValueChange={() => toggleClinicalCondition('asma')} />
-                                            <Text style={styles.checklabel}>Asma</Text>
-                                        </View>
-
-                                        <View style={styles.checkboxContainer}>
-                                            <Checkbox value={clinicalConditions.outra} onValueChange={() => toggleClinicalCondition('outra')} />
-                                            <Text style={styles.checklabel}>Outra condição cardíaca</Text>
-                                        </View>
-
-                                        {clinicalConditions.outra && (
-                                            <View style={styles.checkboxDescription}>
-                                                <TextInput
-                                                    style={styles.checkInput}
-                                                    placeholder="Descreva a condição"
-                                                    value={otherClinicalCondition}
-                                                    onChangeText={setOtherClinicalCondition}
-                                                    multiline
-                                                />
-                                            </View>
-                                        )}
-
-                                        <View style={styles.checkboxContainer}>
-                                            <Checkbox value={noClinicalCondition} onValueChange={toggleNoClinicalCondition} />
-                                            <Text style={styles.checklabel}>Não possuo nenhuma condição {'\n'}clinica</Text>
                                         </View>
                                     </View>
                                 </ScrollView>

@@ -25,7 +25,7 @@ class PpgtestcameraPlugin(proxy: VisionCameraProxy, options: Map<String, Any>?) 
         }
         val image = frame.image
 
-        // Extração da média do canal Vermelho (seu código atual está bom aqui)
+        // Extração da média do canal Vermelho
         val yBuffer = image.planes[0].buffer
         val uBuffer = image.planes[1].buffer
         val vBuffer = image.planes[2].buffer
