@@ -3,7 +3,7 @@ import RoutesOpen from "./routesOpen.js";
 
 function Routes(){
     const user = {
-        id_user: false
+        id_user: true
     };
     return  user.id_user ? <RoutesPrivated /> : <RoutesOpen />;
 }

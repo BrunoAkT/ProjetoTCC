@@ -15,7 +15,6 @@ import { TextInputMask } from 'react-native-masked-text';
 import { useNavigation } from '@react-navigation/native';
 import * as ImagePicker from 'expo-image-picker';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import Checkbox from 'expo-checkbox';
 import CheckBox2 from '../../components/CheckBox';
 import api from '../../constants/api';
 
@@ -31,7 +30,7 @@ function Account({ hideRegister }) {
 
     const [registerStep, setRegisterStep] = useState(1);
     const goToNextStep = () => {
-        if(senha != confirmPassword){
+        if (senha != confirmPassword) {
             return alert("As senhas não coincidem!");
         }
         setRegisterStep(2);
@@ -135,7 +134,7 @@ function Account({ hideRegister }) {
             if (response.data) {
                 console.log(response.data);
             }
-            navigation.navigate('Bai', {id: response.data.id});
+            navigation.navigate('Bai', { id: response.data.id });
         } catch (error) {
             if (error.response?.data.error) {
                 Alert.alert("Erro ao fazer login", error.response.data.error);
