@@ -240,15 +240,15 @@ function Frequency({ route }) {
     const values = data.map((d) => d.value);
     const times = data.map((d) => d.time);
 
-    //console.log(`valores capturados: ${values}`);
+    console.log(`valores capturados: ${values}`);
 
     // 1. Filtragem: Aplica uma média móvel para suavizar o ruído
     const filteredValues = bandpassFilter(values, 2, 10);
-    //console.log(`filteredValues: ${filteredValues}`)
+    console.log(`filteredValues: ${filteredValues}`)
 
     // Calcule o desvio padrão do sinal filtrado
     const signalStdDev = getStandardDeviation(filteredValues);
-    //console.log(`Desvio Padrão do Sinal: ${signalStdDev}`);
+    console.log(`Desvio Padrão do Sinal: ${signalStdDev}`);
 
     // 2. Detecção de Picos
     const fps = 30; // O FPS que você configurou na câmera
@@ -258,7 +258,7 @@ function Frequency({ route }) {
     // Multiplicar por um fator (ex: 1.5) se precisar de mais seletividade.
     const minPeakProminence = signalStdDev * 1.2;
     const peakIndices = detectPeaks(filteredValues, minPeakDistance, minPeakProminence);
-    //console.log(`Picos detectados: ${peakIndices} com proeminência mínima de ${minPeakProminence}`);
+    console.log(`Picos detectados: ${peakIndices} com proeminência mínima de ${minPeakProminence}`);
 
     if (peakIndices.length < 2) {
       console.log('Não há picos suficientes para calcular')
@@ -266,10 +266,10 @@ function Frequency({ route }) {
     }
 
     const peakTimes = peakIndices.map((index) => times[index]);
-    //console.log(`Tempos dos picos: ${peakTimes}`);
+    console.log(`Tempos dos picos: ${peakTimes}`);
 
     const calculatedBpm = calculateBPM(peakTimes);
-    //console.log(`BPM calculado: ${calculatedBpm}`);
+    console.log(`BPM calculado: ${calculatedBpm}`);
 
     // 3. Validação do BPM
     // Se o BPM estiver fora de uma faixa razoável, ignore-o.
