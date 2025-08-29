@@ -2,15 +2,19 @@ import { Image, Modal, Text, TouchableOpacity, View } from "react-native";
 import { styles } from './configuration.styles'
 import Topcurve from "../../components/Topmidcurve";
 import icon from "../../constants/icon";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { SafeAreaView } from "react-native-safe-area-context";
+import { AuthContext } from "../../contexts/auth";
 
 function Configuration() {
 
-    const Nome = 'Bruno'
-    const idade = 20
-    const Email = 'teste@gmail.com'
+    const { user, setUser } = useContext(AuthContext)
+
+    const Nome = user.nome;
+    const Email = user.email;
+    const Img = user.img;
+
     const [MonitoringBle, SetMonitoringBle] = useState(false);
 
     const [popUpMonitoring, setPopUpMonitoring] = useState(false);
@@ -24,7 +28,10 @@ function Configuration() {
                 </Text>
                 <View style={styles.headerContainer}>
                     <View style={styles.avatarcontainer}>
-                        <Image source={icon.avatarplaceholder}></Image>
+                        {Img ?
+                            <Image source={{ uri: Img }} style={styles.avatarplace}></Image>
+                            : <Image source={icon.avatarplaceholder}></Image>
+                        }
                     </View>
                     <View>
                         <Text style={styles.text}>
@@ -88,7 +95,7 @@ function Configuration() {
                             />
                         </View>
                     </TouchableOpacity>
-                    <TouchableOpacity style={styles.button}>
+                    <TouchableOpacity style={styles.button} onPress={() => setUser({})}>
                         <Text style={styles.buttontext}>Sair</Text>
                         <View style={styles.iconcase}>
                             <Image

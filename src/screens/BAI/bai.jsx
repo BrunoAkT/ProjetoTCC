@@ -11,8 +11,7 @@ import api from '../../constants/api';
 const { width } = Dimensions.get('window');
 
 function BaiQuestionario() {
-    //const { id } = useRoute().params;
-    const id = 11
+    const { id } = useRoute().params;
     const navigation = useNavigation();
 
 
@@ -58,12 +57,15 @@ function BaiQuestionario() {
 
         setTimeout(async () => {
             try {
+                console.log(total)
                 console.log('mandando')
-                const response = await api.put(`/user/${id}`, { bai: total });
+                const response = await api.put(`/user/${id}`, {
+                    bai: total
+                });
                 if (response.data) {
                     console.log(response.data);
+                    navigation.navigate('Login');
                 }
-                navigation.navigate('Login');
             } catch (error) {
                 console.log('erro', error)
 

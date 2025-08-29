@@ -69,8 +69,7 @@ export const styles = {
     },
     modalContainer: {
         backgroundColor: Colors.gray,
-        flex: 1,
-
+        flex: 1
     },
     popUp: {
         backgroundColor: Colors.gray,
@@ -134,4 +133,23 @@ export const styles = {
         fontFamily: Fonts_Styles.PoppinsSemiBold,
         fontSize: Fonts_Size.md,
     },
+    overlay: {
+        flex: 1,
+        backgroundColor: 'rgba(0,0,0,0.5)',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    content: {
+        backgroundColor: Colors.gray,
+        padding: 20,
+        borderRadius: 12,
+        width: '90%',
+        height: '90%',
+    },
+    close: {
+        alignItems: 'flex-end',
+    },
+    editContainerCheckBox:{
+        height:400
+    }
 }

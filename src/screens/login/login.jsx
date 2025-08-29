@@ -11,9 +11,12 @@ import {
 import { styles } from "./login.styles";
 import icon from "../../constants/icon";
 import Topcurve from "../../components/Topcurve";
-import { use, useRef, useState } from 'react';
+import { use, useContext, useRef, useState } from 'react';
 import Account from '../account/account';
 import api from '../../constants/api';
+import { AuthContext } from '../../contexts/auth';
+
+
 const { height } = Dimensions.get('window');
 
 function Login() {
@@ -39,6 +42,7 @@ function Login() {
 
     const [email, setEmail] = useState('');
     const [senha, setPassword] = useState('');
+    const { setUser } = useContext(AuthContext);
 
     async function executeLogin() {
         try {
@@ -48,6 +52,7 @@ function Login() {
             });
             if (response.data) {
                 console.log(response.data);
+                setUser(response.data);
             }
         } catch (error) {
             if (error.response?.data.error) {

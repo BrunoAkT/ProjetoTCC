@@ -2,9 +2,10 @@ import { Image, Text, TouchableOpacity, View } from 'react-native';
 import Topcurve from '../../components/Topmidcurve';
 import { styles } from './home.styles'
 import icon from '../../constants/icon';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import BaiSmoll from '../BAI/baiSmoll';
+import { AuthContext } from '../../contexts/auth';
 
 
 function Home() {
@@ -13,7 +14,9 @@ function Home() {
         setSelectedEmoji(index);
         console.log("Emoji pressionado!");
     };
-    const Nome = "Bruno";
+    
+    const { user } = useContext(AuthContext)
+    const Nome = user.nome;
 
     const navigation = useNavigation();
     return (

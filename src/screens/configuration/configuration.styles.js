@@ -100,7 +100,12 @@ export const styles = {
         fontSize: Fonts_Size.md,
         color: '#666',
     },
-    active:{
+    active: {
         backgroundColor: Colors.green,
+    },
+    avatarplace: {
+        width: 130,
+        height: 130,
+        borderRadius: 100,
     },
 }
