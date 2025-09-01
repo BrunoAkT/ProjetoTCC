@@ -59,7 +59,7 @@ function BaiQuestionario() {
             try {
                 console.log(total)
                 console.log('mandando')
-                const response = await api.put(`/user/${id}`, {
+                const response = await api.put(`/user/bai/${id}`, {
                     bai: total
                 });
                 if (response.data) {

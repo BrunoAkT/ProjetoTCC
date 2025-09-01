@@ -3,7 +3,7 @@ import { Colors, Fonts_Size, Fonts_Styles } from "../constants/theme"
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useState } from "react";
 
-const SUA_CHAVE_GEMINI = ''
+const SUA_CHAVE_GEMINI = 'AIzaSyDLF2dqusYqGGxF77HsMzgxaWjOjid4sC4'
 
 function Exercise(params) {
 

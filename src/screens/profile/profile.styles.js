@@ -67,6 +67,12 @@ export const styles = {
         right: 20,
         zIndex: 1,
     },
+    confirmButton: {
+        position: 'absolute',
+        top: 20,
+        left: 20,
+        zIndex: 1,
+    },
     modalContainer: {
         backgroundColor: Colors.gray,
         flex: 1

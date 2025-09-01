@@ -81,14 +81,22 @@ export const styles = {
     },
     modalContainer: {
         backgroundColor: Colors.gray,
-        padding: 10,
-        borderRadius: 10
+        padding: 15,
+        borderRadius: 10,
+        maxWidth: '80%',
+        gap:2
     },
     option: {
         backgroundColor: '#f2f2f2',
         padding: 15,
         borderRadius: 8,
         marginBottom: 10,
+    },
+    option2: {
+        alignItems: 'center',
+        marginTop: 2,
+        backgroundColor: Colors.green,
+        borderRadius:5
     },
     optionTitle: {
         fontFamily: Fonts_Styles.PoppinsRegular,

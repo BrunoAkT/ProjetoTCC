@@ -9,11 +9,12 @@ import * as ImagePicker from 'expo-image-picker';
 import api from "../../constants/api";
 import CheckBox2 from "../../components/CheckBox";
 import { AuthContext } from "../../contexts/auth";
+import Icon from "../../constants/icon";
 
 
 
 function Profile() {
-    const { user } = useContext(AuthContext)
+    const { user, setUser } = useContext(AuthContext)
 
     const Email = user.email;
     const [Nome, setNome] = useState(user.nome)
@@ -131,6 +132,62 @@ function Profile() {
         LoadConditions();
         LoadUserConditions();
     }, [])
+
+    function getCondicoesJson() {
+        const condicoesMarcadas = dataConditions
+            .filter(item => conditions[item.id])
+            .map(item => {
+                if (item.nome === 'Outros' && otherCondition) {
+                    return {
+                        id: item.id,
+                        nome: item.nome,
+                        descricao_extra: otherCondition
+                    };
+                }
+                return {
+                    id: item.id,
+                    nome: item.nome
+                };
+            });
+        return { condicoes: condicoesMarcadas }
+    }
+
+    async function salveData() {
+        const condicoesJson = getCondicoesJson()
+        // console.log(user.id);
+        // console.log(Nome);
+        // console.log(birthDate);
+        // console.log(condicoesJson);
+        // console.log(image);
+        try {
+            console.log('mandando')
+            const response = await api.put(`/user/${user.id}`, {
+                nome: Nome,
+                data_nasc: birthDate,
+                img: image,
+                condicoes: condicoesJson,
+            }, {
+                headers: {
+                    Authorization: `Bearer ${user.token}`
+                }
+            }
+            )
+            if (response.data) {
+                console.log(response.data);
+                setUser(response.data);
+                setVisible(false);
+            }
+        } catch (error) {
+            console.log('erro', error)
+            if (error.response?.data.error) {
+                Alert.alert("Erro ao Atualizar as Informações", error.response.data.error);
+            } else {
+                Alert.alert("Erro ao Atualizar as Informações", error.message);
+            }
+        }
+
+    }
+
     return (
         <View style={styles.mainContainer}>
             <Topcurve></Topcurve>
@@ -163,6 +220,9 @@ function Profile() {
                     animationType="slide"
                 >
                     <SafeAreaView style={styles.modalContainer}>
+                        <TouchableOpacity style={styles.confirmButton} onPress={salveData}>
+                            <Ionicons name="checkmark-circle-outline" size={65} color="#81C784" />
+                        </TouchableOpacity>
                         <TouchableOpacity style={styles.closeButton} onPress={() => setVisible(false)}>
                             <Ionicons name="close" size={30} color="#000" />
                         </TouchableOpacity>
