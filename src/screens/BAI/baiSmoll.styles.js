@@ -10,6 +10,11 @@ export const styles = {
         fontSize: Fonts_Size.md,
         color: Colors.dark_gray,
     },
+    textResult: {
+        fontFamily: Fonts_Styles.PoppinsSemiBold,
+        fontSize: Fonts_Size.md,
+        color: Colors.dark_gray,
+    },
     header: {
         flexDirection: 'row',
         alignItems: 'center',
@@ -61,5 +66,21 @@ export const styles = {
         height:10,
         borderRadius:10,
         backgroundColor: Colors.dark_gray
+    },
+    resultContainer:{
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    resultBox:{
+        flexDirection: 'row', 
+        flexWrap: 'wrap', 
+        width: 300, 
+        gap: 10,
+        justifyContent: 'center',
+    },
+    reloadButton:{
+        position: 'absolute',
+        top: 15,
+        left: 15,
     }
 }

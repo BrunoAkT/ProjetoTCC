@@ -1,13 +1,20 @@
-import { Dimensions, Image, Text, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, Animated, Dimensions, Image, Text, TouchableOpacity, View } from "react-native";
 import * as Progress from 'react-native-progress';
 import { questions } from '../../constants/data';
 import icon from "../../constants/icon";
 import { styles } from "./bai.styles";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { useNavigation, useRoute } from "@react-navigation/native";
+import api from '../../constants/api';
+
 
 const { width } = Dimensions.get('window');
 
 function BaiQuestionario() {
+    const { id } = useRoute().params;
+    const navigation = useNavigation();
+
+
     const [currentIndex, setCurrentIndex] = useState(0);
     const [Answers, setAnswers] = useState({});
 
@@ -22,6 +29,10 @@ function BaiQuestionario() {
         }
     }
 
+    const fadeAnim = useRef(new Animated.Value(0)).current;
+    const scaleAnim = useRef(new Animated.Value(0.8)).current;
+
+
     if (currentIndex >= questions.length) {
         const total = Object.values(Answers).reduce((sum, val) => sum + val, 0);
         let interpretation = "";
@@ -31,21 +42,58 @@ function BaiQuestionario() {
         else if (total < 29) interpretation = "Ansiedade moderada";
         else interpretation = "Ansiedade grave";
 
+        Animated.parallel([
+            Animated.timing(fadeAnim, {
+                toValue: 1,
+                duration: 6000,
+                useNativeDriver: true,
+            }),
+            Animated.spring(scaleAnim, {
+                toValue: 1,
+                friction: 5,
+                useNativeDriver: true,
+            }),
+        ]).start();
+
+        setTimeout(async () => {
+            try {
+                console.log(total)
+                console.log('mandando')
+                const response = await api.put(`/user/bai/${id}`, {
+                    bai: total
+                });
+                if (response.data) {
+                    console.log(response.data);
+                    navigation.navigate('Login');
+                }
+            } catch (error) {
+                console.log('erro', error)
+
+                if (error.response?.data.error) {
+                    Alert.alert("Erro ao enviar Dados", error.response.data.error);
+                } else {
+                    Alert.alert("Erro ao enviar Dados", error.message);
+                }
+            }
+        }, 6000);
+
+
+
         return (
             <View style={styles.mainContainer}>
-                <Text style={styles.text}>Resultado</Text>
-                <Text style={styles.text}>Pontuação: {total}</Text>
-                <Text style={styles.text}>{interpretation}</Text>
-                <View style={styles.answersContainer}>
-                    {Object.entries(Answers).map(([questionId, value]) => (
-                        <View key={questionId} style={styles.answerItem}>
-                            <Text style={styles.text}>
-                                Pergunta {questionId}: {value}
-                            </Text>
-                        </View>
-                    ))}
-                </View>
-            </View>
+                <Animated.View style={[styles.resultContainer, { transform: [{ scale: scaleAnim }] }]}>
+                    <Text style={styles.title}>Resultado</Text>
+                    <Text style={styles.text}>Pontuação: {total}</Text>
+                    <Text style={styles.text}>{interpretation}</Text>
+                </Animated.View>
+
+                <Animated.View style={[styles.footerContainer, { opacity: fadeAnim }]}>
+                    <ActivityIndicator size={80} color={styles.progressColor} style={{ marginTop: 20 }} />
+                    <View style={styles.footer}>
+                        <Text style={styles.footerText}>Você pode refazer o questionário novamente em seu Perfil</Text>
+                    </View>
+                </Animated.View>
+            </View >
         );
     }
 

@@ -6,12 +6,17 @@ import {
     Animated,
     Dimensions,
     Image,
+    Alert,
 } from 'react-native';
 import { styles } from "./login.styles";
 import icon from "../../constants/icon";
 import Topcurve from "../../components/Topcurve";
-import { useRef, useState } from 'react';
+import { use, useContext, useRef, useState } from 'react';
 import Account from '../account/account';
+import api from '../../constants/api';
+import { AuthContext } from '../../contexts/auth';
+
+
 const { height } = Dimensions.get('window');
 
 function Login() {
@@ -34,6 +39,30 @@ function Login() {
             useNativeDriver: false,
         }).start(() => setIsRegisterVisible(false));
     };
+
+    const [email, setEmail] = useState('');
+    const [senha, setPassword] = useState('');
+    const { setUser } = useContext(AuthContext);
+
+    async function executeLogin() {
+        try {
+            const response = await api.post('/user/login', {
+                email,
+                senha
+            });
+            if (response.data) {
+                console.log(response.data);
+                setUser(response.data);
+            }
+        } catch (error) {
+            if (error.response?.data.error) {
+                Alert.alert("Erro ao fazer login", error.response.data.error);
+            } else {
+                Alert.alert("Erro ao fazer login", error.message);
+            }
+        }
+
+    }
     return (
         <View style={styles.mainContainer}>
             <Topcurve></Topcurve>
@@ -47,11 +76,11 @@ function Login() {
 
             <View style={styles.container}>
                 <View>
-                    <TextInput placeholder="E-mail" style={styles.input}></TextInput>
-                    <TextInput placeholder="Senha" style={styles.input}></TextInput>
+                    <TextInput placeholder="E-mail" style={styles.input} onChangeText={(t) => setEmail(t)}></TextInput>
+                    <TextInput placeholder="Senha" style={styles.input} secureTextEntry={true} onChangeText={(t) => setPassword(t)}></TextInput>
                 </View>
                 <View>
-                    <TouchableOpacity style={styles.button}>
+                    <TouchableOpacity style={styles.button} onPress={executeLogin}>
                         <Text style={styles.buttonText}>Entrar</Text>
                     </TouchableOpacity>
                     <View style={styles.containerfooter}>

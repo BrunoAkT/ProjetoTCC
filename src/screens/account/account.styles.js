@@ -6,7 +6,7 @@ export const styles = {
         height: 600,
         alignItems: 'center',
         marginTop: 150,
-        backgroundColor: Colors.gray
+        backgroundColor: Colors.gray,
     },
     footer: {
         marginTop: 80,

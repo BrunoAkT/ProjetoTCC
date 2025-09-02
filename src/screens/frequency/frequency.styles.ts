@@ -1,17 +1,16 @@
-
+import { StyleSheet } from "react-native"
 import { Colors, Fonts_Size, Fonts_Styles } from "../../constants/theme"
 
-export const styles = {
+export const styles = StyleSheet.create({
     mainContainer: {
         flex: 1,
-        position: 'relative',
+        position: 'relative' as const,
         backgroundColor: Colors.gray
-
     },
     header: {
         paddingTop: 30,
         paddingHorizontal: 20,
-        alignItems: 'center',
+        alignItems: 'center' as const,
     },
     headerText: {
         fontFamily: Fonts_Styles.PoppinsSemiBold,
@@ -24,9 +23,9 @@ export const styles = {
     },
     averageContainer: {
         flexDirection: 'row',
-        alignItems: 'center',
         justifyContent: 'space-between',
-        paddingHorizontal:10,
+        paddingHorizontal: 10,
+        alignItems: 'center',
     },
     averageText: {
         fontSize: 60,
@@ -99,7 +98,7 @@ export const styles = {
 
     infInput: {
         fontFamily: Fonts_Styles.PoppinsRegular,
-        fontSize: Fonts_Size.lg
+        fontSize: Fonts_Size.lg,
     },
     animatedContainer: {
         position: 'absolute',
@@ -115,5 +114,17 @@ export const styles = {
         width: 80,
         height: 100,
         borderRadius: 20,
+        position: 'relative', 
+        overflow: 'hidden',
+    },
+    cameraVision: {
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        width: '100%',
+        height: '100%',
+    },
+    alert: {
+        color: Colors.green,
     }
-}
+})

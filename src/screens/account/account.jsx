@@ -5,22 +5,34 @@ import {
     TouchableOpacity,
     Image,
     Modal,
-    ScrollView
+    ScrollView,
+    FlatList
 } from 'react-native';
 import { styles } from "./account.styles";
 import icon from "../../constants/icon";
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { TextInputMask } from 'react-native-masked-text';
 import { useNavigation } from '@react-navigation/native';
 import * as ImagePicker from 'expo-image-picker';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import Checkbox from 'expo-checkbox';
+import CheckBox2 from '../../components/CheckBox';
+import api from '../../constants/api';
 
 function Account({ hideRegister }) {
+
+    const [email, setEmail] = useState('');
+    const [senha, setPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
+    const [nome, setName] = useState('');
     const [birthDate, setBirthDate] = useState('');
     const [image, setImage] = useState(null)
+
+
     const [registerStep, setRegisterStep] = useState(1);
     const goToNextStep = () => {
+        if (senha != confirmPassword) {
+            return alert("As senhas não coincidem!");
+        }
         setRegisterStep(2);
     };
     const goToPreviousStep = () => {
@@ -46,259 +58,213 @@ function Account({ hideRegister }) {
     const navigation = useNavigation();
 
     const [visible, setVisible] = useState(false);
-    const OpenModalRegister = () => {
-        setVisible(true);
-    }
-    const onClose = () => {
-        setVisible(false)
-    }
 
-    const [conditions, setConditions] = useState({
-        hipertensao: false,
-        arritmia: false,
-        insuficiencia: false,
-        marcapasso: false,
-        taquicardia: false,
-        historicoInfarto: false,
-        betabloqueadores: false,
-        outra: false,
-    });
+    const [conditions, setConditions] = useState({});
     const [otherCondition, setOtherCondition] = useState('');
     const [noCondition, setNoCondition] = useState(false);
-
-    const toggleCondition = (condition) => {
-        if (noCondition) setNoCondition(false);
-        setConditions((prev) => ({ ...prev, [condition]: !prev[condition] }))
-    }
-    const toggleNoCondition = () => {
-        const newValue = !noCondition;
-        setNoCondition(newValue);
-        if (newValue) {
-            setConditions({
-                hipertensao: false,
-                arritmia: false,
-                insuficiencia: false,
-                marcapasso: false,
-                taquicardia: false,
-                historicoInfarto: false,
-                betabloqueadores: false,
-                outra: false,
+    function getCondicoesJson() {
+        const condicoesMarcadas = data
+            .filter(item => conditions[item.id])
+            .map(item => {
+                if (item.nome === 'Outros' && otherCondition) {
+                    return {
+                        id: item.id,
+                        nome: item.nome,
+                        descricao_extra: otherCondition
+                    };
+                }
+                return {
+                    id: item.id,
+                    nome: item.nome
+                };
             });
-            setOtherCondition('');
+        return { condicoes: condicoesMarcadas }
+    }
+    const toggleCondition = (id) => {
+
+        if (id === 1) {
+            const newValue = !noCondition;
+            setNoCondition(newValue);
+            if (newValue) {
+                setOtherCondition('');
+                setConditions({});
+            }
+        }
+        if (noCondition) setNoCondition(false);
+        setConditions(prev => ({
+            ...prev,
+            [id]: !prev[id]
+        }));
+    }
+    const [data, setData] = useState([]);
+
+    async function LoadData() {
+        try {
+            const response = await api.get('/conditions');
+            if (response.data) {
+                setData(response.data);
+            }
+        } catch (error) {
+            console.error("Erro ao carregar dados do usuário:", error);
         }
     }
+    useEffect(() => {
+        LoadData();
+    }, []);
 
-    const [clinicalConditions, setClinicalConditions] = useState({
-        diabetes: false,
-        asma: false,
-        outra: false,
-    })
-    const [otherClinicalCondition, setOtherClinicalCondition] = useState('');
-    const [noClinicalCondition, setNoClinicalCondition] = useState(false);
-    const toggleClinicalCondition = (condition) => {
-        if (noClinicalCondition) setNoClinicalCondition(false);
-        setClinicalConditions((prev) => ({...prev, [condition]: !prev[condition]}))
-    }
-    const toggleNoClinicalCondition = () =>{
-        const newValue = !noClinicalCondition;
-        setNoClinicalCondition(newValue);
-        if (newValue) {
-            setClinicalConditions({
-                diabetes:false,
-                asma:false,
+    async function Registration() {
+        const condicoesJson = getCondicoesJson()
+        console.log(condicoesJson);
+        console.log("Nome:", nome);
+        console.log("Email:", email);
+        console.log("Senha:", senha);
+        console.log("Data de Nascimento:", birthDate);
+        console.log("Imagem:", image);
+        try {
+            const response = await api.post('/user/register', {
+                email,
+                senha,
+                nome,
+                data_nasc: birthDate,
+                img: image,
+                ansiedade_points: 0,
+                BLE_cap: 0,
+                condicoes: condicoesJson.condicoes
             });
-            setOtherClinicalCondition('');
+            if (response.data) {
+                console.log(response.data);
+            }
+            navigation.navigate('Bai', { id: response.data.id });
+        } catch (error) {
+            if (error.response?.data.error) {
+                Alert.alert("Erro ao fazer login", error.response.data.error);
+            } else {
+                Alert.alert("Erro ao fazer login", error.message);
+            }
         }
     }
 
     return (
         <View>
-            {registerStep === 1 ? (
-                <View style={styles.maincontainer}>
-                    <View>
-                        <TextInput placeholder="E-mail" style={styles.input} />
-                        <TextInput placeholder="Senha" style={styles.input} />
-                        <TextInput placeholder="Confirmar Senha" secureTextEntry style={styles.input} />
-                    </View>
-                    <View style={styles.footer}>
-                        <TouchableOpacity style={styles.button} onPress={goToNextStep}>
-                            <Text style={styles.buttonText}>Cadastrar-se</Text>
+            <View style={[styles.maincontainer, { display: registerStep === 1 ? '' : 'none' }]}>
+                <View>
+                    <TextInput placeholder="E-mail" style={styles.input} onChangeText={(t) => setEmail(t)} />
+                    <TextInput placeholder="Senha" secureTextEntry style={styles.input} onChangeText={(t) => setPassword(t)} />
+                    <TextInput placeholder="Confirmar Senha" secureTextEntry style={styles.input} onChangeText={(t) => setConfirmPassword(t)} />
+                </View>
+                <View style={styles.footer}>
+                    <TouchableOpacity style={styles.button} onPress={goToNextStep}>
+                        <Text style={styles.buttonText}>Cadastrar-se</Text>
+                    </TouchableOpacity>
+                    <View style={styles.containerfooter}>
+                        <Text style={styles.containerfootertext}>Já possui conta?</Text>
+                        <TouchableOpacity onPress={hideRegister}>
+                            <Text style={styles.link}>Faça seu Login!</Text>
                         </TouchableOpacity>
-                        <View style={styles.containerfooter}>
-                            <Text style={styles.containerfootertext}>Já possui conta?</Text>
-                            <TouchableOpacity onPress={hideRegister}>
-                                <Text style={styles.link}>Faça seu Login!</Text>
-                            </TouchableOpacity>
-                        </View>
                     </View>
                 </View>
-            ) : (
-                <View style={styles.maincontainer}>
-                    <TouchableOpacity onPress={goToPreviousStep} style={styles.iconbutton}>
-                        <Image
-                            source={icon.next}
+            </View>
+
+            <View style={[styles.maincontainer, { display: registerStep === 1 ? 'none' : '' }]}>
+                <TouchableOpacity onPress={goToPreviousStep} style={styles.iconbutton}>
+                    <Image
+                        source={icon.next}
+                    />
+                </TouchableOpacity>
+                <View style={styles.container}>
+                    <View style={styles.avatar}>
+                        <TouchableOpacity style={styles.iconedit} onPress={selectImage}>
+                            <Image source={icon.edit}></Image>
+                        </TouchableOpacity>
+                        {image ? (
+                            <Image source={{ uri: image }} style={styles.avatarplace} />)
+                            : (
+                                <Image source={icon.avatarplaceholder}></Image>
+                            )}
+                    </View>
+                    <View style={styles.avatarinput}>
+                        <TextInput placeholder="Nome" style={styles.inputsm} onChangeText={(t) => setName(t)} />
+                        <Text style={styles.text}>Nascimento</Text>
+                        <TextInputMask
+                            type={'datetime'}
+                            options={{
+                                format: 'DD/MM/YYYY'
+                            }}
+                            placeholder="00/00/0000"
+                            style={styles.inputsm}
+                            keyboardType="numeric"
+                            value={birthDate}
+                            onChangeText={setBirthDate}
                         />
+                    </View>
+                </View>
+                <View style={styles.register}>
+                    <Text style={styles.text}>
+                        Informe:
+                    </Text>
+                    <TouchableOpacity style={styles.buttonregister} onPress={() => {
+                        setVisible(true);
+                    }}>
+                        <Text style={styles.textreg}>Registro cardíaco</Text>
                     </TouchableOpacity>
-                    <View style={styles.container}>
-                        <View style={styles.avatar}>
-                            <TouchableOpacity style={styles.iconedit} onPress={selectImage}>
-                                <Image source={icon.edit}></Image>
+                </View>
+                <View style={styles.footer}>
+                    <TouchableOpacity style={styles.button} onPress={Registration}>
+                        <Text style={styles.buttonText}>Finalizar Cadastro</Text>
+                    </TouchableOpacity>
+                    <View style={styles.containerfooter}>
+                        <Text style={styles.containerfootertext}>Já possui conta?</Text>
+                        <TouchableOpacity onPress={hideRegister}>
+                            <Text style={styles.link}>Faça seu Login!</Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+                <Modal
+                    transparent
+                    visible={visible}
+                    animationType="fade"
+                    onRequestClose={() => {
+                        setVisible(false);
+                    }}
+                >
+                    <View style={styles.overlay}>
+                        <View style={styles.content}>
+                            <TouchableOpacity style={styles.close} onPress={() => {
+                                setVisible(false);
+                            }}>
+                                <Ionicons name="close" size={24} />
                             </TouchableOpacity>
-                            {image ? (
-                                <Image source={{ uri: image }} style={styles.avatarplace} />)
-                                : (
-                                    <Image source={icon.avatarplaceholder}></Image>
+                            <View>
+                                <Text style={styles.text}>Você tem alguma condição cardíaca diagnosticada?</Text>
+                                <FlatList
+                                    data={data}
+                                    keyExtractor={(item) => item.id}
+                                    renderItem={({ item }) => (
+                                        <CheckBox2
+                                            label={item.nome}
+                                            value={item.id === 1 ? noCondition : !!conditions[item.id]}
+                                            onValueChange={() => toggleCondition(item.id)}>
+                                        </CheckBox2>
+                                    )}>
+                                </FlatList>
+
+                                {conditions[99] && (
+                                    <View style={styles.checkboxDescription}>
+                                        <TextInput
+                                            style={styles.checkInput}
+                                            placeholder="Descreva a condição"
+                                            value={otherCondition}
+                                            onChangeText={setOtherCondition}
+                                            multiline
+                                        />
+                                    </View>
                                 )}
-                        </View>
-                        <View style={styles.avatarinput}>
-                            <TextInput placeholder="Nome" style={styles.inputsm} />
-                            <Text style={styles.text}>Nascimento</Text>
-                            <TextInputMask
-                                type={'datetime'}
-                                options={{
-                                    format: 'DD/MM/YYYY'
-                                }}
-                                placeholder="00/00/0000"
-                                style={styles.inputsm}
-                                keyboardType="numeric"
-                                value={birthDate}
-                                onChangeText={setBirthDate}
-                            />
-                        </View>
-                    </View>
-                    <View style={styles.register}>
-                        <Text style={styles.text}>
-                            Informe:
-                        </Text>
-                        <TouchableOpacity style={styles.buttonregister} onPress={OpenModalRegister}>
-                            <Text style={styles.textreg}>Registro cardíaco</Text>
-                        </TouchableOpacity>
-                    </View>
-                    <View style={styles.footer}>
-                        <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Bai')}>
-                            <Text style={styles.buttonText}>Finalizar Cadastro</Text>
-                        </TouchableOpacity>
-                        <View style={styles.containerfooter}>
-                            <Text style={styles.containerfootertext}>Já possui conta?</Text>
-                            <TouchableOpacity onPress={hideRegister}>
-                                <Text style={styles.link}>Faça seu Login!</Text>
-                            </TouchableOpacity>
-                        </View>
-                    </View>
-                    <Modal
-                        transparent
-                        visible={visible}
-                        animationType="fade"
-                        onRequestClose={onClose}
-                    >
-                        <View style={styles.overlay}>
-                            <View style={styles.content}>
-                                <TouchableOpacity style={styles.close} onPress={onClose}>
-                                    <Ionicons name="close" size={24} />
-                                </TouchableOpacity>
-                                <ScrollView>
-                                    <View>
-                                        <Text style={styles.text}>Você tem alguma condição cardíaca diagnosticada?</Text>
-                                        <View style={styles.checkboxContainer}>
-                                            <Checkbox value={conditions.hipertensao} onValueChange={() => toggleCondition('hipertensao')} />
-                                            <Text style={styles.checklabel}>Hipertensão</Text>
-                                        </View>
-
-                                        <View style={styles.checkboxContainer}>
-                                            <Checkbox value={conditions.arritmia} onValueChange={() => toggleCondition('arritmia')} />
-                                            <Text style={styles.checklabel}>Arritmia</Text>
-                                        </View>
-
-                                        <View style={styles.checkboxContainer}>
-                                            <Checkbox value={conditions.insuficiencia} onValueChange={() => toggleCondition('insuficiencia')} />
-                                            <Text style={styles.checklabel}>Insuficiência cardíaca</Text>
-                                        </View>
-
-                                        <View style={styles.checkboxContainer}>
-                                            <Checkbox value={conditions.marcapasso} onValueChange={() => toggleCondition('marcapasso')} />
-                                            <Text style={styles.checklabel}>Marcapasso</Text>
-                                        </View>
-
-                                        <View style={styles.checkboxContainer}>
-                                            <Checkbox value={conditions.taquicardia} onValueChange={() => toggleCondition('taquicardia')} />
-                                            <Text style={styles.checklabel}>Taquicardia / Bradicardia</Text>
-                                        </View>
-
-                                        <View style={styles.checkboxContainer}>
-                                            <Checkbox value={conditions.historicoInfarto} onValueChange={() => toggleCondition('historicoInfarto')} />
-                                            <Text style={styles.checklabel}>Histórico de infarto</Text>
-                                        </View>
-
-                                        <View style={styles.checkboxContainer}>
-                                            <Checkbox value={conditions.betabloqueadores} onValueChange={() => toggleCondition('betabloqueadores')} />
-                                            <Text style={styles.checklabel}>Uso de betabloqueadores</Text>
-                                        </View>
-
-                                        <View style={styles.checkboxContainer}>
-                                            <Checkbox value={conditions.outra} onValueChange={() => toggleCondition('outra')} />
-                                            <Text style={styles.checklabel}>Outra condição cardíaca</Text>
-                                        </View>
-
-                                        {conditions.outra && (
-                                            <View style={styles.checkboxDescription}>
-                                                <TextInput
-                                                    style={styles.checkInput}
-                                                    placeholder="Descreva a condição"
-                                                    value={otherCondition}
-                                                    onChangeText={setOtherCondition}
-                                                    multiline
-                                                />
-                                            </View>
-                                        )}
-
-                                        <View style={styles.checkboxContainer}>
-                                            <Checkbox value={noCondition} onValueChange={toggleNoCondition} />
-                                            <Text style={styles.checklabel}>Não possuo nenhuma condição cardíaca</Text>
-                                        </View>
-                                    </View>
-                                    <View>
-                                        <Text style={styles.text}>Condição clinica diagnosticada?</Text>
-                                        <View style={styles.checkboxContainer}>
-                                            <Checkbox value={clinicalConditions.diabetes} onValueChange={() => toggleClinicalCondition('diabetes')} />
-                                            <Text style={styles.checklabel}>Diabetes</Text>
-                                        </View>
-
-                                        <View style={styles.checkboxContainer}>
-                                            <Checkbox value={clinicalConditions.asma} onValueChange={() => toggleClinicalCondition('asma')} />
-                                            <Text style={styles.checklabel}>Asma</Text>
-                                        </View>
-
-                                        <View style={styles.checkboxContainer}>
-                                            <Checkbox value={clinicalConditions.outra} onValueChange={() => toggleClinicalCondition('outra')} />
-                                            <Text style={styles.checklabel}>Outra condição cardíaca</Text>
-                                        </View>
-
-                                        {clinicalConditions.outra && (
-                                            <View style={styles.checkboxDescription}>
-                                                <TextInput
-                                                    style={styles.checkInput}
-                                                    placeholder="Descreva a condição"
-                                                    value={otherClinicalCondition}
-                                                    onChangeText={setOtherClinicalCondition}
-                                                    multiline
-                                                />
-                                            </View>
-                                        )}
-
-                                        <View style={styles.checkboxContainer}>
-                                            <Checkbox value={noClinicalCondition} onValueChange={toggleNoClinicalCondition} />
-                                            <Text style={styles.checklabel}>Não possuo nenhuma condição {'\n'}clinica</Text>
-                                        </View>
-                                    </View>
-                                </ScrollView>
                             </View>
                         </View>
+                    </View>
 
-                    </Modal>
-                </View>
-
-            )
-            }
+                </Modal>
+            </View>
         </View >
     );
 

@@ -2,20 +2,43 @@ import { Image, Text, TouchableOpacity, View } from 'react-native';
 import Topcurve from '../../components/Topmidcurve';
 import { styles } from './home.styles'
 import icon from '../../constants/icon';
-import { useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import BaiSmoll from '../BAI/baiSmoll';
+import { AuthContext } from '../../contexts/auth';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 
 
 function Home() {
-    const [selectedEmoji, setSelectedEmoji] = useState(null);
-    const handlePressEmoji = (index) => {
-        setSelectedEmoji(index);
-        console.log("Emoji pressionado!");
+
+    const getAsyncData = async () => {
+        try {
+            const value = await AsyncStorage.getItem(`selectedEmoji${user.id}`);
+            if (value !== null) {
+                console.log(value)
+                setSelectedEmoji(parseInt(value));
+            }
+        } catch (e) {
+            console.log('Erro na captura de dados da ultima seleção:', e)
+        }
     };
-    const Nome = "Bruno";
+
+    const [selectedEmoji, setSelectedEmoji] = useState(null);
+    const handlePressEmoji = async (index) => {
+        setSelectedEmoji(index);
+        await AsyncStorage.setItem(`selectedEmoji${user.id}`, index.toString());
+        console.log(selectedEmoji);
+    };
+
+    const { user } = useContext(AuthContext)
+    const Nome = user.nome;
 
     const navigation = useNavigation();
+
+    useEffect(() => {
+        getAsyncData();
+    }, []);
     return (
         <View style={styles.mainContainer}>
             <Topcurve />
