@@ -3,7 +3,12 @@ import * as Progress from 'react-native-progress';
 import { questions } from '../../constants/data';
 import icon from "../../constants/icon";
 import { styles } from "./baiSmoll.styles";
-import { useState } from "react";
+import { useContext, useEffect, useState } from "react";
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import { AuthContext } from "../../contexts/auth";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+
 
 const { width } = Dimensions.get('window');
 
@@ -22,6 +27,38 @@ function BaiSmoll() {
         }
     }
 
+    const { user } = useContext(AuthContext);
+
+    useEffect(() => {
+        LoadAsyncData();
+    }, []);
+
+    async function LoadAsyncData() {
+        try {
+            const data = await AsyncStorage.getItem(`answers${user.id}`);
+            if (data) {
+                setAnswers(JSON.parse(data));
+                setCurrentIndex(questions.length);
+            }
+        } catch (error) {
+            console.error("Error loading data:", error);
+        }
+    }
+
+    async function saveAsyncData() {
+        try {
+            await AsyncStorage.setItem(`answers${user.id}`, JSON.stringify(Answers));
+            console.log('Data successfully saved', JSON.stringify(Answers));
+        } catch (error) {
+            console.error("Error saving data:", error);
+        }
+    }
+
+    const resetAnswers = () => {
+        setCurrentIndex(0);
+        setAnswers({});
+    }
+
     if (currentIndex >= questions.length) {
         const total = Object.values(Answers).reduce((sum, val) => sum + val, 0);
         let interpretation = "";
@@ -29,21 +66,28 @@ function BaiSmoll() {
         if (total < 10) interpretation = "Ansiedade mínima";
         else if (total < 19) interpretation = "Ansiedade leve";
         else if (total < 29) interpretation = "Ansiedade moderada";
-        else interpretation = "Ansiedade grave";
+        else interpretation = "Ansiedade Alta";
+
+        saveAsyncData();
 
         return (
             <View style={styles.mainContainer}>
-                <Text style={styles.text}>Resultado</Text>
-                <Text style={styles.text}>Pontuação: {total}</Text>
-                <Text style={styles.text}>{interpretation}</Text>
-                <View style={{ flexDirection: 'row', flexWrap: 'wrap', width: 300, gap:10 }}>
-                    {Object.entries(Answers).map(([questionId, value]) => (
-                        <View key={questionId} >
-                            <Text style={styles.text}>
-                                Q{questionId} = {value}
-                            </Text>
-                        </View>
-                    ))}
+                <TouchableOpacity style={styles.reloadButton} onPress={resetAnswers}>
+                    <Ionicons name="sync-circle-outline" size={40} color="#000" />
+                </TouchableOpacity>
+                <View style={styles.resultContainer}>
+                    <Text style={styles.optionText}>Resultado</Text>
+                    <Text style={styles.text}>Pontuação: {total}</Text>
+                    <Text style={styles.text}>{interpretation}</Text>
+                    <View style={styles.resultBox}>
+                        {Object.entries(Answers).map(([questionId, value]) => (
+                            <View key={questionId}  >
+                                <Text style={styles.textResult}>
+                                    Q{questionId} = {value}
+                                </Text>
+                            </View>
+                        ))}
+                    </View>
                 </View>
             </View>
         )
@@ -51,7 +95,6 @@ function BaiSmoll() {
 
     const currentQuestion = questions[currentIndex];
     const progress = (currentIndex + 1) / questions.length;
-
 
     return (
         <View style={styles.mainContainer}>
