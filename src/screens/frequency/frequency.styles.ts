@@ -1,5 +1,6 @@
 import { StyleSheet } from "react-native"
 import { Colors, Fonts_Size, Fonts_Styles } from "../../constants/theme"
+import { measure } from "react-native-reanimated"
 
 export const styles = StyleSheet.create({
     mainContainer: {
@@ -18,8 +19,11 @@ export const styles = StyleSheet.create({
     },
     container: {
         flex: 1,
+        width: '100%',
         backgroundColor: Colors.dark_gray,
         padding: 20,
+        borderWidth: 1,
+        borderColor: Colors.red,
     },
     averageContainer: {
         flexDirection: 'row',
@@ -41,8 +45,18 @@ export const styles = StyleSheet.create({
     FrequencyNumberFormat: {
         flexDirection: 'row',
     },
+    HistoricFormat: {
+        flexDirection: 'row',
+        backgroundColor: "#222",
+        padding: 10,
+    },
+    historicList:{
+        width: '100%',
+        height: 150,
+        borderWidth: 1,
+    },
     frequencyFormat: {
-        margin: 10
+        margin: 10,
     },
     text: {
         fontFamily: Fonts_Styles.PoppinsSemiBold,
@@ -114,7 +128,7 @@ export const styles = StyleSheet.create({
         width: 80,
         height: 100,
         borderRadius: 20,
-        position: 'relative', 
+        position: 'relative',
         overflow: 'hidden',
     },
     cameraVision: {
@@ -126,5 +140,19 @@ export const styles = StyleSheet.create({
     },
     alert: {
         color: Colors.green,
+        marginLeft: 0,
+    },
+    measurementContainer: {
+        padding: 20,
+        backgroundColor: "#222",
+        borderRadius: 12,
+    },
+    textOnly: {
+        lineHeight: Fonts_Size.lg
+    },
+    reloadButton: {
+        justifyContent: 'center',
+        alignItems: 'center',
+        flex: 1
     }
 })

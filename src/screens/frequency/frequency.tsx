@@ -1,6 +1,6 @@
 import { styles } from './frequency.styles'
-import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react';
-import { View, Text, Dimensions, Image, TouchableOpacity, TextInput, Animated, TouchableWithoutFeedback, Keyboard, StyleSheet, ActivityIndicator } from 'react-native';
+import React, { useState, useEffect, useRef, useMemo, useCallback, useContext } from 'react';
+import { View, Text, Dimensions, Image, TouchableOpacity, TextInput, Animated, Keyboard, ActivityIndicator, FlatList, Pressable } from 'react-native';
 import icon from '../../constants/icon';
 import { useNavigation } from '@react-navigation/native';
 import { Camera, useCameraDevice, useCameraFormat, useCameraPermission, useFrameProcessor } from 'react-native-vision-camera';
@@ -9,7 +9,10 @@ import NoCameraDeviceError from '../../components/NoCameraDeviceError';
 import { Ppgtest } from '../../components/PPGConection';
 import { Worklets } from 'react-native-worklets-core';
 import { RealTimeGraph } from '../../components/RealTimeGraph';
-import { Use } from 'react-native-svg';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { AuthContext } from '../../contexts/auth';
+
 
 // Entrada Da Data Atual
 const dataAtual = new Date();
@@ -169,6 +172,40 @@ function Frequency({ route }) {
     }
   }, [cameraReady]);
 
+  const [showMeasurementView, setShowMeasurementView] = useState(false);
+  const [timer, setTimer] = useState(15); // contador de 15s
+
+  const [resultBpm, setResultBpm] = useState<number | null>(null);
+  const bpmRef = useRef<number | null>(null);
+  // mantém ref atualizada com o último bpm calculado
+  const savedResultRef = useRef(false); // flag para garantir execução única
+
+  useEffect(() => {
+    let interval: NodeJS.Timeout | null = null;
+    if (showMeasurementView) {
+      setResultBpm(null); // limpa resultado anterior quando iniciar nova medição
+      savedResultRef.current = false;
+      interval = setInterval(() => {
+        setTimer((prev) => {
+          if (prev <= 1) {
+            if (interval) clearInterval(interval);
+            setShowMeasurementView(false); // esconde a View após 30s
+            setIsCalibrated(false); // reset calibrado
+            setResultBpm(bpmRef.current); // salva o resultado final
+            setCameraReady(false);
+            setTorch('off');
+            return 0;
+          }
+          if (isCalibratedRef.current) {
+            return prev - 1;
+          }
+          return prev;
+        });
+      }, 1000);
+    }
+    return () => clearInterval(interval);
+  }, [showMeasurementView]);
+
   const savePPGValue = useCallback((result: { ac: number, dc: number }) => {
     // 1. Portão de Qualidade: o dedo está na câmera?
     if (result.dc < 180) {
@@ -197,6 +234,8 @@ function Frequency({ route }) {
         if (newCalibrationData.length >= 90) {
           console.log("Calibração concluída! Iniciando medição.");
           setIsCalibrated(true);
+          setShowMeasurementView(true); // inicia exibição da View
+          setTimer(15); // reseta o timer
           // Prepara para a próxima medição limpando os dados de calibração
           return [];
         }
@@ -240,15 +279,15 @@ function Frequency({ route }) {
     const values = data.map((d) => d.value);
     const times = data.map((d) => d.time);
 
-    console.log(`valores capturados: ${values}`);
+    //console.log(`valores capturados: ${values}`);
 
     // 1. Filtragem: Aplica uma média móvel para suavizar o ruído
     const filteredValues = bandpassFilter(values, 2, 10);
-    console.log(`filteredValues: ${filteredValues}`)
+    //console.log(`filteredValues: ${filteredValues}`)
 
     // Calcule o desvio padrão do sinal filtrado
     const signalStdDev = getStandardDeviation(filteredValues);
-    console.log(`Desvio Padrão do Sinal: ${signalStdDev}`);
+    //console.log(`Desvio Padrão do Sinal: ${signalStdDev}`);
 
     // 2. Detecção de Picos
     const fps = 30; // O FPS que você configurou na câmera
@@ -258,7 +297,7 @@ function Frequency({ route }) {
     // Multiplicar por um fator (ex: 1.5) se precisar de mais seletividade.
     const minPeakProminence = signalStdDev * 1.2;
     const peakIndices = detectPeaks(filteredValues, minPeakDistance, minPeakProminence);
-    console.log(`Picos detectados: ${peakIndices} com proeminência mínima de ${minPeakProminence}`);
+    //console.log(`Picos detectados: ${peakIndices} com proeminência mínima de ${minPeakProminence}`);
 
     if (peakIndices.length < 2) {
       console.log('Não há picos suficientes para calcular')
@@ -266,10 +305,10 @@ function Frequency({ route }) {
     }
 
     const peakTimes = peakIndices.map((index) => times[index]);
-    console.log(`Tempos dos picos: ${peakTimes}`);
+    //console.log(`Tempos dos picos: ${peakTimes}`);
 
     const calculatedBpm = calculateBPM(peakTimes);
-    console.log(`BPM calculado: ${calculatedBpm}`);
+    //console.log(`BPM calculado: ${calculatedBpm}`);
 
     // 3. Validação do BPM
     // Se o BPM estiver fora de uma faixa razoável, ignore-o.
@@ -280,66 +319,147 @@ function Frequency({ route }) {
     return null
   }, [data]);
 
+  useEffect(() => {
+    bpmRef.current = typeof bpm === 'number' ? bpm : null;
+  }, [bpm]);
+
+  const [HistoricData, setHistoricData] = useState<{ time: string, bpm: number[] }[]>([])
+
+  const { user } = useContext(AuthContext)
+
+  const saveBpmData = async () => {
+    try {
+      const newEntry = { time: new Date().toLocaleTimeString(), bpm: resultBpm };
+
+      const stored = await AsyncStorage.getItem(`historicData${user.id}`);
+      const parsed = stored ? JSON.parse(stored) : []
+      const updated = [...parsed, newEntry]
+
+      await AsyncStorage.setItem(`historicData${user.id}`, JSON.stringify(updated));
+      setHistoricData(updated);
+    } catch (error) {
+      console.error('Erro ao salvar dados históricos:', error);
+    }
+  }
+
+  const loadBpmData = async () => {
+    try {
+      const stored = await AsyncStorage.getItem(`historicData${user.id}`)
+      if (stored) {
+        setHistoricData(JSON.parse(stored))
+      }
+    } catch (e) {
+      console.error('Erro ao carregar dados históricos:', e);
+    }
+  }
+  useEffect(() => {
+    if (resultBpm != null && !savedResultRef.current) {
+      saveBpmData();
+      console.log('Dado salvo:', resultBpm);
+      savedResultRef.current = true;
+    }
+  }, [resultBpm]);
+
+  useEffect(() => {
+    loadBpmData();
+  }, []);
+
   const [isLayoutReady, setIsLayoutReady] = useState(false);
   if (!hasPermission) return <PermissionsPage />
   if (device == null) return <NoCameraDeviceError />
 
+
   return (
 
-    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <View style={styles.mainContainer}>
-        <View style={styles.header}>
-          <Text style={styles.headerText}>{dataFormatada ?? 'Erro na Data'}</Text>
+    <Pressable style={styles.mainContainer} onPress={Keyboard.dismiss}>
+      <View style={styles.header}>
+        <Text style={styles.headerText}>{dataFormatada ?? 'Erro na Data'}</Text>
+      </View>
+      <View style={{ alignItems: 'center', justifyContent: 'center' }}>
+        <RealTimeGraph dataPoints={graphData}></RealTimeGraph>
+      </View>
+      <View style={styles.container}>
+        <View>
+          {showMeasurementView ? (
+            <View style={styles.measurementContainer}>
+              <Text style={[styles.text, styles.alert, styles.textOnly]}>
+                Medindo... {timer}s restantes
+              </Text>
+            </View>
+          ) : (
+            resultBpm == null ? <Text style={[styles.text, styles.alert]}>Coloque seu dedo na camera do celular</Text> : null
+          )}
         </View>
-        <View style={{ alignItems: 'center', justifyContent: 'center' }}>
-          <RealTimeGraph dataPoints={graphData}></RealTimeGraph>
-        </View>
-        <View style={styles.container}>
-          <View>
-            <Text style={[styles.text, styles.alert]}>Coloque seu dedo na camera do celular</Text>
+        <View style={styles.averageContainer}>
+          {
+            data.length > 0 ? data[data.length - 1].value >= 0
+              ? <Image source={icon.Heart}></Image> :
+              <Image source={icon.HeartEmpty}></Image> : null
+          }
+          <View style={styles.frequencyFormat}>
+            <View style={styles.FrequencyNumberFormat}>
+              {resultBpm == null ?
+                (isCalibrated ? <Text style={styles.averageText}>{bpm}</Text> : <ActivityIndicator size={'large'} style={{ marginRight: 10 }} />)
+                :
+                <Text style={styles.averageText}>{resultBpm}</Text>
+              }
+
+              <Text style={styles.BPMText}>BPM</Text>
+            </View>
+            <Text style={styles.text}>valor de {horarioFormatado ?? 'Erro no Horario'}</Text>
           </View>
-          <View style={styles.averageContainer}>
+
+          <View style={styles.camera} onLayout={() => setTimeout(() => setIsLayoutReady(true), 2000)}>
             {
-              data.length > 0 ? data[data.length - 1].value >= 0
-                ? <Image source={icon.Heart}></Image> :
-                <Image source={icon.HeartEmpty}></Image> : null
+              resultBpm == null ? (
+                device != null && hasPermission && isLayoutReady && (
+                  <Camera
+                    style={styles.cameraVision}
+                    device={device}
+                    isActive={true}
+                    torch={torch}
+                    frameProcessor={frameProcessor}
+                    format={format}
+                    fps={format?.maxFps}
+                    onInitialized={() => setCameraReady(true)}
+                  />
+                )) : <TouchableOpacity onPress={() => [setResultBpm(null), setTimeout(() => setCameraReady(true), 5000)]} style={styles.reloadButton}>
+                <Ionicons name="sync-circle-outline" size={60} color="#000000ff" />
+              </TouchableOpacity>
             }
-            <View style={styles.frequencyFormat}>
-              <View style={styles.FrequencyNumberFormat}>
-                {isCalibrated ? <Text style={styles.averageText}>{bpm}</Text> : <ActivityIndicator size={'large'} style={{ marginRight: 10 }} />}
-                <Text style={styles.BPMText}>BPM</Text>
-              </View>
-              <Text style={styles.text}>valor de {horarioFormatado ?? 'Erro no Horario'}</Text>
-            </View>
-
-            <View style={styles.camera} onLayout={() => setTimeout(() => setIsLayoutReady(true), 2000)}>
-              {device != null && hasPermission && isLayoutReady && (
-                <Camera
-                  style={styles.cameraVision}
-                  device={device}
-                  isActive={true}
-                  torch={torch}
-                  frameProcessor={frameProcessor}
-                  format={format}
-                  fps={format?.maxFps}
-                  onInitialized={() => setCameraReady(true)}
-                />
-              )}
-            </View>
-          </View>
-
-          <View style={styles.recomendationContainer}>
-            <Text style={styles.recomendationText}>Respire</Text>
-          </View>
-
-          <View style={styles.functionContainers}>
-            <TouchableOpacity style={styles.exerciciesContainer} onPress={() => navigation.navigate('Exercises')}>
-              <Image></Image>
-            </TouchableOpacity>
           </View>
         </View>
 
-        <Animated.View style={[styles.animatedContainer, { bottom: slideAnim }]}>
+        <View style={styles.recomendationContainer}>
+          <Text style={styles.recomendationText}>Respire</Text>
+        </View>
+
+        <View style={styles.functionContainers}>
+          <TouchableOpacity style={styles.exerciciesContainer} onPress={() => navigation.navigate('Exercises')}>
+            <Image></Image>
+          </TouchableOpacity>
+        </View>
+
+        <View >
+          <FlatList
+            style={styles.historicList}
+            contentContainerStyle={{ flexGrow: 1 }} // 👈 Adicione esta linha 
+            data={HistoricData}
+            keyExtractor={(item, index) => index.toString()}
+            renderItem={({ item }) => (
+              <View style={styles.HistoricFormat}>
+                <Text style={styles.BPMText}>{item.time} - </Text>
+                <Text style={styles.BPMText}>{item.bpm}bpm</Text>
+              </View>
+            )}
+          >
+          </FlatList>
+        </View>
+
+
+      </View>
+
+      {/* <Animated.View style={[styles.animatedContainer, { bottom: slideAnim }]}>
           <View style={styles.infContainer}>
             <TextInput
               placeholder='Adicione Notas Sobre:'
@@ -349,9 +469,8 @@ function Frequency({ route }) {
               multiline={true}
             />
           </View>
-        </Animated.View>
-      </View >
-    </TouchableWithoutFeedback>
+        </Animated.View> */}
+    </Pressable>
   )
 }
 export default Frequency
