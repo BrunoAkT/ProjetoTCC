@@ -1,6 +1,6 @@
 import { styles } from './frequency.styles'
 import React, { useState, useEffect, useRef, useMemo, useCallback, useContext } from 'react';
-import { View, Text, Dimensions, Image, TouchableOpacity, TextInput, Animated, Keyboard, ActivityIndicator, FlatList, Pressable } from 'react-native';
+import { View, Text, Image, TouchableOpacity, TextInput, Animated, Keyboard, ActivityIndicator, FlatList, Pressable, KeyboardAvoidingView } from 'react-native';
 import icon from '../../constants/icon';
 import { useNavigation } from '@react-navigation/native';
 import { Camera, useCameraDevice, useCameraFormat, useCameraPermission, useFrameProcessor } from 'react-native-vision-camera';
@@ -127,7 +127,7 @@ function Frequency({ route }) {
   const ShowTab = () => {
     setIsVisibleTab(true)
     Animated.timing(slideAnim, {
-      toValue: -100,
+      toValue: 100,
       duration: 400,
       useNativeDriver: false
     }).start();
@@ -324,6 +324,7 @@ function Frequency({ route }) {
   }, [bpm]);
 
   const [HistoricData, setHistoricData] = useState<{ time: string, bpm: number[] }[]>([])
+  const [TextData, setTextData] = useState<string>("")
 
   const { user } = useContext(AuthContext)
 
@@ -342,16 +343,31 @@ function Frequency({ route }) {
     }
   }
 
-  const loadBpmData = async () => {
+  const saveTextData = async () => {
+    try {
+      await AsyncStorage.setItem(`textData${user.id}`, TextData);
+    } catch (error) {
+      console.error('Erro ao salvar dados de texto:', error);
+    }
+  }
+
+
+  const loadData = async () => {
     try {
       const stored = await AsyncStorage.getItem(`historicData${user.id}`)
       if (stored) {
         setHistoricData(JSON.parse(stored))
       }
+      const storedText = await AsyncStorage.getItem(`textData${user.id}`);
+      if (storedText) {
+        setTextData(storedText)
+        console.log('Texto carregado com sucesso!', storedText);
+      }
     } catch (e) {
       console.error('Erro ao carregar dados históricos:', e);
     }
   }
+
   useEffect(() => {
     if (resultBpm != null && !savedResultRef.current) {
       saveBpmData();
@@ -360,8 +376,19 @@ function Frequency({ route }) {
     }
   }, [resultBpm]);
 
+  const typingTimeout = useRef<NodeJS.Timeout | null>(null);
+  const handleChangeText = (text: string) => {
+    setTextData(text);
+    if (typingTimeout.current) {
+      clearTimeout(typingTimeout.current);
+    }
+    typingTimeout.current = setTimeout(() => {
+      saveTextData();
+    }, 1000);
+  }
+
   useEffect(() => {
-    loadBpmData();
+    loadData();
   }, []);
 
   const [isLayoutReady, setIsLayoutReady] = useState(false);
@@ -370,14 +397,16 @@ function Frequency({ route }) {
 
 
   return (
+    <KeyboardAvoidingView style={styles.mainContainer}>
+      <Pressable onPress={Keyboard.dismiss}>
+        <View style={styles.header}>
+          <Text style={styles.headerText}>{dataFormatada ?? 'Erro na Data'}</Text>
+        </View>
+        <View style={{ alignItems: 'center', justifyContent: 'center' }}>
+          <RealTimeGraph dataPoints={graphData}></RealTimeGraph>
+        </View>
+      </Pressable>
 
-    <Pressable style={styles.mainContainer} onPress={Keyboard.dismiss}>
-      <View style={styles.header}>
-        <Text style={styles.headerText}>{dataFormatada ?? 'Erro na Data'}</Text>
-      </View>
-      <View style={{ alignItems: 'center', justifyContent: 'center' }}>
-        <RealTimeGraph dataPoints={graphData}></RealTimeGraph>
-      </View>
       <View style={styles.container}>
         <View>
           {showMeasurementView ? (
@@ -430,6 +459,7 @@ function Frequency({ route }) {
           </View>
         </View>
 
+
         <View style={styles.recomendationContainer}>
           <Text style={styles.recomendationText}>Respire</Text>
         </View>
@@ -440,10 +470,9 @@ function Frequency({ route }) {
           </TouchableOpacity>
         </View>
 
-        <View >
+        <View>
           <FlatList
             style={styles.historicList}
-            contentContainerStyle={{ flexGrow: 1 }} // 👈 Adicione esta linha 
             data={HistoricData}
             keyExtractor={(item, index) => index.toString()}
             renderItem={({ item }) => (
@@ -455,22 +484,23 @@ function Frequency({ route }) {
           >
           </FlatList>
         </View>
-
-
       </View>
 
-      {/* <Animated.View style={[styles.animatedContainer, { bottom: slideAnim }]}>
-          <View style={styles.infContainer}>
-            <TextInput
-              placeholder='Adicione Notas Sobre:'
-              style={styles.infInput}
-              onFocus={ShowTab}
-              onBlur={HiddeTab}
-              multiline={true}
-            />
-          </View>
-        </Animated.View> */}
-    </Pressable>
+      <Animated.View style={[styles.animatedContainer, { bottom: slideAnim }]}>
+        <View style={styles.infContainer}>
+          <TextInput
+            value={TextData}
+            placeholder='Adicione Notas Sobre:'
+            placeholderTextColor={"#000000ff"}
+            style={styles.infInput}
+            onFocus={ShowTab}
+            onBlur={HiddeTab}
+            multiline={true}
+            onChangeText={handleChangeText}
+          />
+        </View>
+      </Animated.View>
+    </KeyboardAvoidingView>
   )
 }
 export default Frequency
