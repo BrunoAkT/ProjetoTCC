@@ -76,8 +76,9 @@ function Login() {
 
             <View style={styles.container}>
                 <View>
-                    <TextInput placeholder="E-mail" style={styles.input} onChangeText={(t) => setEmail(t)}></TextInput>
-                    <TextInput placeholder="Senha" style={styles.input} secureTextEntry={true} onChangeText={(t) => setPassword(t)}></TextInput>
+                    <TextInput placeholder="E-mail" style={styles.input} onChangeText={(t) => setEmail(t)} placeholderTextColor={"#000000ff"}
+                    ></TextInput>
+                    <TextInput placeholder="Senha" style={styles.input} secureTextEntry={true} onChangeText={(t) => setPassword(t)} placeholderTextColor={"#000000ff"}></TextInput>
                 </View>
                 <View>
                     <TouchableOpacity style={styles.button} onPress={executeLogin}>

@@ -68,5 +68,24 @@ export const styles = {
     text:{
         fontFamily:Fonts_Styles.PoppinsSemiBold,
         fontSize: Fonts_Size.lg
+    },
+    popUp:{
+        position: 'absolute',
+        width: 180,
+        height: 80,
+        backgroundColor: Colors.gray,
+        borderRadius: 20,
+        top: 40,
+        right: 20,
+        justifyContent: 'center',
+        alignItems: 'center',
+        elevation: 10,
+        padding: 10,
+    },
+    popUpText:{
+        fontFamily: Fonts_Styles.PoppinsSemiBold,
+        fontSize: Fonts_Size.md,
+        color: Colors.dark_gray,
+        textAlign: 'center',
     }
 }

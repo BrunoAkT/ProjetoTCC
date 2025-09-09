@@ -1,22 +1,18 @@
-import { Image, Text, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, Animated, Image, Text, TouchableOpacity, View } from 'react-native';
 import Topcurve from '../../components/Topmidcurve';
 import { styles } from './home.styles'
 import icon from '../../constants/icon';
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect, useRef, useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import BaiSmoll from '../BAI/baiSmoll';
 import { AuthContext } from '../../contexts/auth';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-
-
 function Home() {
-
     const getAsyncData = async () => {
         try {
             const value = await AsyncStorage.getItem(`selectedEmoji${user.id}`);
             if (value !== null) {
-                console.log(value)
                 setSelectedEmoji(parseInt(value));
             }
         } catch (e) {
@@ -28,16 +24,42 @@ function Home() {
     const handlePressEmoji = async (index) => {
         setSelectedEmoji(index);
         await AsyncStorage.setItem(`selectedEmoji${user.id}`, index.toString());
-        console.log(selectedEmoji);
     };
 
     const { user } = useContext(AuthContext)
-    const Nome = user.nome;
+    const [saveComplete, setSaveComplete] = useState(false);
+    const [showPopUp, setShowPopUp] = useState(true);
+    const fadeAnim = useRef(new Animated.Value(1)).current;
 
+    useEffect(() => {
+    if (saveComplete) {
+      const timer = setTimeout(() => {
+        Animated.timing(fadeAnim, {
+          toValue: 0,
+          duration: 600, 
+          useNativeDriver: true,
+        }).start(() => setShowPopUp(false)); 
+      }, 2000);
+
+      return () => clearTimeout(timer);
+    }
+  }, [saveComplete]);
+
+    const Nome = user.nome;
     const navigation = useNavigation();
+
+    async function setResults() {
+        console.log('User ID:', user.id);
+        console.log(new Date().toLocaleDateString('pt-BR'));
+        console.log("Anotações:", await AsyncStorage.getItem(`textData${user.id}`));
+        console.log("BPM`s:", await AsyncStorage.getItem(`historicData${user.id}`));
+        console.log("BAI:", await AsyncStorage.getItem(`total${user.id}`));
+        console.log("Emoji:", await AsyncStorage.getItem(`selectedEmoji${user.id}`));
+    }
 
     useEffect(() => {
         getAsyncData();
+        setResults();
     }, []);
     return (
         <View style={styles.mainContainer}>
@@ -83,6 +105,17 @@ function Home() {
                     </Image>
                 </TouchableOpacity>
             </View>
+
+            {showPopUp && (
+                <Animated.View style={[styles.popUp, { opacity: fadeAnim }]}>
+                    {saveComplete ? (
+                        <Text style={styles.popUpText}>Dados salvos com sucesso!</Text>
+                    ) : (
+                        <ActivityIndicator size="large" color="#0000ff" />
+                    )}
+                </Animated.View>
+            )}
+
         </View>
     );
 

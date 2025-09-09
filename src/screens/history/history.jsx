@@ -3,12 +3,33 @@ import { styles } from './history.styles'
 import Topcurve from "../../components/Topmidcurve"
 import HistoryValues from "../../components/HistoryValues"
 import { TextInputMask } from "react-native-masked-text"
-import { useState } from "react"
-import { savedHistory } from '../../constants/dataTest'
+import { useContext, useEffect, useState } from "react"
+import api from "../../constants/api"
+import { AuthContext } from "../../contexts/auth"
 
 function History() {
     const [classification, setClassification] = useState();
+    const { user } = useContext(AuthContext);
 
+
+    const [savedHistory, setSavedHistory] = useState();
+    async function LoadHistoric() {
+        try {
+            const response = await api.get(`/history/${user.id}`,{
+                headers:{
+                    Authorization: `Bearer ${user.token}`
+                }
+            });
+            console.log(response.data);
+            setSavedHistory(response.data);
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
+    useEffect(() => {
+        LoadHistoric();
+    }, [])
     return (
         <View style={styles.mainContainer}>
             <Topcurve></Topcurve>
@@ -33,18 +54,12 @@ function History() {
             <View style={styles.container}>
                 <FlatList
                     data={savedHistory}
-                    keyExtractior={(item) => item.id}
+                    keyExtractor={(item) => item.id}
                     renderItem={({ item }) => (
                         <HistoryValues
-                            date={item.date}
-                            emoji={item.emoji}
-                            hight_frequency={item.hight_frequency}
-                            hight_frequency_time={item.hight_frequency_time}
+                            date={item.data}
+                            emoji={item.Valor}
                             anotation={item.anotation}
-                            avg_frequency={item.avg_frequency}
-                            frequency={item.frequency}
-                            BAI_points={item.BAI_points}
-                            BAI_interpretation={item.BAI_interpretation}
                         ></HistoryValues>
                     )}
                     style={styles.flatListContainer}

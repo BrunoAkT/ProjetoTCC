@@ -22,6 +22,7 @@ export const styles = {
         fontFamily: Fonts_Styles.PoppinsSemiBold,
         fontSize: Fonts_Size.md,
         borderWidth: 2,
+        color: Colors.dark_gray,
     },
     button: {
         backgroundColor: Colors.green,

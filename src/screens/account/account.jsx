@@ -148,9 +148,12 @@ function Account({ hideRegister }) {
         <View>
             <View style={[styles.maincontainer, { display: registerStep === 1 ? '' : 'none' }]}>
                 <View>
-                    <TextInput placeholder="E-mail" style={styles.input} onChangeText={(t) => setEmail(t)} />
-                    <TextInput placeholder="Senha" secureTextEntry style={styles.input} onChangeText={(t) => setPassword(t)} />
-                    <TextInput placeholder="Confirmar Senha" secureTextEntry style={styles.input} onChangeText={(t) => setConfirmPassword(t)} />
+                    <TextInput placeholder="E-mail" style={styles.input} placeholderTextColor={"#000000ff"}
+                        onChangeText={(t) => setEmail(t)} />
+                    <TextInput placeholder="Senha" secureTextEntry style={styles.input} placeholderTextColor={"#000000ff"}
+                        onChangeText={(t) => setPassword(t)} />
+                    <TextInput placeholder="Confirmar Senha" secureTextEntry style={styles.input} placeholderTextColor={"#000000ff"}
+                        onChangeText={(t) => setConfirmPassword(t)} />
                 </View>
                 <View style={styles.footer}>
                     <TouchableOpacity style={styles.button} onPress={goToNextStep}>
@@ -183,7 +186,7 @@ function Account({ hideRegister }) {
                             )}
                     </View>
                     <View style={styles.avatarinput}>
-                        <TextInput placeholder="Nome" style={styles.inputsm} onChangeText={(t) => setName(t)} />
+                        <TextInput placeholder="Nome" style={styles.inputsm} onChangeText={(t) => setName(t)} placeholderTextColor={"#000000ff"} />
                         <Text style={styles.text}>Nascimento</Text>
                         <TextInputMask
                             type={'datetime'}
@@ -195,6 +198,7 @@ function Account({ hideRegister }) {
                             keyboardType="numeric"
                             value={birthDate}
                             onChangeText={setBirthDate}
+                            placeholderTextColor={"#000000ff"}
                         />
                     </View>
                 </View>
@@ -255,6 +259,7 @@ function Account({ hideRegister }) {
                                             placeholder="Descreva a condição"
                                             value={otherCondition}
                                             onChangeText={setOtherCondition}
+                                            placeholderTextColor={"#000000ff"}
                                             multiline
                                         />
                                     </View>

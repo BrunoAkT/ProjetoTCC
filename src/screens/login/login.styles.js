@@ -30,7 +30,9 @@ export const styles = {
         paddingTop: 0,
         marginTop: 20,
         fontFamily: Fonts_Styles.PoppinsSemiBold,
+        color: Colors.dark_gray,
         fontSize: Fonts_Size.md
+
     },
     button: {
         backgroundColor: Colors.green,

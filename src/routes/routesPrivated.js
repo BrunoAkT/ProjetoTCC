@@ -18,6 +18,7 @@ function RoutesOpen() {
             headerTitleStyle: { fontFamily: Fonts_Styles.PoppinsRegular },
         }}>
         <Stack.Screen name="Dashboard" component={Dashboard} options={{ headerShown: false }} />
+        
         <Stack.Screen name="Frequency" component={Frequency} options={{
             headerTitle: () => (
                 <View>

@@ -45,10 +45,10 @@ function BaiSmoll() {
         }
     }
 
-    async function saveAsyncData() {
+    async function saveAsyncData(total) {
         try {
             await AsyncStorage.setItem(`answers${user.id}`, JSON.stringify(Answers));
-            console.log('Data successfully saved', JSON.stringify(Answers));
+            await AsyncStorage.setItem(`total${user.id}`, JSON.stringify(total));
         } catch (error) {
             console.error("Error saving data:", error);
         }
@@ -68,7 +68,7 @@ function BaiSmoll() {
         else if (total < 29) interpretation = "Ansiedade moderada";
         else interpretation = "Ansiedade Alta";
 
-        saveAsyncData();
+        saveAsyncData(total);
 
         return (
             <View style={styles.mainContainer}>
