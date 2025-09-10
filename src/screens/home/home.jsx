@@ -7,8 +7,11 @@ import { useNavigation } from '@react-navigation/native';
 import BaiSmoll from '../BAI/baiSmoll';
 import { AuthContext } from '../../contexts/auth';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import api from '../../constants/api';
 
 function Home() {
+    const navigation = useNavigation();
+
     const getAsyncData = async () => {
         try {
             const value = await AsyncStorage.getItem(`selectedEmoji${user.id}`);
@@ -28,38 +31,92 @@ function Home() {
 
     const { user } = useContext(AuthContext)
     const [saveComplete, setSaveComplete] = useState(false);
-    const [showPopUp, setShowPopUp] = useState(true);
+    const [showPopUp, setShowPopUp] = useState(false);
     const fadeAnim = useRef(new Animated.Value(1)).current;
+    const [resetCounter, setResetCounter] = useState(0);
 
     useEffect(() => {
-    if (saveComplete) {
-      const timer = setTimeout(() => {
-        Animated.timing(fadeAnim, {
-          toValue: 0,
-          duration: 600, 
-          useNativeDriver: true,
-        }).start(() => setShowPopUp(false)); 
-      }, 2000);
+        if (saveComplete) {
+            const timer = setTimeout(() => {
+                Animated.timing(fadeAnim, {
+                    toValue: 0,
+                    duration: 600,
+                    useNativeDriver: true,
+                }).start(() => setShowPopUp(false));
+            }, 2000);
 
-      return () => clearTimeout(timer);
-    }
-  }, [saveComplete]);
+            return () => clearTimeout(timer);
+        }
+    }, [saveComplete]);
 
     const Nome = user.nome;
-    const navigation = useNavigation();
 
+    const resetAll = async () => {
+        await AsyncStorage.multiRemove([
+            `textData${user.id}`,
+            `historicData${user.id}`,
+            `total${user.id}`,
+            `selectedEmoji${user.id}`,
+            `answers${user.id}`
+        ]);
+        setSelectedEmoji(null);
+        setSaveComplete(false);
+        // avisa os filhos que o reset aconteceu
+        setResetCounter(prev => prev + 1);
+    };
+
+    const dataAtual = new Date().toLocaleDateString('pt-BR');
     async function setResults() {
-        console.log('User ID:', user.id);
-        console.log(new Date().toLocaleDateString('pt-BR'));
-        console.log("Anotações:", await AsyncStorage.getItem(`textData${user.id}`));
-        console.log("BPM`s:", await AsyncStorage.getItem(`historicData${user.id}`));
-        console.log("BAI:", await AsyncStorage.getItem(`total${user.id}`));
-        console.log("Emoji:", await AsyncStorage.getItem(`selectedEmoji${user.id}`));
+        try {
+            setShowPopUp(true);
+            console.log(dataAtual)
+            console.log("Data:", await AsyncStorage.getItem(`dayData${user.id}`));
+            console.log('User ID:', user.id);
+            console.log("Anotações:", await AsyncStorage.getItem(`textData${user.id}`));
+            console.log("BPM`s:", await AsyncStorage.getItem(`historicData${user.id}`));
+            console.log("BAI:", await AsyncStorage.getItem(`total${user.id}`));
+            console.log("Emoji:", await AsyncStorage.getItem(`selectedEmoji${user.id}`));
+            console.log('--------------------');
+            const dayData = await AsyncStorage.getItem(`dayData${user.id}`);
+            const textData = await AsyncStorage.getItem(`textData${user.id}`);
+            const historicData = await AsyncStorage.getItem(`historicData${user.id}`);
+            const total = await AsyncStorage.getItem(`total${user.id}`);
+            const selectedEmoji = await AsyncStorage.getItem(`selectedEmoji${user.id}`);
+
+            if (dayData !== dataAtual) {
+                const response = await api.post(`/history/${user.id}`, {
+                    date: dayData,
+                    anotation: textData,
+                    Bpm: historicData,
+                    Bai: total,
+                    emoji: selectedEmoji
+                },
+                    {
+                        headers: {
+                            Authorization: `Bearer ${user.token}`
+                        }
+                    })
+                if (response.data) {
+                    // espera o reset terminar antes de continuar
+                    await resetAll();
+                    await AsyncStorage.setItem(`dayData${user.id}`, dataAtual); // define nova data
+                    setSaveComplete(true);
+                }
+            } else {
+                setShowPopUp(false);
+            }
+        } catch (error) {
+            console.log('Erro ao salvar dados:', error);
+        }
     }
 
+
+
     useEffect(() => {
-        getAsyncData();
-        setResults();
+        (async () => {
+            await getAsyncData();
+            await setResults();
+        })();
     }, []);
     return (
         <View style={styles.mainContainer}>
@@ -95,7 +152,7 @@ function Home() {
             </View>
             <View style={styles.container}>
                 <View style={styles.BAIcontainer}>
-                    <BaiSmoll></BaiSmoll>
+                    <BaiSmoll resetTrigger={saveComplete} resetCounter={resetCounter} />
                 </View>
                 <TouchableOpacity style={styles.exercises} onPress={() => navigation.navigate('Exercises')}>
                     <Text style={styles.text}>
