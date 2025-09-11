@@ -97,7 +97,6 @@ function Home() {
                         }
                     })
                 if (response.data) {
-                    // espera o reset terminar antes de continuar
                     await resetAll();
                     await AsyncStorage.setItem(`dayData${user.id}`, dataAtual); // define nova data
                     setSaveComplete(true);

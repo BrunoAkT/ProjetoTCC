@@ -15,13 +15,12 @@ function History() {
     const [savedHistory, setSavedHistory] = useState();
     async function LoadHistoric() {
         try {
-            const response = await api.get(`/history/${user.id}`,{
-                headers:{
+            const response = await api.get(`/history/${user.id}`, {
+                headers: {
                     Authorization: `Bearer ${user.token}`
                 }
             });
-            console.log(response.data);
-            setSavedHistory(response.data);
+            setSavedHistory(Array.isArray(response.data) ? response.data : []);
         } catch (error) {
             console.error(error);
         }
@@ -53,13 +52,15 @@ function History() {
             </View>
             <View style={styles.container}>
                 <FlatList
-                    data={savedHistory}
-                    keyExtractor={(item) => item.id}
+                    data={savedHistory ?? []}
+                    keyExtractor={(item) => String(item.id)}
                     renderItem={({ item }) => (
                         <HistoryValues
                             date={item.data}
                             emoji={item.Valor}
-                            anotation={item.anotation}
+                            anotation={item.anotacao}
+                            id={item.id}
+                            points={item.pontuacao}
                         ></HistoryValues>
                     )}
                     style={styles.flatListContainer}

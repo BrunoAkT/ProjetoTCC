@@ -1,4 +1,4 @@
-import { Image, Modal, SafeAreaView, Text, TouchableOpacity, View } from "react-native";
+import { Image, Modal, SafeAreaView, Text, TouchableOpacity, View, ScrollView } from "react-native";
 import { styles } from "./statistics.styles";
 import icon from "../../constants/icon";
 import HistoryGraph from "../../components/HistoryGraph";
@@ -8,13 +8,9 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 
 function Statistics(params) {
     const { route } = params;
-    const dataAtual = new Date(route.params.date);
-    const dataFormatada = dataAtual.toLocaleDateString('pt-BR', {
-        day: 'numeric',
-        month: 'long',
-        year: 'numeric',
-        timeZone: 'America/Sao_Paulo'
-    });
+    const parts = route.params.date.split("/");
+    const jsDate = new Date(`${parts[2]}-${parts[1]}-${parts[0]}`);
+    const formatado = jsDate.toLocaleDateString("pt-BR", { day: "2-digit", month: "long", year: "numeric" });
 
     const [visible, setVisible] = useState(false);
     const onClose = () => {
@@ -27,18 +23,18 @@ function Statistics(params) {
     return (
         <View style={styles.mainContainer}>
             <View style={styles.header}>
-                <Text style={styles.headerText}>{dataFormatada}</Text>
-                <HistoryGraph data={route.params.frequency}></HistoryGraph>
+                <Text style={styles.headerText}>{formatado}</Text>
+                <HistoryGraph id={route.params.id} />
             </View>
             <View style={styles.container}>
                 <View style={styles.midContainer}>
                     <View style={styles.frequencyFormat}>
                         <Text style={styles.text}>Maxima</Text>
                         <View style={styles.FrequencyNumberFormat}>
-                            <Text style={styles.averageText}>{route.params.hight_frequency}</Text>
+                            <Text style={styles.averageText}>@</Text>
                             <Text style={styles.BPMText}>BPM</Text>
                         </View>
-                        <Text style={styles.text}>Valor de {route.params.hight_frequency_time}</Text>
+                        <Text style={styles.text}>Valor de TESte</Text>
                     </View>
                     <TouchableOpacity style={styles.summaryContainer} onPress={onOpen}>
                         <View style={styles.sumarryResult}>
@@ -59,9 +55,11 @@ function Statistics(params) {
                 </View>
                 <View style={styles.infContainer}>
                     <Text style={styles.infTitle}>Anotações nesta Data</Text>
-                    <View style={styles.infContent}>
-                        <Text style={styles.infText}>{route.params.anotation}</Text>
-                    </View>
+                    <ScrollView>
+                        <View style={styles.infContent}>
+                            <Text style={styles.infText}>{route.params.anotation}</Text>
+                        </View>
+                    </ScrollView>
                 </View>
             </View>
             <Modal
@@ -92,15 +90,19 @@ function Statistics(params) {
                             </View>
                             <View>
                                 <Text style={styles.modalSubTitle}>Resultado BAI</Text>
-                                <Text style={styles.modalText}>Pontuação: {route.params.BAI_points}</Text>
-                                <Text style={styles.modalText}>Nivel: {route.params.BAI_interpretation}</Text>
+                                <Text style={styles.modalText}>Pontuação: {route.params.points}</Text>
+                                <Text style={styles.modalText}>Nivel: {
+                                    route.params.points < 10 ? 'Baixa' :
+                                        route.params.points < 19 ? 'Moderada' :
+                                            route.params.points < 29 ? 'Alta' : 'Muito Alta'
+                                }</Text>
                             </View>
                             <View>
                                 <Text style={styles.modalSubTitle}>Frequência Cardíaca</Text>
                                 <View>
-                                    <Text style={styles.modalText}>Máxima: {route.params.hight_frequency} BPM</Text>
+                                    {/* <Text style={styles.modalText}>Máxima: {route.params.hight_frequency} BPM</Text>
                                     <Text style={styles.modalText}>Média: {route.params.avg_frequency} BPM</Text>
-                                    <Text style={styles.modalText}>Hora Máxima: {route.params.hight_frequency_time}</Text>
+                                    <Text style={styles.modalText}>Hora Máxima: {route.params.hight_frequency_time}</Text> */}
                                 </View>
                             </View>
                         </View>

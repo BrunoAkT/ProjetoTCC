@@ -1,14 +1,41 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, use, useContext } from 'react';
 import { View, Dimensions } from 'react-native';
 import { LineChart } from 'react-native-chart-kit';
 import { Colors, Fonts_Styles, Fonts_Size } from '../constants/theme'
+import { AuthContext } from '../contexts/auth';
+import api from '../constants/api';
 
-function HistoryGraph({ data }) {
-    const [average, setAverage] = useState(0);
+function HistoryGraph({ id }) {
+    const [data, setData] = useState([]);
+    const { user } = useContext(AuthContext);
 
+    async function fetchData() {
+        try {
+            const response = await api.get(`/bpm/${id}`, {
+                headers: {
+                    Authorization: `Bearer ${user.token}`
+                }
+            });
+            if (response.data) {
+                console.log(response.data)
+                const numbers = Array.isArray(response.data)
+                    ? response.data.map((it) => Number(it.bpm) || 0)
+                    : [];
+                setData(numbers);
+            }
+        } catch (e) {
+            console.log('Erro ao buscar dados:', e);
+        }
+    }
+    useEffect(() => {
+        fetchData();
+    }, [])
+    useEffect(() => {
+        console.log('data state updated:', data);
+    }, [data]);
     return (
         <View style={{ margin: 10, justifyContent: 'center', alignItems: 'center' }}>
-            <LineChart
+            {/* <LineChart
                 data={{
                     datasets: [{ data }],
                 }}
@@ -32,7 +59,7 @@ function HistoryGraph({ data }) {
                 }}
                 style={{ marginVertical: 8, borderRadius: 16 }}
 
-            />
+            /> */}
         </View>
     )
 }

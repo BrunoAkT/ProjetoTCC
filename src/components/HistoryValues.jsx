@@ -7,19 +7,15 @@ import { useNavigation } from "@react-navigation/native"
 function HistoryValues(params) {
     const navigation = useNavigation();
 
-    const dataAtual = new Date(params.date);
-    const dataFormatada = dataAtual.toLocaleDateString('pt-BR', {
-        day: 'numeric',
-        month: 'long',
-        year: 'numeric',
-        timeZone: 'America/Sao_Paulo'
-    });
+    const parts = params.date.split("/");
+    const jsDate = new Date(`${parts[2]}-${parts[1]}-${parts[0]}`);
+    const formatado = jsDate.toLocaleDateString("pt-BR", { day: "2-digit", month: "long", year: "numeric" });
 
     return (
         <TouchableOpacity style={styles.container} onPress={() => navigation.navigate('Statistics', params)}>
             <Image source={icon.logo}></Image>
             <View>
-                <Text style={styles.text}>{dataFormatada}</Text>
+                <Text style={styles.text}>{formatado}</Text>
                 {
                     params.emoji === 0 ? (
                         <Image source={icon.Sad}></Image>
@@ -33,7 +29,7 @@ function HistoryValues(params) {
                 }
             </View>
             <View style={styles.buttonnext}>
-                <Text style={styles.textnext}>Estatísticas</Text>
+                <Text style={styles.textnext}>Estatísticas {params.id}</Text>
                 <View style={styles.iconcase}>
                     <Image
                         source={icon.next}

@@ -45,8 +45,8 @@ export const styles = {
         textShadowRadius: 2,
     },
     container: {
-        flex: 1,
         alignItems: 'center',
+        height: '74%',
     },
     flatListContainer:{
         width: '100%',
