@@ -26,7 +26,12 @@ function Account({ hideRegister }) {
     const [nome, setName] = useState('');
     const [birthDate, setBirthDate] = useState('');
     const [image, setImage] = useState(null)
-
+    const dataAtual = new Date().toLocaleDateString('pt-BR', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+        timeZone: 'America/Sao_Paulo'
+    });
 
     const [registerStep, setRegisterStep] = useState(1);
     const goToNextStep = () => {
@@ -133,6 +138,8 @@ function Account({ hideRegister }) {
             });
             if (response.data) {
                 console.log(response.data);
+                await AsyncStorage.setItem(`dayData${user.id}`, dataAtual);
+                alert("Cadastro realizado com sucesso!");
             }
             navigation.navigate('Bai', { id: response.data.id });
         } catch (error) {

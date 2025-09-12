@@ -170,8 +170,7 @@ function Profile() {
                 headers: {
                     Authorization: `Bearer ${user.token}`
                 }
-            }
-            )
+            });
             if (response.data) {
                 console.log(response.data);
                 setUser(response.data);

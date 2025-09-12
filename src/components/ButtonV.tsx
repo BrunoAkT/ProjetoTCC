@@ -21,9 +21,6 @@ textbutton:{
     color: "#000000",
     fontSize:16,
     textAlign: "center", 
-}
-}
-)
-
+}})
 
 export default ButtonV

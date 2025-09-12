@@ -28,6 +28,9 @@ export const styles = {
         justifyContent: 'space-between',
         alignItems: 'center'
     },
+    frequencyFormat:{
+        alignItems: 'center',
+    },
     averageText: {
         fontSize: 60,
         fontFamily: Fonts_Styles.PoppinsSemiBold,

@@ -1,4 +1,5 @@
 
+import { Line } from "react-native-svg"
 import { Colors, Fonts_Size, Fonts_Styles } from "../../constants/theme"
 export const styles = {
     mainContainer: {
@@ -48,7 +49,7 @@ export const styles = {
         alignItems: 'center',
         height: '74%',
     },
-    flatListContainer:{
+    flatListContainer: {
         width: '100%',
         padding: 40,
     },
@@ -73,17 +74,30 @@ export const styles = {
         fontFamily: Fonts_Styles.PoppinsSemiBold,
         fontSize: Fonts_Size.lg
     },
-    inputContainer:{
-        flexDirection:'row',
-        justifyContent:'flex-end',
-        marginTop:20,
-        marginRight:20,
+    inputContainer: {
+        flexDirection: 'row',
+        justifyContent: 'flex-end',
+        marginTop: 20,
+        marginRight: 20,
+        gap: 10
     },
-    inputsm:{
+    inputText: {
+        fontFamily: Fonts_Styles.PoppinsRegular,
+        color: Colors.gray,
+        fontSize: Fonts_Size.md,
+        alignSelf: 'center'
+    },
+    inputsm: {
         backgroundColor: Colors.gray,
-        width:100,
-        height:40,
-        borderRadius:10,
-        textAlign:'center'
+        width: 100,
+        height: 40,
+        borderRadius: 10,
+        padding:0,
+        textAlign: 'center'
+    },
+    buttonFilter:{
+        backgroundColor: Colors.green,
+        borderRadius: 10,
+        padding: 5,
     }
 }

@@ -2,8 +2,10 @@ import { Image, Modal, SafeAreaView, Text, TouchableOpacity, View, ScrollView } 
 import { styles } from "./statistics.styles";
 import icon from "../../constants/icon";
 import HistoryGraph from "../../components/HistoryGraph";
-import { useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import { AuthContext } from "../../contexts/auth";
+import api from "../../constants/api";
 
 
 function Statistics(params) {
@@ -20,21 +22,61 @@ function Statistics(params) {
         setVisible(true);
     }
 
+    const [data, setData] = useState([]);
+    const [labels, setLabels] = useState([]);
+    const [max, setMax] = useState();
+    const [timeMax, setTimeMax] = useState();
+    const [avg, setAvg] = useState();
+    const { user } = useContext(AuthContext);
+    const id = route.params.id;
+
+    async function fetchData() {
+        try {
+            if (!user?.token || !id) return;
+            const response = await api.get(`/bpm/${id}`, {
+                headers: {
+                    Authorization: `Bearer ${user.token}`
+                }
+            });
+            if (response.data) {
+                const numbers = response.data.map(it => Number(it.bpm) || 0);
+                const horarios = response.data.map(it => it.horario || '');
+                setData(numbers);
+                setLabels(horarios);
+                setMax(Math.max(...numbers));
+                setTimeMax(horarios[numbers.indexOf(max)]);
+                setAvg(numbers.reduce((a, b) => a + b, 0) / numbers.length);
+            } else {
+                setData([]);
+                setLabels([]);
+            }
+        } catch (e) {
+            console.log('Erro ao buscar dados:', e);
+            setData([]);
+            setLabels([]);
+        }
+    }
+
+    useEffect(() => {
+        fetchData();
+    }, [id, user?.token]);
+
+
     return (
         <View style={styles.mainContainer}>
             <View style={styles.header}>
                 <Text style={styles.headerText}>{formatado}</Text>
-                <HistoryGraph id={route.params.id} />
+                <HistoryGraph data={data} labels={labels} />
             </View>
             <View style={styles.container}>
                 <View style={styles.midContainer}>
                     <View style={styles.frequencyFormat}>
                         <Text style={styles.text}>Maxima</Text>
                         <View style={styles.FrequencyNumberFormat}>
-                            <Text style={styles.averageText}>@</Text>
+                            <Text style={styles.averageText}>{max}</Text>
                             <Text style={styles.BPMText}>BPM</Text>
                         </View>
-                        <Text style={styles.text}>Valor de TESte</Text>
+                        <Text style={styles.text}>Valor de {timeMax}</Text>
                     </View>
                     <TouchableOpacity style={styles.summaryContainer} onPress={onOpen}>
                         <View style={styles.sumarryResult}>
@@ -100,9 +142,9 @@ function Statistics(params) {
                             <View>
                                 <Text style={styles.modalSubTitle}>Frequência Cardíaca</Text>
                                 <View>
-                                    {/* <Text style={styles.modalText}>Máxima: {route.params.hight_frequency} BPM</Text>
-                                    <Text style={styles.modalText}>Média: {route.params.avg_frequency} BPM</Text>
-                                    <Text style={styles.modalText}>Hora Máxima: {route.params.hight_frequency_time}</Text> */}
+                                    <Text style={styles.modalText}>Máxima: {max} BPM</Text>
+                                    <Text style={styles.modalText}>Hora da Máxima: {timeMax}</Text>
+                                    <Text style={styles.modalText}>Média Diária: {avg.toFixed(1)} BPM</Text>
                                 </View>
                             </View>
                         </View>

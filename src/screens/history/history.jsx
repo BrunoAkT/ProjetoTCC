@@ -6,9 +6,12 @@ import { TextInputMask } from "react-native-masked-text"
 import { useContext, useEffect, useState } from "react"
 import api from "../../constants/api"
 import { AuthContext } from "../../contexts/auth"
+import Ionicons from 'react-native-vector-icons/Ionicons';
+
 
 function History() {
-    const [classification, setClassification] = useState();
+    const [classification, setClassification] = useState([]);
+    const [classificationfilter, setClassificationfilter] = useState([]);
     const { user } = useContext(AuthContext);
 
 
@@ -16,11 +19,17 @@ function History() {
     async function LoadHistoric() {
         try {
             const response = await api.get(`/history/${user.id}`, {
+                params: {
+                    start: classification || undefined,
+                    limit: classificationfilter || undefined
+                },
                 headers: {
                     Authorization: `Bearer ${user.token}`
                 }
             });
-            setSavedHistory(Array.isArray(response.data) ? response.data : []);
+            if (response.data) {
+                setSavedHistory(Array.isArray(response.data) ? response.data : []);
+            }
         } catch (error) {
             console.error(error);
         }
@@ -29,6 +38,7 @@ function History() {
     useEffect(() => {
         LoadHistoric();
     }, [])
+
     return (
         <View style={styles.mainContainer}>
             <Topcurve></Topcurve>
@@ -49,6 +59,21 @@ function History() {
                     value={classification}
                     onChangeText={setClassification}
                 />
+                <Text style={styles.inputText}> até </Text>
+                <TextInputMask
+                    type={'datetime'}
+                    options={{
+                        format: 'DD/MM/YYYY'
+                    }}
+                    placeholder="00/00/0000"
+                    style={styles.inputsm}
+                    keyboardType="numeric"
+                    value={classificationfilter}
+                    onChangeText={setClassificationfilter}
+                />
+                <TouchableOpacity style={styles.buttonFilter} onPress={LoadHistoric}>
+                    <Ionicons name="repeat-outline" size={30} color="#404040" />
+                </TouchableOpacity>
             </View>
             <View style={styles.container}>
                 <FlatList
