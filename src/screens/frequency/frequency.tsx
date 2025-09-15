@@ -487,6 +487,9 @@ function Frequency({ route }) {
       </View>
 
       <Animated.View style={[styles.animatedContainer, { bottom: slideAnim }]}>
+        <View style={styles.annotationHeader}>
+          <Text style={styles.BPMText}>Anotações •</Text>
+        </View>
         <View style={styles.infContainer}>
           <TextInput
             value={TextData}

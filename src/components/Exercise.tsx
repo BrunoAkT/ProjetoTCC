@@ -3,7 +3,7 @@ import { Colors, Fonts_Size, Fonts_Styles } from "../constants/theme"
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useState } from "react";
 
-const SUA_CHAVE_GEMINI = 'AIzaSyDLF2dqusYqGGxF77HsMzgxaWjOjid4sC4'
+// const SUA_CHAVE_GEMINI = 'AIzaSyDLF2dqusYqGGxF77HsMzgxaWjOjid4sC4'
 
 function Exercise(params) {
 
@@ -14,34 +14,34 @@ function Exercise(params) {
         setVisible(false);
     };
 
-    async function gerarExplicacaoIA() {
-        setCarregando(true);
-        try {
-            const prompt = `Explique de forma clara e breve o que é a atividade "${params.nome}" e quais são seus benefícios para reduzir estresse e ansiedade.`;
+    // async function gerarExplicacaoIA() {
+    //     setCarregando(true);
+    //     try {
+    //         const prompt = `Explique de forma clara e breve o que é a atividade "${params.nome}" e quais são seus benefícios para reduzir estresse e ansiedade.`;
 
-            const respostaAPI = await fetch(
-                `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${SUA_CHAVE_GEMINI}`,
-                {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        contents: [{ parts: [{ text: prompt }] }],
-                    }),
-                }
-            );
+    //         const respostaAPI = await fetch(
+    //             `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${SUA_CHAVE_GEMINI}`,
+    //             {
+    //                 method: 'POST',
+    //                 headers: {
+    //                     'Content-Type': 'application/json',
+    //                 },
+    //                 body: JSON.stringify({
+    //                     contents: [{ parts: [{ text: prompt }] }],
+    //                 }),
+    //             }
+    //         );
 
-            const data = await respostaAPI.json();
-            const textoGerado = data.candidates?.[0]?.content?.parts?.[0]?.text;
-            setVisible(true);
-            setResposta(textoGerado || 'Nenhuma resposta gerada.');
-        } catch (err) {
-            console.error('Erro ao gerar explicação:', err);
-            setResposta('Erro ao gerar explicação.');
-        }
-        setCarregando(false);
-    }
+    //         const data = await respostaAPI.json();
+    //         const textoGerado = data.candidates?.[0]?.content?.parts?.[0]?.text;
+    //         setVisible(true);
+    //         setResposta(textoGerado || 'Nenhuma resposta gerada.');
+    //     } catch (err) {
+    //         console.error('Erro ao gerar explicação:', err);
+    //         setResposta('Erro ao gerar explicação.');
+    //     }
+    //     setCarregando(false);
+    // }
 
     return (
         <TouchableOpacity style={styles.container}>
@@ -55,7 +55,7 @@ function Exercise(params) {
             <View style={styles.image}>
 
             </View>
-            <TouchableOpacity style={styles.information} onPress={gerarExplicacaoIA}>
+            <TouchableOpacity style={styles.information} onPress={/*gerarExplicacaoIA*/ () => { setVisible(true); setResposta(params.descricao) }}>
                 <Ionicons name="help-circle-outline" size={40} />
 
             </TouchableOpacity>

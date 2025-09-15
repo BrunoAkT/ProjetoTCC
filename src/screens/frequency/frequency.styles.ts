@@ -103,18 +103,22 @@ export const styles = StyleSheet.create({
         borderTopRightRadius: 30,
         height: '120%',
         width: '90%',
-        padding: 30,
+        padding: 10,
         marginHorizontal: 20,
         borderWidth: 1,
         borderColor: Colors.dark_gray,
     },
+    annotationHeader: {
+        marginHorizontal: 20,
 
+    },
     infInput: {
         fontFamily: Fonts_Styles.PoppinsRegular,
         fontSize: Fonts_Size.lg,
         color: Colors.dark_gray,
         height: 300,
-
+        padding: 30,
+        textAlignVertical: 'top' as const,
     },
     animatedContainer: {
         position: 'absolute',

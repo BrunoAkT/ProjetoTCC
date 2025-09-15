@@ -1,13 +1,31 @@
-import { Image, Text, View, ScrollView, FlatList } from 'react-native'
+import { Image, Text, View, ScrollView, FlatList, TouchableOpacity } from 'react-native'
 import { styles } from './exercises.styles'
 import { exercises } from '../../constants/dataTest'
 import icon from '../../constants/icon'
 import Category from '../../components/Category'
 import Exercise from '../../components/Exercise'
+import api from '../../constants/api'
+import { useContext, useEffect, useState } from 'react'
+import { AuthContext } from '../../contexts/auth'
 
 function Exercises() {
-    
 
+    const { user } = useContext(AuthContext)
+    const [dataExercises, setDataExercises] = useState([])
+
+    async function FetchData() {
+        const response = await api.get('/exercises', {
+            headers: {
+                Authorization: `Bearer ${user.token}`
+            }
+        })
+        if (response) {
+            setDataExercises(response.data)
+        }
+    }
+    useEffect(() => {
+        FetchData()
+    },[])
 
     return (
         <View style={styles.mainContainer}>
@@ -37,7 +55,7 @@ function Exercises() {
             <View>
                 <Text style={styles.text}>Metodos</Text>
                 <FlatList
-                    data={exercises}
+                    data={dataExercises}
                     keyExtractor={(item) => item.id.toString()}
                     renderItem={({ item }) => (
                         <Exercise
