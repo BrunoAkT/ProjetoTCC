@@ -71,10 +71,11 @@ function Home() {
         year: 'numeric',
         timeZone: 'America/Sao_Paulo'
     });
+
+
     async function setResults() {
         try {
             setShowPopUp(true);
-            console.log(dataAtual)
             console.log("Data:", await AsyncStorage.getItem(`dayData${user.id}`));
             console.log('User ID:', user.id);
             console.log("Anotações:", await AsyncStorage.getItem(`textData${user.id}`));
@@ -82,11 +83,14 @@ function Home() {
             console.log("BAI:", await AsyncStorage.getItem(`total${user.id}`));
             console.log("Emoji:", await AsyncStorage.getItem(`selectedEmoji${user.id}`));
             console.log('--------------------');
+            console.log(user.id)
+            console.log(dataAtual)
             const dayData = await AsyncStorage.getItem(`dayData${user.id}`);
             const textData = await AsyncStorage.getItem(`textData${user.id}`);
             const historicData = await AsyncStorage.getItem(`historicData${user.id}`);
             const total = await AsyncStorage.getItem(`total${user.id}`);
             const selectedEmoji = await AsyncStorage.getItem(`selectedEmoji${user.id}`);
+            console.log(dayData)
 
             if (dayData !== dataAtual) {
                 const response = await api.post(`/history/${user.id}`, {

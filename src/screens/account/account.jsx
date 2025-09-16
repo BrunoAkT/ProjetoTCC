@@ -17,6 +17,7 @@ import * as ImagePicker from 'expo-image-picker';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import CheckBox2 from '../../components/CheckBox';
 import api from '../../constants/api';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 function Account({ hideRegister }) {
 
@@ -33,13 +34,39 @@ function Account({ hideRegister }) {
         timeZone: 'America/Sao_Paulo'
     });
 
+
     const [registerStep, setRegisterStep] = useState(1);
-    const goToNextStep = () => {
+    const goToNextStep = async () => {
+        const emailExists = await existEmail();
+        if (emailExists) {
+            return
+        };
+
+        if (!email || !senha || !confirmPassword) {
+            return alert("Por favor, preencha todos os campos!");
+        }
         if (senha != confirmPassword) {
             return alert("As senhas não coincidem!");
         }
         setRegisterStep(2);
     };
+
+    async function existEmail() {
+        try {
+            if (!email) return false;
+            console.log("Verificando email:", email);
+            const response = await api.get(`/user/verification`, {
+                params: { email: email }
+            });
+            if (response.data?.exists) {
+                alert("Email já cadastrado!");
+                return true;
+            }
+            return false;
+        } catch (error) {
+            console.error("Erro ao verificar email:", error);
+        }
+    }
     const goToPreviousStep = () => {
         setRegisterStep(1);
     };
@@ -137,9 +164,8 @@ function Account({ hideRegister }) {
                 condicoes: condicoesJson.condicoes
             });
             if (response.data) {
-                console.log(response.data);
-                await AsyncStorage.setItem(`dayData${user.id}`, dataAtual);
-                alert("Cadastro realizado com sucesso!");
+                console.log("Usuário cadastrado com sucesso!", response.data.id);
+                await AsyncStorage.setItem(`dayData${response.data.id}`, dataAtual);
             }
             navigation.navigate('Bai', { id: response.data.id });
         } catch (error) {

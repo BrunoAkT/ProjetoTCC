@@ -62,7 +62,7 @@ function Exercises() {
                             nome={item.nome}
                             descricao={item.descricao}
                             icone={item.icone}
-                            duracao={item.duracao}
+                            duracao={item.tempo}
                             rota={item.rota}
                         />
                     )}
