@@ -13,6 +13,7 @@ function Exercises() {
     const { user } = useContext(AuthContext)
     const [dataExercises, setDataExercises] = useState([])
 
+
     async function FetchData() {
         const response = await api.get('/exercises', {
             headers: {
@@ -21,11 +22,12 @@ function Exercises() {
         })
         if (response) {
             setDataExercises(response.data)
+
         }
     }
     useEffect(() => {
         FetchData()
-    },[])
+    }, [])
 
     return (
         <View style={styles.mainContainer}>
@@ -61,9 +63,10 @@ function Exercises() {
                         <Exercise
                             nome={item.nome}
                             descricao={item.descricao}
-                            icone={item.icone}
                             duracao={item.tempo}
-                            rota={item.rota}
+                            img={item.image}
+                            video={item.video}
+                            audio={item.audio}
                         />
                     )}
                     style={styles.scrollExercicies}

@@ -1,19 +1,25 @@
-import { ActivityIndicator, Image, Modal, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native"
+import { ActivityIndicator, Dimensions, Image, Modal, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native"
 import { Colors, Fonts_Size, Fonts_Styles } from "../constants/theme"
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useState } from "react";
+import api from "../constants/api";
+import YoutubePlayer from "react-native-youtube-iframe";
+
 
 // const SUA_CHAVE_GEMINI = 'AIzaSyDLF2dqusYqGGxF77HsMzgxaWjOjid4sC4'
+const window = Dimensions.get('window');
 
 function Exercise(params) {
 
     const [resposta, setResposta] = useState('');
     const [carregando, setCarregando] = useState(false);
-    const [visible, setVisible] = useState(true);
-    const onClose = () => {
-        setVisible(false);
+    const [visibleDescription, setVisibleDescription] = useState(true);
+    const onCloseDescription = () => {
+        setVisibleDescription(false);
     };
+    const [handleVisible, setHandleVisible] = useState(false);
 
+    const preview = params.img ? `${api.defaults.baseURL}/uploads/${params.img || ""}` : null;
     // async function gerarExplicacaoIA() {
     //     setCarregando(true);
     //     try {
@@ -44,46 +50,81 @@ function Exercise(params) {
     // }
 
     return (
-        <TouchableOpacity style={styles.container}>
-            <View style={styles.containerText}>
-                <Text style={styles.text}>{params.nome}</Text>
-                <View style={styles.buttonplay}>
-                    <Ionicons name="caret-forward-sharp" size={30} />
-                    <Text style={styles.textbutton}>{params.duracao} min</Text>
-                </View>
-            </View>
-            <View style={styles.image}>
+        <View>
+            <TouchableOpacity style={styles.container} onPress={() => setHandleVisible(true)}>
 
-            </View>
-            <TouchableOpacity style={styles.information} onPress={/*gerarExplicacaoIA*/ () => { setVisible(true); setResposta(params.descricao) }}>
-                <Ionicons name="help-circle-outline" size={40} />
-
-            </TouchableOpacity>
-
-            {carregando && <ActivityIndicator/>}
-
-            {resposta !== '' && (
-                <Modal
-                    transparent
-                    visible={visible}
-                    animationType="fade"
-                    onRequestClose={onClose}
-                >
-                    <View style={styles.overlay}>
-                        <View style={styles.content}>
-                            <TouchableOpacity style={styles.close} onPress={onClose}>
-                                <Ionicons name="close" size={24} />
-                            </TouchableOpacity>
-                            <ScrollView>
-                                <Text style={styles.textAnwser}>{resposta}</Text>
-                            </ScrollView>
-                        </View>
+                <View style={styles.containerText}>
+                    <Text style={styles.text}>{params.nome}</Text>
+                    <View style={styles.buttonplay}>
+                        <Ionicons name="caret-forward-sharp" size={30} />
+                        <Text style={styles.textbutton}>{params.duracao} min</Text>
                     </View>
+                </View>
+                <View style={styles.image}>
+                    {preview ? (
+                        <Image
+                            source={{ uri: preview }}
+                            style={styles.imagePreview}
+                        />
+                    ) : (
+                        <Text style={{ borderWidth: 1 }}>No Image Available</Text>
+                    )}
+                </View>
+                <TouchableOpacity style={styles.information} onPress={/*gerarExplicacaoIA*/ () => { setVisibleDescription(true); setResposta(params.descricao) }}>
+                    <Ionicons name="help-circle-outline" size={40} />
 
-                </Modal>
-            )
-            }
-        </TouchableOpacity >
+                </TouchableOpacity>
+
+                {carregando && <ActivityIndicator />}
+
+                {resposta !== '' && (
+                    <Modal
+                        transparent
+                        visible={visibleDescription}
+                        animationType="fade"
+                        onRequestClose={onCloseDescription}
+                    >
+                        <View style={styles.overlay}>
+                            <View style={styles.content}>
+                                <TouchableOpacity style={styles.close} onPress={onCloseDescription}>
+                                    <Ionicons name="close" size={24} />
+                                </TouchableOpacity>
+                                <ScrollView
+                                    contentContainerStyle={{ paddingBottom: 20 }}
+                                    showsVerticalScrollIndicator>
+                                    <Text style={styles.textAnwser}>{resposta}</Text>
+                                </ScrollView>
+                            </View>
+                        </View>
+
+                    </Modal>
+                )}
+            </TouchableOpacity >
+            <Modal
+                transparent
+                visible={handleVisible}
+                animationType="fade"
+                onRequestClose={() => setHandleVisible(false)}
+            >
+                <View style={styles.overlay}>
+                    <View style={styles.content}>
+                        <TouchableOpacity style={styles.close} onPress={() => setHandleVisible(false)}>
+                            <Ionicons name="close" size={24} />
+                        </TouchableOpacity>
+                        <Text></Text>
+                        <YoutubePlayer
+                            height={250}
+                            play={true}
+                            videoId="hplFqaANsFw"
+                            initialPlayerParams={{
+                                start: 258, // começa aos 258 segundos
+                            }}
+                        />
+                    </View>
+                </View>
+            </Modal>
+        </View>
+
     )
 }
 
@@ -122,7 +163,6 @@ const styles = StyleSheet.create({
     image: {
         width: 100,
         height: 100,
-        borderWidth: 1,
         right: 15,
     },
     information: {
@@ -155,11 +195,18 @@ const styles = StyleSheet.create({
         backgroundColor: 'white',
         padding: 20,
         borderRadius: 12,
-        width: '90%',
-        height: '90%',
+        margin: 20,
+        width: Math.min(window.width - 40, 600),
+        maxHeight: window.height * 0.8,
     },
-    close:{
+    close: {
         alignItems: 'flex-end',
+    },
+    imagePreview: {
+        width: '100%',
+        height: '100%',
+        resizeMode: 'cover',
+        borderRadius: 8,
     }
 })
 
