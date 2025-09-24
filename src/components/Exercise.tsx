@@ -241,19 +241,15 @@ function Exercise(params) {
                         </View>
                         {audio ?
                             <View style={styles.audioContainer}>
-                                <Text style={styles.title}>Ouça o áudio relaxante:</Text>
-
+                                <Text style={styles.title}>Relaxe e acompanhe o áudio:</Text>
                                 <View style={styles.player}>
-                                    {/* Botão Play/Pause */}
-                                    <TouchableOpacity onPress={togglePlayPause} style={styles.playButton}>
+                                    <TouchableOpacity onPress={togglePlayPause}>
                                         <Ionicons
                                             name={status.isPlaying ? "pause-circle" : "play-circle"}
                                             size={70}
                                             color="#6AAFE6"
                                         />
                                     </TouchableOpacity>
-
-                                    {/* Slider */}
                                     <Slider
                                         style={styles.slider}
                                         minimumValue={0}
@@ -264,8 +260,6 @@ function Exercise(params) {
                                         maximumTrackTintColor="#D3EAFD"
                                         thumbTintColor="#6AAFE6"
                                     />
-
-                                    {/* Tempo */}
                                     <View style={styles.timeContainer}>
                                         <Text style={styles.timeText}>{formatTime(status.positionMillis)}</Text>
                                         <Text style={styles.timeText}>{formatTime(status.durationMillis - status.positionMillis)}</Text>
@@ -418,7 +412,6 @@ const styles = StyleSheet.create({
         fontSize: 14,
         color: "#555",
         textAlign: "center",
-        marginVertical: 10,
         fontFamily: Fonts_Styles.PoppinsSemiBold,
     },
     buttons: {
@@ -458,18 +451,14 @@ const styles = StyleSheet.create({
     player: {
         alignItems: "center",
     },
-    playButton: {
-        marginBottom: 15,
-    },
     slider: {
         width: "90%",
-        height: 40,
         marginBottom: 10,
     },
     timeText: {
         color: "#3D5A80",
         fontWeight: "500",
-    },
+    }
 })
 
 export default Exercise
