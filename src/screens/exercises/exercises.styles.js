@@ -29,7 +29,6 @@ export const styles = {
     },
     categoryItens: {
         flexDirection: 'row',
-        gap: 10,
     },
     scrollCategory: {
         padding: 20

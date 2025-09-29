@@ -12,22 +12,47 @@ function Exercises() {
 
     const { user } = useContext(AuthContext)
     const [dataExercises, setDataExercises] = useState([])
+    const [dataTypes, setDataTypes] = useState([])
+
+    const [filterOn, setFilterOn] = useState(null)
 
 
     async function FetchData() {
-        const response = await api.get('/exercises', {
+
+        const exercisesConfig = {
+            headers: {
+                Authorization: `Bearer ${user.token}`
+            }
+        };
+
+        if (filterOn) {
+            exercisesConfig.params = { type: filterOn };
+        }
+
+        const response = await api.get('/exercises', exercisesConfig);
+
+        const responseTypes = await api.get('/types', {
             headers: {
                 Authorization: `Bearer ${user.token}`
             }
         })
-        if (response) {
-            setDataExercises(response.data)
 
+        if (response && responseTypes) {
+            setDataExercises(response.data)
+            setDataTypes(responseTypes.data)
         }
     }
     useEffect(() => {
         FetchData()
-    }, [])
+    }, [filterOn])
+
+    function Press(id) {
+        setFilterOn(id)
+        if (filterOn === id) {
+            setFilterOn(null) 
+        }
+        FetchData() 
+    }
 
     return (
         <View style={styles.mainContainer}>
@@ -42,17 +67,21 @@ function Exercises() {
             </View>
             <View>
                 <Text style={styles.text}>Categorias</Text>
-                <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} style={styles.scrollCategory}>
-                    <View style={styles.categoryItens}>
-                        <Category></Category>
-                        <Category></Category>
-                        <Category></Category>
-                        <Category></Category>
-                        <Category></Category>
-                        <Category></Category>
-                        <Category></Category>
-                    </View>
-                </ScrollView>
+                <FlatList
+                    data={dataTypes}
+                    keyExtractor={(item) => item.id_tipo.toString()}
+                    renderItem={({ item }) => (
+                        <Category
+                            nome={item.nome_tipo}
+                            icon={item.icon}
+                            id={item.id_tipo}
+                            onPressCategory={() => Press(item.id_tipo)}
+                            filterOn={filterOn === item.id_tipo}
+                        />
+                    )}
+                    horizontal={true}
+                    style={styles.scrollCategory}
+                />
             </View>
             <View>
                 <Text style={styles.text}>Metodos</Text>
