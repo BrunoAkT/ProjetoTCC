@@ -78,15 +78,12 @@ export const styles = {
     },
     summaryContainer: {
         backgroundColor: Colors.gray,
-        width: 200,
-        height: 60,
         alingItems: 'center',
         justifyContent: 'center',
         padding: 15,
         borderRadius: 10,
     },
     sumarryResult: {
-        flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
     },

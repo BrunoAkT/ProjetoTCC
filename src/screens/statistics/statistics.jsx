@@ -41,11 +41,17 @@ function Statistics(params) {
             if (response.data) {
                 const numbers = response.data.map(it => Number(it.bpm) || 0);
                 const horarios = response.data.map(it => it.horario || '');
+
+                const maxValue = Math.max(...numbers);
+                const maxIndex = numbers.indexOf(maxValue);
+                const maxTime = horarios[maxIndex];
+                const avgValue = numbers.reduce((a, b) => a + b, 0) / numbers.length;
+
                 setData(numbers);
                 setLabels(horarios);
-                setMax(Math.max(...numbers));
-                setTimeMax(horarios[numbers.indexOf(max)]);
-                setAvg(numbers.reduce((a, b) => a + b, 0) / numbers.length);
+                setMax(maxValue);
+                setTimeMax(maxTime);
+                setAvg(avgValue);
             } else {
                 setData([]);
                 setLabels([]);

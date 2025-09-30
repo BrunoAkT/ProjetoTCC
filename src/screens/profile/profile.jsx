@@ -9,7 +9,7 @@ import * as ImagePicker from 'expo-image-picker';
 import api from "../../constants/api";
 import CheckBox2 from "../../components/CheckBox";
 import { AuthContext } from "../../contexts/auth";
-import Icon from "../../constants/icon";
+import { Colors } from "../../constants/theme";
 
 
 
@@ -87,6 +87,9 @@ function Profile() {
     }
 
     const [dataConditions, setDataConditions] = useState([]);
+
+
+
     async function LoadConditions() {
         try {
             const response = await api.get('/conditions');
@@ -134,6 +137,10 @@ function Profile() {
     }, [])
 
     function getCondicoesJson() {
+        if (noCondition) {
+            const item = dataConditions.find(item => item.id === 1);
+            return { condicoes: item ? [{ id: item.id, nome: item.nome }] : [] };
+        }
         const condicoesMarcadas = dataConditions
             .filter(item => conditions[item.id])
             .map(item => {
@@ -175,6 +182,8 @@ function Profile() {
                 console.log(response.data);
                 setUser(response.data);
                 setVisible(false);
+                LoadConditions();
+                LoadUserConditions();
             }
         } catch (error) {
             console.log('erro', error)
@@ -245,9 +254,11 @@ function Profile() {
                                     style={styles.textInput}
                                     placeholder={Nome}
                                     onChangeText={setNome}
+                                    placeholderTextColor={Colors.gray}
+
                                 ></TextInput>
                             </View>
-                            <View v>
+                            <View>
                                 <Text style={styles.textreg}>Data de Nascimento</Text>
                                 <TextInputMask
                                     type={'datetime'}
@@ -255,6 +266,7 @@ function Profile() {
                                         format: 'DD/MM/YYYY'
                                     }}
                                     placeholder={birthDate}
+                                    placeholderTextColor={Colors.gray}
                                     style={styles.textInput}
                                     keyboardType="numeric"
                                     onChangeText={setBirthDate}

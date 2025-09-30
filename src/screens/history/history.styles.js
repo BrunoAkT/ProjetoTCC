@@ -77,8 +77,7 @@ export const styles = {
     inputContainer: {
         flexDirection: 'row',
         justifyContent: 'flex-end',
-        marginTop: 20,
-        marginRight: 20,
+        margin: 10,
         gap: 10
     },
     inputText: {

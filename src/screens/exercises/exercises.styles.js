@@ -35,7 +35,7 @@ export const styles = {
     },
     scrollExercicies: {
         padding: 20,
-        height: 500,
+        height: 400,
         position: 'relative', 
         overflow: 'visible', 
     },
