@@ -93,6 +93,12 @@ function Home() {
             console.log(dayData)
 
             if (dayData !== dataAtual) {
+                
+                if (dayData === null) {
+                    await AsyncStorage.setItem(`dayData${user.id}`, dataAtual); // define nova data
+                    setShowPopUp(false);
+                }
+
                 const response = await api.post(`/history/${user.id}`, {
                     date: dayData,
                     anotation: textData,

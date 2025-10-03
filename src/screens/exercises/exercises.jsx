@@ -1,6 +1,5 @@
 import { Image, Text, View, ScrollView, FlatList, TouchableOpacity } from 'react-native'
 import { styles } from './exercises.styles'
-import { exercises } from '../../constants/dataTest'
 import icon from '../../constants/icon'
 import Category from '../../components/Category'
 import Exercise from '../../components/Exercise'
@@ -24,12 +23,12 @@ function Exercises() {
                 Authorization: `Bearer ${user.token}`
             }
         };
-
+        exercisesConfig.params = { id: user.id };
         if (filterOn) {
-            exercisesConfig.params = { type: filterOn };
+            exercisesConfig.params = { type: filterOn, id: user.id };
         }
 
-        const response = await api.get('/exercises', exercisesConfig);
+        const response = await api.get(`/exercises`, exercisesConfig);
 
         const responseTypes = await api.get('/types', {
             headers: {
@@ -49,9 +48,9 @@ function Exercises() {
     function Press(id) {
         setFilterOn(id)
         if (filterOn === id) {
-            setFilterOn(null) 
+            setFilterOn(null)
         }
-        FetchData() 
+        FetchData()
     }
 
     return (

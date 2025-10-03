@@ -11,4 +11,4 @@ function AuthProvider(props) {
     </AuthContext.Provider>
 }
 
-export { AuthContext, AuthProvider }
+export { AuthContext, AuthProvider } 
