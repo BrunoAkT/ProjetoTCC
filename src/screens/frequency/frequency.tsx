@@ -12,6 +12,9 @@ import { RealTimeGraph } from '../../components/RealTimeGraph';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { AuthContext } from '../../contexts/auth';
+import { Colors } from '../../constants/theme';
+import Icon from 'react-native-vector-icons/FontAwesome5';
+
 
 
 // Entrada Da Data Atual
@@ -391,6 +394,41 @@ function Frequency({ route }) {
     loadData();
   }, []);
 
+  function getExerciseRecommendation(bpm: number | null) {
+    if (bpm == null) return null;
+    if (bpm > 120) {
+      return {
+        title: "Relaxe Imediatamente",
+        description: "Sua frequência está muito alta. Sente-se, respire fundo e experimente um exercício de respiração guiada.",
+        type: "respiracao",
+        iconName: "heartbeat"
+      };
+    }
+    if (bpm > 110) {
+      return {
+        title: "Pausa para Relaxamento",
+        description: "Sua frequência está alta. Experimente uma meditação curta ou alongamento leve.",
+        type: "meditacao",
+        iconName: "hands"
+      };
+    }
+    if (bpm > 90) {
+      return {
+        title: "Alongamento Sugerido",
+        description: "Sua frequência está levemente elevada. Que tal um alongamento ou caminhada leve?",
+        type: "alongamento",
+        iconName: "running"
+      };
+    }
+    return {
+      title: "Continue Assim!",
+      description: "Sua frequência está dentro do normal. Continue com seus hábitos saudáveis!",
+      type: "normal"
+    };
+  }
+  const recommendation = getExerciseRecommendation(resultBpm);
+
+
   const [isLayoutReady, setIsLayoutReady] = useState(false);
   if (!hasPermission) return <PermissionsPage />
   if (device == null) return <NoCameraDeviceError />
@@ -461,13 +499,24 @@ function Frequency({ route }) {
 
 
         <View style={styles.recomendationContainer}>
-          <Text style={styles.recomendationText}>Respire</Text>
+          <Text style={styles.recomendationText}>
+            {recommendation ? recommendation.title : "Recomendação"}
+          </Text>
+          <Text style={styles.recomendationText}>
+            {recommendation ? recommendation.description : ""}
+          </Text>
+
         </View>
 
         <View style={styles.functionContainers}>
-          <TouchableOpacity style={styles.exerciciesContainer} onPress={() => navigation.navigate('Exercises')}>
-            <Image></Image>
-          </TouchableOpacity>
+          {recommendation && recommendation.type !== "normal" && (
+            <TouchableOpacity
+              style={styles.exerciciesContainer}
+              onPress={() => navigation.navigate('Exercises')}
+            >
+               <Icon name={recommendation.iconName} size={75} color={Colors.dark_gray} />
+            </TouchableOpacity>
+          )}
         </View>
 
         <View>

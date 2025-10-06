@@ -50,7 +50,7 @@ export const styles = StyleSheet.create({
     },
     historicList: {
         width: '100%',
-        height: 150,
+        height: 120,
     },
     frequencyFormat: {
         margin: 10,
@@ -65,11 +65,11 @@ export const styles = StyleSheet.create({
         marginTop: 20,
     },
     recomendationContainer: {
-        marginLeft: 50,
-        marginTop: 20,
+        marginLeft: 10,
+        marginTop: 10,
     },
     recomendationText: {
-        fontSize: Fonts_Size.title,
+        fontSize: Fonts_Size.lg,
         color: Colors.gray,
         fontFamily: Fonts_Styles.PoppinsRegular,
     },
@@ -78,11 +78,13 @@ export const styles = StyleSheet.create({
         height: 100,
         backgroundColor: Colors.gray,
         position: 'absolute',
-        right: 30,
-        top: -70,
+        right: 10,
+        top: -10,
         borderRadius: 10,
         elevation: 10,
         zIndex: 1,
+        alignItems: 'center',
+        justifyContent: 'center'
     },
     stressContainer: {
         width: '100%',
