@@ -11,7 +11,7 @@ class PpgtestcameraPlugin(proxy: VisionCameraProxy, options: Map<String, Any>?) 
 
     // JANELA DE SUAVIZAÇÃO: Um pequeno buffer para suavizar o sinal bruto
     private val smoothingHistory = LinkedList<Double>()
-    private val smoothingSize = 3 // Média dos últimos 3 frames. Ajustável.
+    private val smoothingSize = 5 // Média dos últimos 3 frames. Ajustável.
 
     // Usaremos uma LinkedList para manter um histórico dos valores e calcular a média (DC)
     private val signalHistory = LinkedList<Double>()
@@ -37,7 +37,7 @@ class PpgtestcameraPlugin(proxy: VisionCameraProxy, options: Map<String, Any>?) 
 
         val centerX = width / 2
         val centerY = height / 2
-        val regionSize = 10
+        val regionSize = 25
 
         var sumRed = 0.0
         var count = 0
@@ -59,7 +59,7 @@ class PpgtestcameraPlugin(proxy: VisionCameraProxy, options: Map<String, Any>?) 
             }
         }
 
-                if (count == 0) return null
+        if (count == 0) return null
         val rawAvgRed = sumRed / count
 
         // --- NOVO: PASSO DE SUAVIZAÇÃO ---

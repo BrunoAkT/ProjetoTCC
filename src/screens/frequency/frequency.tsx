@@ -14,6 +14,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { AuthContext } from '../../contexts/auth';
 import { Colors } from '../../constants/theme';
 import Icon from 'react-native-vector-icons/FontAwesome5';
+import InstructionModal from '../../components/InstructionModal';
 
 
 
@@ -75,6 +76,8 @@ function detectPeaks(values: number[], minDistance: number, minProminence: numbe
   const peaks: number[] = [];
   if (values.length < 3) return peaks;
 
+  const minPeakWidth = 2;
+
   for (let i = 1; i < values.length - 1; i++) {
     const currentValue = values[i];
     const prevValue = values[i - 1];
@@ -86,7 +89,7 @@ function detectPeaks(values: number[], minDistance: number, minProminence: numbe
       let leftValley = currentValue;
       for (let j = i - 1; j >= 0; j--) {
         leftValley = Math.min(leftValley, values[j]);
-        if (values[j] > currentValue) break; // Parar se encontrarmos um pico maior
+        if (values[j] > currentValue) break;
       }
 
       let rightValley = currentValue;
@@ -100,7 +103,22 @@ function detectPeaks(values: number[], minDistance: number, minProminence: numbe
       if (prominence >= minProminence) {
         // Verifica a distância do último pico encontrado
         if (peaks.length === 0 || i - peaks[peaks.length - 1] >= minDistance) {
-          peaks.push(i);
+
+          // --- NOVA VERIFICAÇÃO DE LARGURA ---
+          let width = 1;
+          // Verifica à esquerda
+          for (let j = i - 1; j > 0 && values[j] > values[j - 1] && values[j] > rightValley; j--) {
+            width++;
+          }
+          // Verifica à direita
+          for (let j = i + 1; j < values.length - 1 && values[j] > values[j + 1] && values[j] > leftValley; j++) {
+            width++;
+          }
+
+          if (width >= minPeakWidth) {
+            peaks.push(i);
+          }
+          // ------------------------------------
         }
       }
     }
@@ -121,8 +139,39 @@ function calculateBPM(timestamps: number[]): number {
   return 60000 / avgInterval; // ms -> bpm
 }
 
+function calculateRMSSD(rrIntervals: number[]): number {
+  if (rrIntervals.length < 2) return 0;
+
+  let sumOfSquares = 0;
+  for (let i = 1; i < rrIntervals.length; i++) {
+    const diff = rrIntervals[i] - rrIntervals[i - 1];
+    sumOfSquares += diff * diff;
+  }
+
+  const meanSquare = sumOfSquares / (rrIntervals.length - 1);
+  return Math.sqrt(meanSquare);
+}
+
+// Coloque esta função junto com as outras funções auxiliares no topo do arquivo
+function getMedian(values: number[]): number {
+  if (values.length === 0) return 0;
+
+  const sorted = [...values].sort((a, b) => a - b);
+  const middleIndex = Math.floor(sorted.length / 2);
+
+  if (sorted.length % 2 === 0) {
+    // Se for par, média dos dois do meio
+    return (sorted[middleIndex - 1] + sorted[middleIndex]) / 2;
+  } else {
+    // Se for ímpar, o valor do meio
+    return sorted[middleIndex];
+  }
+}
 function Frequency({ route }) {
   const navigation = useNavigation();
+  const { user } = useContext(AuthContext)
+  const [isInstructionVisible, setIsInstructionVisible] = useState(true);
+
 
   //Componente de Anotação
   const [isVisibleTab, setIsVisibleTab] = useState(false);
@@ -161,6 +210,9 @@ function Frequency({ route }) {
   const [isCalibrated, setIsCalibrated] = useState(false);
   const [calibrationData, setCalibrationData] = useState<number[]>([]);
 
+  const calibrationDataRef = useRef<number[]>([]);
+  // Crie um estado para armazenar o limiar de proeminência
+
   const isFingerDetectedRef = useRef(isFingerDetected);
   const isCalibratedRef = useRef(isCalibrated);
 
@@ -183,31 +235,12 @@ function Frequency({ route }) {
   // mantém ref atualizada com o último bpm calculado
   const savedResultRef = useRef(false); // flag para garantir execução única
 
-  useEffect(() => {
-    let interval: NodeJS.Timeout | null = null;
-    if (showMeasurementView) {
-      setResultBpm(null); // limpa resultado anterior quando iniciar nova medição
-      savedResultRef.current = false;
-      interval = setInterval(() => {
-        setTimer((prev) => {
-          if (prev <= 1) {
-            if (interval) clearInterval(interval);
-            setShowMeasurementView(false); // esconde a View após 30s
-            setIsCalibrated(false); // reset calibrado
-            setResultBpm(bpmRef.current); // salva o resultado final
-            setCameraReady(false);
-            setTorch('off');
-            return 0;
-          }
-          if (isCalibratedRef.current) {
-            return prev - 1;
-          }
-          return prev;
-        });
-      }, 1000);
-    }
-    return () => clearInterval(interval);
-  }, [showMeasurementView]);
+
+  const [resultRmssd, setResultRmssd] = useState<number | null>(null); // NOVO ESTADO
+  const measurementResultsRef = useRef<{ bpm: number | null; rrIntervals: number[] } | null>(null);
+  const allRmssdValuesRef = useRef<number[]>([]); // NOVO REF
+
+
 
   const savePPGValue = useCallback((result: { ac: number, dc: number }) => {
     // 1. Portão de Qualidade: o dedo está na câmera?
@@ -217,6 +250,8 @@ function Frequency({ route }) {
         setIsCalibrated(false);
         setCalibrationData([]);
         setData([]);
+        calibrationDataRef.current = [];
+
       }
       return;
     }
@@ -227,26 +262,56 @@ function Frequency({ route }) {
 
     // 2. Fase de Calibração
     if (isFingerDetectedRef.current && !isCalibratedRef.current) {
-      // Usando a forma funcional para garantir que estamos adicionando ao array mais recente
-      setCalibrationData(prevCalibrationData => {
-        const newCalibrationData = [...prevCalibrationData, result.ac];
+      // // Usando a forma funcional para garantir que estamos adicionando ao array mais recente
 
-        console.log(`Calibrando... ${newCalibrationData.length}/90`);
+      // OLD
+      // setCalibrationData(prevCalibrationData => {
+      //   const newCalibrationData = [...prevCalibrationData, result.ac];
 
-        // A lógica de finalização de calibração vai aqui dentro
-        if (newCalibrationData.length >= 90) {
-          console.log("Calibração concluída! Iniciando medição.");
+      //   console.log(`Calibrando... ${newCalibrationData.length}/90`);
+
+      //   // A lógica de finalização de calibração vai aqui dentro
+      //   if (newCalibrationData.length >= 90) {
+      //     console.log("Calibração concluída! Iniciando medição.");
+      //     setIsCalibrated(true);
+      //     setShowMeasurementView(true); // inicia exibição da View
+      //     setTimer(15); // reseta o timer
+      //     // Prepara para a próxima medição limpando os dados de calibração
+      //     return [];
+      //   }
+
+      //   // Continua a calibração retornando o novo array
+      //   return newCalibrationData;
+      // });
+      // return; // Sai da função durante a calibração
+
+
+      calibrationDataRef.current.push(result.ac); // Adiciona ao ref, sem re-renderizar
+
+      console.log(`Calibrando... ${calibrationDataRef.current.length}/150`);
+
+      // Processa a cada 30 frames (1 segundo)
+      if (calibrationDataRef.current.length >= 150) {
+        const lastSecondData = calibrationDataRef.current.slice(-150);
+        const stdDev = getStandardDeviation(lastSecondData);
+        console.log(`[CALIBRAÇÃO] Desvio Padrão do sinal: ${stdDev}`);
+
+        // Se o desvio padrão for baixo, o sinal está estável.
+        // O valor 0.005 é empírico e pode ser ajustado.
+        if (stdDev < 0.005) {
+          console.log("[CALIBRAÇÃO] Sinal estabilizado. Iniciando medição.");
+          calibrationDataRef.current = []; // Limpa para a próxima
           setIsCalibrated(true);
-          setShowMeasurementView(true); // inicia exibição da View
-          setTimer(15); // reseta o timer
-          // Prepara para a próxima medição limpando os dados de calibração
-          return [];
+          setShowMeasurementView(true);
+          setTimer(15);
+        } else {
+          // Se o sinal não estiver estável, remove dados antigos para continuar calibrando
+          if (calibrationDataRef.current.length > 150) {
+            calibrationDataRef.current.splice(0, 30);
+          }
         }
-
-        // Continua a calibração retornando o novo array
-        return newCalibrationData;
-      });
-      return; // Sai da função durante a calibração
+      }
+      return;
     }
 
     // 3. Fase de Medição
@@ -272,11 +337,24 @@ function Frequency({ route }) {
   }, [])
 
 
-  const bpm = useMemo(() => {
+  function calculateAge(dataNascStr) {
+    const [dia, mes, ano] = dataNascStr.split("/").map(Number);
+    const hoje = new Date();
+    const nascimento = new Date(ano, mes - 1, dia);
+    let idade = hoje.getFullYear() - nascimento.getFullYear();
+    const mesAtual = hoje.getMonth();
+    const diaAtual = hoje.getDate();
+    if (mesAtual < mes - 1 || (mesAtual === mes - 1 && diaAtual < dia)) {
+      idade--;
+    }
+    return idade;
+  }
+
+  const measurementResults = useMemo(() => {
     // Processar apenas quando tivermos dados suficientes (ex: 5 segundos de dados a 30 FPS)
     const MIN_SAMPLES = 150;
     if (data.length < MIN_SAMPLES) {
-      return null; // Sem dados suficientes
+      return { bpm: null, rrIntervals: [] }; // Sem dados suficientes
     }
 
     const values = data.map((d) => d.value);
@@ -295,41 +373,119 @@ function Frequency({ route }) {
     // 2. Detecção de Picos
     const fps = 30; // O FPS que você configurou na câmera
     // Distância mínima: 40 bpm -> 1.5s/batida -> 1.5*30 = 45 frames
-    const minPeakDistance = fps * (60 / 200); // Distância para 200 bpm (máximo)
+    const minPeakDistance = fps * (60 / (220 - calculateAge(user.data_nasc))); // A FC máxima é determinada pela idade 
     // Use o desvio padrão para definir a proeminência dinamicamente!
     // Multiplicar por um fator (ex: 1.5) se precisar de mais seletividade.
+
     const minPeakProminence = signalStdDev * 1.2;
+
+    //console.log(`Proeminência Mínima Usada: ${minPeakProminence}`);
+
     const peakIndices = detectPeaks(filteredValues, minPeakDistance, minPeakProminence);
     //console.log(`Picos detectados: ${peakIndices} com proeminência mínima de ${minPeakProminence}`);
+    //console.log(`Número de picos detectados: ${peakIndices}`);
 
     if (peakIndices.length < 2) {
-      console.log('Não há picos suficientes para calcular')
+      //console.log('Não há picos suficientes para calcular')
       return null; // Não há picos suficientes para calcular
     }
 
     const peakTimes = peakIndices.map((index) => times[index]);
     //console.log(`Tempos dos picos: ${peakTimes}`);
 
+    const rrIntervals = [];
+    for (let i = 1; i < peakTimes.length; i++) {
+      const interval = peakTimes[i] - peakTimes[i - 1];
+      rrIntervals.push(interval);
+    }
+    //console.log(`Intervalo RR: ${rrIntervals} ms`);
+
+    const rrIntervalsClean = rrIntervals.filter((interval, index, arr) => {
+      if (index === 0) return true; // Mantém o primeiro intervalo
+      const prevInterval = arr[index - 1];
+      const diffPercent = Math.abs(interval - prevInterval) / prevInterval;
+
+      // Remove o intervalo se ele for mais de 30% diferente do anterior.
+      // Este é um filtro simples, mas eficaz para remover grandes erros.
+      return diffPercent <= 0.30;
+    });
+
+    //console.log(`Intervalo RR: ${rrIntervalsClean} ms`);
+
+
     const calculatedBpm = calculateBPM(peakTimes);
     //console.log(`BPM calculado: ${calculatedBpm}`);
 
     // 3. Validação do BPM
     // Se o BPM estiver fora de uma faixa razoável, ignore-o.
-    if (calculatedBpm > 40 && calculatedBpm < 200) {
-      return Math.round(calculatedBpm);
+    if (calculatedBpm > 40 && calculatedBpm < 220) {
+      return {
+        bpm: Math.round(calculatedBpm),
+        rrIntervals: rrIntervalsClean // Retorna os intervalos limpos
+      };
     }
 
-    return null
+
+    return { bpm: null, rrIntervals: [] }
   }, [data]);
 
   useEffect(() => {
-    bpmRef.current = typeof bpm === 'number' ? bpm : null;
-  }, [bpm]);
+    measurementResultsRef.current = measurementResults;
+    if (measurementResults?.rrIntervals && measurementResults.rrIntervals.length > 1) {
+      const instantRmssd = calculateRMSSD(measurementResults.rrIntervals);
+      if (instantRmssd > 0) { // Adiciona apenas valores válidos
+        allRmssdValuesRef.current.push(instantRmssd);
+      }
+    }
+  }, [measurementResults]);
+
+  useEffect(() => {
+    let interval: NodeJS.Timeout | null = null;
+    if (showMeasurementView) {
+      setResultBpm(null); // limpa resultado anterior quando iniciar nova medição
+      setResultRmssd(null); // Limpa o resultado anterior
+      savedResultRef.current = false;
+      interval = setInterval(() => {
+        setTimer((prev) => {
+          if (prev <= 1) {
+            if (interval) clearInterval(interval);
+            setShowMeasurementView(false); // esconde a View após 30s
+            setIsCalibrated(false); // reset calibrado
+
+
+            const finalBpm = measurementResultsRef.current?.bpm ?? null;
+            const medianRmssd = getMedian(allRmssdValuesRef.current);
+
+
+
+            setResultBpm(finalBpm);
+            setResultRmssd(medianRmssd);
+            allRmssdValuesRef.current = [];
+
+            setCameraReady(false);
+            setTorch('off');
+
+            return 0;
+          }
+          if (isCalibratedRef.current) {
+            return prev - 1;
+          }
+          return prev;
+        });
+      }, 1000);
+    }
+    return () => clearInterval(interval);
+  }, [showMeasurementView]);
+
+
+  useEffect(() => {
+    bpmRef.current = measurementResults?.bpm ?? null;
+  }, [measurementResults]);
 
   const [HistoricData, setHistoricData] = useState<{ time: string, bpm: number[] }[]>([])
   const [TextData, setTextData] = useState<string>("")
 
-  const { user } = useContext(AuthContext)
+
 
   const saveBpmData = async () => {
     try {
@@ -436,6 +592,10 @@ function Frequency({ route }) {
 
   return (
     <KeyboardAvoidingView style={styles.mainContainer}>
+      <InstructionModal
+        visible={isInstructionVisible}
+        onClose={() => setIsInstructionVisible(false)}
+      />
       <Pressable onPress={Keyboard.dismiss}>
         <View style={styles.header}>
           <Text style={styles.headerText}>{dataFormatada ?? 'Erro na Data'}</Text>
@@ -466,12 +626,20 @@ function Frequency({ route }) {
           <View style={styles.frequencyFormat}>
             <View style={styles.FrequencyNumberFormat}>
               {resultBpm == null ?
-                (isCalibrated ? <Text style={styles.averageText}>{bpm}</Text> : <ActivityIndicator size={'large'} style={{ marginRight: 10 }} />)
+                (isCalibrated ? <Text style={styles.averageText}>{measurementResults?.bpm}</Text> : <ActivityIndicator size={'large'} style={{ marginRight: 10 }} />)
                 :
                 <Text style={styles.averageText}>{resultBpm}</Text>
               }
-
               <Text style={styles.BPMText}>BPM</Text>
+            </View>
+
+            <View>
+              {resultRmssd != null && (
+                <View style={styles.RMSSDContainer}>
+                  <Text style={styles.text}>{resultRmssd.toFixed(0)}</Text>
+                  <Text style={styles.text}>ms (RMSSD)</Text>
+                </View>
+              )}
             </View>
             <Text style={styles.text}>valor de {horarioFormatado ?? 'Erro no Horario'}</Text>
           </View>
@@ -514,7 +682,7 @@ function Frequency({ route }) {
               style={styles.exerciciesContainer}
               onPress={() => navigation.navigate('Exercises')}
             >
-               <Icon name={recommendation.iconName} size={75} color={Colors.dark_gray} />
+              <Icon name={recommendation.iconName} size={75} color={Colors.dark_gray} />
             </TouchableOpacity>
           )}
         </View>
