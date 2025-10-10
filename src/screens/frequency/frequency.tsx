@@ -228,7 +228,7 @@ function Frequency({ route }) {
   }, [cameraReady]);
 
   const [showMeasurementView, setShowMeasurementView] = useState(false);
-  const [timer, setTimer] = useState(15); // contador de 15s
+  const [timer, setTimer] = useState(60); // contador de 15s
 
   const [resultBpm, setResultBpm] = useState<number | null>(null);
   const bpmRef = useRef<number | null>(null);
@@ -303,7 +303,7 @@ function Frequency({ route }) {
           calibrationDataRef.current = []; // Limpa para a próxima
           setIsCalibrated(true);
           setShowMeasurementView(true);
-          setTimer(15);
+          setTimer(60);
         } else {
           // Se o sinal não estiver estável, remove dados antigos para continuar calibrando
           if (calibrationDataRef.current.length > 150) {
@@ -456,8 +456,11 @@ function Frequency({ route }) {
             const finalBpm = measurementResultsRef.current?.bpm ?? null;
             const medianRmssd = getMedian(allRmssdValuesRef.current);
 
+            const rmssdValuesFromThisSession = allRmssdValuesRef.current; // Copia os valores antes de limpar
 
-
+            if (finalBpm != null) {
+              saveBpmData(finalBpm, rmssdValuesFromThisSession);
+            }
             setResultBpm(finalBpm);
             setResultRmssd(medianRmssd);
             allRmssdValuesRef.current = [];
@@ -487,10 +490,10 @@ function Frequency({ route }) {
 
 
 
-  const saveBpmData = async () => {
+  const saveBpmData = async (bpm: number, rmssdValues: number[]) => {
     try {
-      const newEntry = { time: new Date().toLocaleTimeString(), bpm: resultBpm };
-
+      const newEntry = { time: new Date().toLocaleTimeString(), bpm, rmssd_values: rmssdValues };
+      console.log('Salvando nova entrada:', newEntry);
       const stored = await AsyncStorage.getItem(`historicData${user.id}`);
       const parsed = stored ? JSON.parse(stored) : []
       const updated = [...parsed, newEntry]
@@ -529,7 +532,7 @@ function Frequency({ route }) {
 
   useEffect(() => {
     if (resultBpm != null && !savedResultRef.current) {
-      saveBpmData();
+      //saveBpmData();
       console.log('Dado salvo:', resultBpm);
       savedResultRef.current = true;
     }
@@ -614,7 +617,14 @@ function Frequency({ route }) {
               </Text>
             </View>
           ) : (
-            resultBpm == null ? <Text style={[styles.text, styles.alert]}>Coloque seu dedo na camera do celular</Text> : null
+            resultBpm == null ? <View>
+
+              {(isFingerDetected && !isCalibrated) ? (
+                <Text style={[styles.text, styles.alert]}>
+                  Calibrando... Mantenha-se imóvel.
+                </Text>
+              ) : <Text style={[styles.text, styles.alert]}>Coloque seu dedo na camera do celular</Text>}
+            </View> : null
           )}
         </View>
         <View style={styles.averageContainer}>

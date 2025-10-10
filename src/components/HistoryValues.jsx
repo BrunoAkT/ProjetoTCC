@@ -8,7 +8,7 @@ function HistoryValues(params) {
     const navigation = useNavigation();
 
     const parts = params.date.split("/");
-    const jsDate = new Date(`${parts[2]}-${parts[1]}-${parts[0]}`);
+    const jsDate = new Date(parts[2], parts[1] - 1, parts[0]);
     const formatado = jsDate.toLocaleDateString("pt-BR", { day: "2-digit", month: "long", year: "numeric" });
 
     return (

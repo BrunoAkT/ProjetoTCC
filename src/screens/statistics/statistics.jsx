@@ -11,7 +11,7 @@ import api from "../../constants/api";
 function Statistics(params) {
     const { route } = params;
     const parts = route.params.date.split("/");
-    const jsDate = new Date(`${parts[2]}-${parts[1]}-${parts[0]}`);
+    const jsDate = new Date(parts[2], parts[1] - 1, parts[0]);
     const formatado = jsDate.toLocaleDateString("pt-BR", { day: "2-digit", month: "long", year: "numeric" });
 
     const [visible, setVisible] = useState(false);
@@ -30,6 +30,10 @@ function Statistics(params) {
     const { user } = useContext(AuthContext);
     const id = route.params.id;
 
+
+    const [dailyRmssd, setDailyRmssd] = useState(null); // <-- NOVO ESTADO
+
+
     async function fetchData() {
         try {
             if (!user?.token || !id) return;
@@ -42,6 +46,11 @@ function Statistics(params) {
                 const numbers = response.data.map(it => Number(it.bpm) || 0);
                 const horarios = response.data.map(it => it.horario || '');
 
+                console.log('Dados recebidos:', response.data);
+
+                const allRmssdValues = response.data.flatMap(it => it.RMSSD || []);
+
+
                 const maxValue = Math.max(...numbers);
                 const maxIndex = numbers.indexOf(maxValue);
                 const maxTime = horarios[maxIndex];
@@ -52,14 +61,20 @@ function Statistics(params) {
                 setMax(maxValue);
                 setTimeMax(maxTime);
                 setAvg(avgValue);
+
+                setDailyRmssd(allRmssdValues.length > 0 ? (allRmssdValues.reduce((a, b) => a + b, 0) / allRmssdValues.length) : null);
             } else {
                 setData([]);
                 setLabels([]);
+                setDailyRmssd(null); // Limpa em caso de não haver dados
+
             }
         } catch (e) {
             console.log('Erro ao buscar dados:', e);
             setData([]);
             setLabels([]);
+            setDailyRmssd(null); // Limpa em caso de não haver dados
+
         }
     }
 
@@ -159,6 +174,8 @@ function Statistics(params) {
                                         <Text style={styles.modalText}>Máxima: {max} BPM</Text>
                                         <Text style={styles.modalText}>Hora da Máxima: {timeMax}</Text>
                                         <Text style={styles.modalText}>Média Diária: {avg.toFixed(1)} BPM</Text>
+                                        {/* <Text style={styles.modalText}>RMSSD Diário: {dailyRmssd.toFixed(2)} ms</Text> */}
+
                                     </View>
                                 ) : (
                                     <Text style={styles.modalText}>Dados não disponíveis</Text>

@@ -2,8 +2,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import { View, Dimensions } from 'react-native';
 import { LineChart } from 'react-native-chart-kit';
 import { Colors, Fonts_Styles, Fonts_Size } from '../constants/theme'
-import { AuthContext } from '../contexts/auth';
-import api from '../constants/api';
+
 
 function HistoryGraph({ data, labels }) {
 
@@ -14,8 +13,19 @@ function HistoryGraph({ data, labels }) {
         return null;
     }
 
+    const labelDisplayInterval = Math.max(1, Math.ceil(labels.length / 6));
+
+    const formattedLabels = labels.map((time, index) => {
+        // Mostra o label apenas em intervalos calculados
+        if (index % labelDisplayInterval === 0) {
+            return time.substring(0, 5); // Formato HH:MM
+        }
+        return ''; // Retorna vazio para os outros pontos
+    });
+
+
     const chartData = {
-        labels: labels, 
+        labels: formattedLabels,
         datasets: [
             { data }
         ]
@@ -23,7 +33,7 @@ function HistoryGraph({ data, labels }) {
 
     return (
         <View style={{ margin: 10, justifyContent: 'center', alignItems: 'center' }}>
-           <LineChart
+            <LineChart
                 data={chartData}
                 width={Math.min(Dimensions.get('window').width, 420)} // ajustar conforme layout
                 height={220}
@@ -41,7 +51,7 @@ function HistoryGraph({ data, labels }) {
                     propsForDots: { r: '4', strokeWidth: '2', stroke: Colors.green },
                 }}
                 style={{ marginVertical: 8, borderRadius: 16 }}
-            /> 
+            />
         </View>
     )
 }
