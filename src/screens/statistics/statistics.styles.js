@@ -28,7 +28,7 @@ export const styles = {
         justifyContent: 'space-between',
         alignItems: 'center'
     },
-    frequencyFormat:{
+    frequencyFormat: {
         alignItems: 'center',
     },
     averageText: {
@@ -65,10 +65,10 @@ export const styles = {
         width: '100%',
         height: '100%'
     },
-    infContent:{
+    infContent: {
         padding: 10,
     },
-    infTitle:{
+    infTitle: {
         fontFamily: Fonts_Styles.PoppinsSemiBold,
         fontSize: Fonts_Size.lg,
     },
@@ -102,29 +102,59 @@ export const styles = {
         padding: 20,
         borderRadius: 12,
         width: '90%',
+        padding: 20,
     },
-    close:{
+    close: {
         alignItems: 'flex-end',
     },
-    modalTitle:{
-         fontFamily: Fonts_Styles.PoppinsSemiBold,
+    modalTitle: {
+        fontFamily: Fonts_Styles.PoppinsSemiBold,
         fontSize: Fonts_Size.xl,
         color: Colors.dark_gray,
         textAlign: 'center',
     },
-    modalSubTitle:{
-         fontFamily: Fonts_Styles.PoppinsSemiBold,
+    modalSubTitle: {
+        fontFamily: Fonts_Styles.PoppinsSemiBold,
         fontSize: Fonts_Size.lg,
         color: Colors.dark_gray,
         textAlign: 'center',
     },
-    emojiSection:{
-        alignItems:'center',
+    emojiSection: {
+        alignItems: 'center',
     },
-    modalText:{
+    modalText: {
         fontFamily: Fonts_Styles.PoppinsSemiBold,
         fontSize: Fonts_Size.md,
         color: Colors.dark_gray,
         textAlign: 'center',
+    },
+    card: {
+        backgroundColor: '#f8f8f8',
+        borderRadius: 10,
+        padding: 15,
+        marginBottom: 15,
+        borderWidth: 1,
+        borderColor: '#eee',
+    },
+    insightButton: {
+        backgroundColor: '#007AFF',
+        borderRadius: 8,
+        paddingVertical: 12,
+        paddingHorizontal: 15,
+        alignItems: 'center',
+        marginTop: 15,
+    },
+    insightButtonText: {
+        color: '#fff',
+        fontSize: 16,
+        fontWeight: 'bold',
+    },
+    // Modifique o content para ter um padding melhor
+    content: {
+        backgroundColor: '#fff',
+        borderRadius: 15,
+        padding: 20, // Aumenta o espaçamento interno
+        width: '90%',
+        maxHeight: '80%',
     },
 }
