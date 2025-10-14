@@ -79,7 +79,7 @@ function Home() {
             console.log("Data:", await AsyncStorage.getItem(`dayData${user.id}`));
             console.log('User ID:', user.id);
             console.log("Anotações:", await AsyncStorage.getItem(`textData${user.id}`));
-            console.log("BPM`s:", await AsyncStorage.getItem(`historicData${user.id}`));
+            //console.log("BPM`s:", await AsyncStorage.getItem(`historicData${user.id}`));
             console.log("BAI:", await AsyncStorage.getItem(`total${user.id}`));
             console.log("Emoji:", await AsyncStorage.getItem(`selectedEmoji${user.id}`));
             console.log('--------------------');

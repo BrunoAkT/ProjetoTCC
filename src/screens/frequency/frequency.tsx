@@ -228,7 +228,7 @@ function Frequency({ route }) {
   }, [cameraReady]);
 
   const [showMeasurementView, setShowMeasurementView] = useState(false);
-  const [timer, setTimer] = useState(60); // contador de 15s
+  const [timer, setTimer] = useState(30); // contador de 30s
 
   const [resultBpm, setResultBpm] = useState<number | null>(null);
   const bpmRef = useRef<number | null>(null);
@@ -303,7 +303,7 @@ function Frequency({ route }) {
           calibrationDataRef.current = []; // Limpa para a próxima
           setIsCalibrated(true);
           setShowMeasurementView(true);
-          setTimer(60);
+          setTimer(30);
         } else {
           // Se o sinal não estiver estável, remove dados antigos para continuar calibrando
           if (calibrationDataRef.current.length > 150) {
@@ -585,7 +585,7 @@ function Frequency({ route }) {
       type: "normal"
     };
   }
-  const recommendation = getExerciseRecommendation(resultBpm);
+  const recommendation = getExerciseRecommendation(resultBpm); 
 
 
   const [isLayoutReady, setIsLayoutReady] = useState(false);

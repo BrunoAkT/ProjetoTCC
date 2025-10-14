@@ -1,13 +1,48 @@
-import { Image, Modal, Text, TouchableOpacity, View } from "react-native";
+import { Image, Modal, Text, TouchableOpacity, View, Platform, AppState } from "react-native";
 import { styles } from './configuration.styles'
 import Topcurve from "../../components/Topmidcurve";
 import icon from "../../constants/icon";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState, useRef } from "react";
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { SafeAreaView } from "react-native-safe-area-context";
 import { AuthContext } from "../../contexts/auth";
 import api from "../../constants/api";
+import { check, request, PERMISSIONS, RESULTS, openSettings } from 'react-native-permissions';
 
+
+const PLATFORM_PERMISSIONS = {
+    camera: Platform.OS === 'ios' ? PERMISSIONS.IOS.CAMERA : PERMISSIONS.ANDROID.CAMERA,
+    bluetooth: Platform.OS === 'ios' ? PERMISSIONS.IOS.BLUETOOTH_PERIPHERAL : PERMISSIONS.ANDROID.BLUETOOTH_SCAN,
+};
+
+const PermissionItem = ({ title, status, onPress }) => {
+    const getStatusInfo = () => {
+        switch (status) {
+            case RESULTS.GRANTED:
+                return { text: 'Concedida', color: 'green', description: 'A permissão está ativa e funcionando.' };
+            case RESULTS.DENIED:
+                return { text: 'Negada', color: 'orange', description: 'Toque aqui para solicitar a permissão novamente.' };
+            case RESULTS.BLOCKED:
+                return { text: 'Bloqueada', color: 'red', description: 'Toque aqui para abrir as configurações do app e permitir manualmente.' };
+            default:
+                return { text: 'Indisponível', color: 'gray', description: 'Seu dispositivo não suporta esta funcionalidade.' };
+        }
+    };
+
+    const info = getStatusInfo();
+
+    return (
+        // MELHORIA: Usar o styles.option para o container principal
+        <TouchableOpacity style={styles.option} onPress={onPress}>
+            <View>
+                <Text style={styles.optionTitle}>{title}</Text>
+                {/* MELHORIA: Adicionar texto descritivo */}
+                <Text style={styles.optionDesc}>{info.description}</Text>
+            </View>
+            <Text style={{ color: info.color, fontWeight: 'bold' }}>{info.text}</Text>
+        </TouchableOpacity>
+    );
+};
 function Configuration() {
 
     const { user, setUser } = useContext(AuthContext)
@@ -19,7 +54,55 @@ function Configuration() {
     const [showExclusionModal, setShowExclusionModal] = useState(false);
     const [showLogoutModal, setShowLogoutModal] = useState(false);
     const [popUpMonitoring, setPopUpMonitoring] = useState(false);
+    const [popUpPermissions, setPopUpPermissions] = useState(false);
 
+    const [cameraPermission, setCameraPermission] = useState('');
+    const [bluetoothPermission, setBluetoothPermission] = useState('');
+
+    const appState = useRef(AppState.currentState);
+    useEffect(() => {
+        const subscription = AppState.addEventListener('change', nextAppState => {
+            if (
+                appState.current.match(/inactive|background/) &&
+                nextAppState === 'active'
+            ) {
+                // App voltou para o primeiro plano, re-verificar permissões
+                console.log('App has come to the foreground, checking permissions.');
+                checkPermissions();
+            }
+            appState.current = nextAppState;
+        });
+
+        return () => {
+            subscription.remove();
+        };
+    }, []);
+
+    const checkPermissions = async () => {
+        const cameraStatus = await check(Platform.OS === 'ios' ? PERMISSIONS.IOS.CAMERA : PERMISSIONS.ANDROID.CAMERA);
+        setCameraPermission(cameraStatus);
+
+        const bluetoothStatus = await check(Platform.OS === 'ios' ? PERMISSIONS.IOS.BLUETOOTH_PERIPHERAL : PERMISSIONS.ANDROID.BLUETOOTH_SCAN);
+        setBluetoothPermission(bluetoothStatus);
+    };
+
+    // Função para lidar com o clique em uma permissão
+    const handlePermissionRequest = async (permissionType) => {
+        const permission = PLATFORM_PERMISSIONS[permissionType];
+        const currentStatus = permissionType === 'camera' ? cameraPermission : bluetoothPermission;
+
+        if (currentStatus === RESULTS.DENIED) {
+            const newStatus = await request(permission);
+            // CORREÇÃO DE BUG: Atualizar o estado correto dinamicamente
+            if (permissionType === 'camera') {
+                setCameraPermission(newStatus);
+            } else {
+                setBluetoothPermission(newStatus);
+            }
+        } else if (currentStatus === RESULTS.BLOCKED) {
+            await openSettings();
+        }
+    };
 
     const [MonitoringBle, SetMonitoringBle] = useState(user.BLE_cap);
     async function MonitoringBLEConfiguration() {
@@ -110,7 +193,7 @@ function Configuration() {
                             />
                         </View>
                     </TouchableOpacity>
-                    <TouchableOpacity style={styles.button}>
+                    <TouchableOpacity style={styles.button} onPress={() => { setPopUpPermissions(true); checkPermissions(); }}>
                         <Text style={styles.buttontext}>Permissões</Text>
                         <View style={styles.iconcase}>
                             <Image
@@ -143,6 +226,32 @@ function Configuration() {
                                 <TouchableOpacity style={styles.option2} onPress={() => setShowExclusionModal(false)}>
                                     <Text style={styles.optionTitle}>Não</Text>
                                 </TouchableOpacity>
+                            </SafeAreaView>
+                        </View>
+                    </Modal>
+
+                    <Modal
+                        transparent={true}
+                        visible={popUpPermissions}
+                        animationType="fade"
+                        onRequestClose={() => setPopUpPermissions(false)}>
+                        <View style={styles.overlay}>
+                            <SafeAreaView style={styles.modalContainer}>
+                                <TouchableOpacity style={styles.closeButton} onPress={() => setPopUpPermissions(false)}>
+                                    <Ionicons name="close" size={30} color="#000" />
+                                </TouchableOpacity>
+                                <Text style={styles.optionTitle}>Gerenciar Permissões</Text>
+
+                                <PermissionItem
+                                    title="Câmera"
+                                    status={cameraPermission}
+                                    onPress={() => handlePermissionRequest('camera')}
+                                />
+                                <PermissionItem
+                                    title="Bluetooth"
+                                    status={bluetoothPermission}
+                                    onPress={() => handlePermissionRequest('bluetooth')}
+                                />
                             </SafeAreaView>
                         </View>
                     </Modal>

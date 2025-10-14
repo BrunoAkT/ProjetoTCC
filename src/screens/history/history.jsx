@@ -54,6 +54,7 @@ function History() {
                         format: 'DD/MM/YYYY'
                     }}
                     placeholder="00/00/0000"
+                    placeholderTextColor={"black"}
                     style={styles.inputsm}
                     keyboardType="numeric"
                     value={classification}
@@ -66,6 +67,7 @@ function History() {
                         format: 'DD/MM/YYYY'
                     }}
                     placeholder="00/00/0000"
+                    placeholderTextColor={"black"}
                     style={styles.inputsm}
                     keyboardType="numeric"
                     value={classificationfilter}
