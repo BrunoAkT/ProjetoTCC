@@ -357,7 +357,7 @@ function Frequency({ route }) {
       return { bpm: null, rrIntervals: [] }; // Sem dados suficientes
     }
 
-    const values = data.map((d) => d.value);
+    const values = data.map((d) => d.value * -1);
     const times = data.map((d) => d.time);
 
     //console.log(`valores capturados: ${values}`);
@@ -493,7 +493,7 @@ function Frequency({ route }) {
   const saveBpmData = async (bpm: number, rmssdValues: number[]) => {
     try {
       const newEntry = { time: new Date().toLocaleTimeString(), bpm, rmssd_values: rmssdValues };
-      console.log('Salvando nova entrada:', newEntry);
+      //console.log('Salvando nova entrada:', newEntry);
       const stored = await AsyncStorage.getItem(`historicData${user.id}`);
       const parsed = stored ? JSON.parse(stored) : []
       const updated = [...parsed, newEntry]
@@ -585,7 +585,7 @@ function Frequency({ route }) {
       type: "normal"
     };
   }
-  const recommendation = getExerciseRecommendation(resultBpm); 
+  const recommendation = getExerciseRecommendation(resultBpm);
 
 
   const [isLayoutReady, setIsLayoutReady] = useState(false);

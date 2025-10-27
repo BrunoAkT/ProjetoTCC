@@ -155,7 +155,40 @@ export const styles = {
     close: {
         alignItems: 'flex-end',
     },
-    editContainerCheckBox:{
-        height:400
-    }
+    editContainerCheckBox: {
+        height: 400
+    },
+    summaryContainer: {
+        padding: 15,
+        backgroundColor: Colors.gray,
+        borderRadius: 15,
+        elevation: 5,
+    },
+    summaryTitle: {
+        fontSize: Fonts_Size.lg,
+        fontFamily: Fonts_Styles.PoppinsSemiBold,
+        color: Colors.black,
+        marginBottom: 15,
+        textAlign: 'center',
+    },
+    summaryGrid: {
+        flexDirection: 'row',
+        justifyContent: 'space-around',
+        gap: 15,
+    },
+    summaryCard: {
+        alignItems: 'center',
+    },
+    summaryValue: {
+        fontSize: Fonts_Size.lg,
+        fontFamily: Fonts_Styles.PoppinsSemiBold,
+        color: Colors.green,
+    },
+    summaryLabel: {
+        fontSize: Fonts_Size.md,
+        fontFamily: Fonts_Styles.PoppinsRegular,
+        color: Colors.black,
+        marginTop: 5,
+    },
+
 }

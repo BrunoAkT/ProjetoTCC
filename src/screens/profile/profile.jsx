@@ -1,4 +1,4 @@
-import { FlatList, Image, Modal, SafeAreaView, ScrollView, Text, TextInput, TouchableOpacity, View } from "react-native"
+import { FlatList, Image, Modal, SafeAreaView, Text, TextInput, TouchableOpacity, View } from "react-native"
 import { styles } from './profile.styles'
 import Topcurve from "../../components/Topmidcurve"
 import icon from '../../constants/icon'
@@ -20,6 +20,11 @@ function Profile() {
     const [Nome, setNome] = useState(user.nome)
     const [image, setImage] = useState(user.img);
     const [birthDate, setBirthDate] = useState(user.data_nasc);
+    const [weeklyAvgBpm, setWeeklyAvgBpm] = useState(0);
+    const [weeklyAvgRmssd, setWeeklyAvgRmssd] = useState(0);
+    const [weeklyMeasurementCount, setWeeklyMeasurementCount] = useState(0);
+
+
 
     function calcularIdade(dataNascStr) {
         const [dia, mes, ano] = dataNascStr.split("/").map(Number);
@@ -33,13 +38,6 @@ function Profile() {
         }
         return idade;
     }
-
-    const atfisica = [
-        { label: `Nada`, value: 0 },
-        { label: `Leve`, value: 1 },
-        { label: `Moderado`, value: 2 },
-        { label: `Alta Intensidade`, value: 3 },
-    ]
 
     const [popUpVisible, setPopUpVisible] = useState(false);
     const onPopUp = () => {
@@ -80,7 +78,10 @@ function Profile() {
                 setConditions({});
             }
         }
-        if (noCondition) setNoCondition(false);
+        if (noCondition) {
+            setNoCondition(false);
+            delete conditions[1];
+        }
         setConditions((prev) => ({
             ...prev, [id]: !prev[id]
         }))
@@ -131,10 +132,80 @@ function Profile() {
             console.error("Erro ao carregar condições do usuário:", error);
         }
     }
+
+    const [bpmData, setBpmData] = useState([]);
+    async function LoadBpmData() {
+        try {
+            const response = await api.get(`/bpm/data/${user.id}`,
+                {
+                    headers: {
+                        Authorization: `Bearer ${user.token}`
+                    }
+                }
+            );
+            if (response.data) {
+                setBpmData(response.data);
+            }
+        } catch (error) {
+            console.error("Erro ao carregar dados BPM do usuário:", error);
+        }
+    }
+
+
     useEffect(() => {
         LoadConditions();
         LoadUserConditions();
+        LoadBpmData();
     }, [])
+
+    useEffect(() => {
+        if (bpmData && bpmData.length > 0) {
+            const today = new Date();
+            console.log(today);
+            const sevenDaysAgo = new Date();
+            sevenDaysAgo.setDate(today.getDate() - 7);
+            sevenDaysAgo.setHours(0, 0, 0, 0);
+
+            const recentData = bpmData.filter(record => {
+                const [dia, mes, ano] = record.data.split('/').map(Number);
+                const recordDate = new Date(ano, mes - 1, dia);
+                return recordDate >= sevenDaysAgo && recordDate <= today;
+            });
+
+
+            if (recentData.length > 0) {
+                setWeeklyMeasurementCount(recentData.length);
+                const sumBpm = recentData.reduce((sum, record) => sum + Number(record.bpm), 0);
+                const avgBpm = sumBpm / recentData.length;
+                setWeeklyAvgBpm(avgBpm);
+
+                const allRmssdValues = recentData.flatMap(record => {
+                    try {
+                        if (record.RMSSD && typeof record.RMSSD === 'string') {
+                            return JSON.parse(record.RMSSD);
+                        }
+                        return []; // Retorna array vazio se não houver dados
+                    } catch (e) {
+                        console.error("Erro ao fazer parse do RMSSD:", e);
+                        return [];
+                    }
+                });
+
+                if (allRmssdValues.length > 0) {
+                    const sumRmssd = allRmssdValues.reduce((sum, value) => sum + value, 0);
+                    const avgRmssd = sumRmssd / allRmssdValues.length;
+                    setWeeklyAvgRmssd(avgRmssd);
+                } else {
+                    setWeeklyAvgRmssd(0);
+                }
+
+            } else {
+                setWeeklyAvgBpm(0);
+                setWeeklyAvgRmssd(0);
+                setWeeklyMeasurementCount(0);
+            }
+        }
+    }, [bpmData]);
 
     function getCondicoesJson() {
         if (noCondition) {
@@ -308,11 +379,24 @@ function Profile() {
                         Idade: {calcularIdade(user.data_nasc)}
                     </Text>
                 </View>
-                <View>
-                    <Text style={styles.text}>
-                        Nivel de atividade física:{"\n"}
-                        {atfisica[2].label}
-                    </Text>
+                <View style={styles.summaryContainer}>
+                    <Text style={styles.summaryTitle}>Resumo da Semana</Text>
+                    <View style={styles.summaryGrid}>
+                        <View style={styles.summaryCard}>
+                            <Text style={styles.summaryValue}>{weeklyAvgBpm > 0 ? weeklyAvgBpm.toFixed(0) : '--'} BPM
+                            </Text>
+                            <Text style={styles.summaryLabel}>Média BPM</Text>
+                        </View>
+                        <View style={styles.summaryCard}>
+                            <Text style={styles.summaryValue}>{weeklyAvgRmssd > 0 ? weeklyAvgRmssd.toFixed(1) : '--'}ms
+                            </Text>
+                            <Text style={styles.summaryLabel}>Média RMSSD</Text>
+                        </View>
+                        <View style={styles.summaryCard}>
+                            <Text style={styles.summaryValue}>{weeklyMeasurementCount}/7</Text>
+                            <Text style={styles.summaryLabel}>Medições</Text>
+                        </View>
+                    </View>
                 </View>
                 <TouchableOpacity style={styles.buttonregister} onPress={() => setVisibleConditions(true)}>
                     <Text style={styles.textreg}>Registro cardíaco</Text>

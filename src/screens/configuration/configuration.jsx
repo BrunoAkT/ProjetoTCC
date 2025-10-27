@@ -175,10 +175,10 @@ function Configuration() {
                                 <Text style={styles.optionTitle}>📷 PPG via Câmera</Text>
                                 <Text style={styles.optionDesc}>Usa a câmera e o flash do celular</Text>
                             </TouchableOpacity>
-                            <TouchableOpacity style={[styles.option, MonitoringBle ? styles.active : null]} onPress={() => SetMonitoringBle(1)}>
+                            {/* <TouchableOpacity style={[styles.option, MonitoringBle ? styles.active : null]} onPress={() => SetMonitoringBle(1)}>
                                 <Text style={styles.optionTitle}>⌚ Smartwatch (BLE)</Text>
                                 <Text style={styles.optionDesc}>Conecte um relógio via Bluetooth</Text>
-                            </TouchableOpacity>
+                            </TouchableOpacity> */}
                         </SafeAreaView>
                     </View>
                 </Modal>
