@@ -1,27 +1,33 @@
-import { FlatList, Text, TouchableOpacity, View } from "react-native"
+import { FlatList, Text, TouchableOpacity, View, Platform } from "react-native"
 import { styles } from './history.styles'
 import Topcurve from "../../components/Topmidcurve"
 import HistoryValues from "../../components/HistoryValues"
-import { TextInputMask } from "react-native-masked-text"
 import { useContext, useEffect, useState } from "react"
 import api from "../../constants/api"
 import { AuthContext } from "../../contexts/auth"
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import DateTimePicker from '@react-native-community/datetimepicker';
+import { Colors } from "../../constants/theme"
+
 
 
 function History() {
-    const [classification, setClassification] = useState([]);
-    const [classificationfilter, setClassificationfilter] = useState([]);
+    const [startDate, setStartDate] = useState("");
+    const [endDate, setEndDate] = useState("");
     const { user } = useContext(AuthContext);
 
+    const [date, setDate] = useState(new Date());
+    const [showPicker, setShowPicker] = useState(false);
+    const [activeInput, setActiveInput] = useState(null);
 
     const [savedHistory, setSavedHistory] = useState();
     async function LoadHistoric() {
+        console.log("Loading history with filters:", startDate, endDate);
         try {
             const response = await api.get(`/history/${user.id}`, {
                 params: {
-                    start: classification || undefined,
-                    limit: classificationfilter || undefined
+                    start: startDate || undefined,
+                    limit: endDate || undefined
                 },
                 headers: {
                     Authorization: `Bearer ${user.token}`
@@ -39,6 +45,30 @@ function History() {
         LoadHistoric();
     }, [])
 
+
+    const onChangeDate = (event, selectedDate) => {
+        setShowPicker(false);
+        if (event.type === 'set' && selectedDate) {
+            const formattedDate = selectedDate.toLocaleDateString('pt-BR');
+            if (activeInput === 'start') {
+                setStartDate(formattedDate);
+            } else {
+                setEndDate(formattedDate);
+            }
+            setDate(selectedDate);
+        }
+        setActiveInput(null);
+    };
+    const showDatepicker = (input) => {
+        setActiveInput(input);
+        setShowPicker(true);
+    };
+
+    const clearFilters = () => {
+        setStartDate("");
+        setEndDate("");
+        LoadHistoric("", ""); 
+    };
     return (
         <View style={styles.mainContainer}>
             <Topcurve></Topcurve>
@@ -48,31 +78,39 @@ function History() {
                 </Text>
             </View>
             <View style={styles.inputContainer}>
-                <TextInputMask
-                    type={'datetime'}
-                    options={{
-                        format: 'DD/MM/YYYY'
-                    }}
-                    placeholder="00/00/0000"
-                    placeholderTextColor={"black"}
-                    style={styles.inputsm}
-                    keyboardType="numeric"
-                    value={classification}
-                    onChangeText={setClassification}
-                />
+                <TouchableOpacity onPress={() => showDatepicker('start')} style={styles.inputsm}>
+                    <Ionicons name="calendar-outline" size={20} color={startDate ? Colors.green : "#888"} />
+                    <Text style={styles.inputText}>
+                        {startDate || "Data Início"}
+                    </Text>
+                </TouchableOpacity>
+
                 <Text style={styles.inputText}> até </Text>
-                <TextInputMask
-                    type={'datetime'}
-                    options={{
-                        format: 'DD/MM/YYYY'
-                    }}
-                    placeholder="00/00/0000"
-                    placeholderTextColor={"black"}
-                    style={styles.inputsm}
-                    keyboardType="numeric"
-                    value={classificationfilter}
-                    onChangeText={setClassificationfilter}
-                />
+
+                <TouchableOpacity onPress={() => showDatepicker('end')} style={styles.inputsm}>
+                    <Ionicons name="calendar-outline" size={20} color={endDate ? Colors.green : "#888"} />
+                    <Text style={styles.inputText}>
+                        {endDate || "Data Fim"}
+                    </Text>
+                </TouchableOpacity>
+
+                {showPicker && (
+                    <DateTimePicker
+                        testID="dateTimePicker"
+                        value={date}
+                        mode={'date'}
+                        display="default"
+                        onChange={onChangeDate}
+                    />
+                )}
+
+
+                {(startDate || endDate) && (
+                    <TouchableOpacity style={styles.buttonClear} onPress={clearFilters}>
+                        <Ionicons name="close-circle-outline" size={30} color={Colors.red} />
+                    </TouchableOpacity>
+                )}
+
                 <TouchableOpacity style={styles.buttonFilter} onPress={LoadHistoric}>
                     <Ionicons name="repeat-outline" size={30} color="#404040" />
                 </TouchableOpacity>

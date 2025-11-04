@@ -228,7 +228,7 @@ function Frequency({ route }) {
   }, [cameraReady]);
 
   const [showMeasurementView, setShowMeasurementView] = useState(false);
-  const [timer, setTimer] = useState(30); // contador de 30s
+  const [timer, setTimer] = useState(20); // contador de 20s
 
   const [resultBpm, setResultBpm] = useState<number | null>(null);
   const bpmRef = useRef<number | null>(null);
@@ -303,11 +303,11 @@ function Frequency({ route }) {
           calibrationDataRef.current = []; // Limpa para a próxima
           setIsCalibrated(true);
           setShowMeasurementView(true);
-          setTimer(30);
+          setTimer(20);
         } else {
           // Se o sinal não estiver estável, remove dados antigos para continuar calibrando
           if (calibrationDataRef.current.length > 150) {
-            calibrationDataRef.current.splice(0, 30);
+            calibrationDataRef.current.splice(0, 50);
           }
         }
       }
@@ -678,7 +678,7 @@ function Frequency({ route }) {
 
         <View style={styles.recomendationContainer}>
           <Text style={styles.recomendationText}>
-            {recommendation ? recommendation.title : "Recomendação"}
+            {recommendation ? recommendation.title : ""}
           </Text>
           <Text style={styles.recomendationText}>
             {recommendation ? recommendation.description : ""}

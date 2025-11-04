@@ -96,6 +96,7 @@ export const styles = {
         paddingTop: 0,
         fontFamily: Fonts_Styles.PoppinsSemiBold,
         fontSize: Fonts_Size.md,
+        color: Colors.dark_gray,
         borderWidth: 2,
     },
     text: {
@@ -130,7 +131,7 @@ export const styles = {
         padding: 20,
         borderRadius: 12,
         width: '90%',
-        height: '90%',
+        maxHeight:  "90vh",
     },
     close: {
         alignItems: 'flex-end',
@@ -154,5 +155,8 @@ export const styles = {
     checkInput: {
         fontFamily: Fonts_Styles.PoppinsSemiBold,
         fontSize: Fonts_Size.md,
+    },
+    checkboxList: {
+        height: "60%",
     },
 }

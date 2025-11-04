@@ -26,7 +26,7 @@ function Login() {
     const showRegister = () => {
         setIsRegisterVisible(true);
         Animated.timing(slideAnim, {
-            toValue: height - 600, // altura onde vai parar (ajuste como quiser)
+            toValue: height - 500, // altura onde vai parar (ajuste como quiser)
             duration: 500,
             useNativeDriver: false,
         }).start();

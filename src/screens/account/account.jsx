@@ -219,7 +219,9 @@ function Account({ hideRegister }) {
                             )}
                     </View>
                     <View style={styles.avatarinput}>
-                        <TextInput placeholder="Nome" style={styles.inputsm} onChangeText={(t) => setName(t)} placeholderTextColor={"#000000ff"} />
+                        <TextInput placeholder="Nome" style={styles.inputsm} 
+                        onChangeText={(t) => setName(t)} 
+                        placeholderTextColor={"#000000ff"} />
                         <Text style={styles.text}>Nascimento</Text>
                         <TextInputMask
                             type={'datetime'}
@@ -275,6 +277,7 @@ function Account({ hideRegister }) {
                                 <Text style={styles.text}>Você tem alguma condição cardíaca diagnosticada?</Text>
                                 <FlatList
                                     data={data}
+                                    style={styles.checkboxList}
                                     keyExtractor={(item) => item.id}
                                     renderItem={({ item }) => (
                                         <CheckBox2

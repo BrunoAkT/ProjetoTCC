@@ -393,7 +393,7 @@ function Profile() {
                             <Text style={styles.summaryLabel}>Média RMSSD</Text>
                         </View>
                         <View style={styles.summaryCard}>
-                            <Text style={styles.summaryValue}>{weeklyMeasurementCount}/7</Text>
+                            <Text style={styles.summaryValue}>{weeklyMeasurementCount}</Text>
                             <Text style={styles.summaryLabel}>Medições</Text>
                         </View>
                     </View>

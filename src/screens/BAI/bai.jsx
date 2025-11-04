@@ -1,4 +1,4 @@
-import { ActivityIndicator, Animated, Dimensions, Image, Text, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, Animated, Dimensions, Image, Modal, Text, TouchableOpacity, View } from "react-native";
 import * as Progress from 'react-native-progress';
 import { questions } from '../../constants/data';
 import icon from "../../constants/icon";
@@ -6,6 +6,7 @@ import { styles } from "./bai.styles";
 import { useEffect, useRef, useState } from "react";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import api from '../../constants/api';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
 
 const { width } = Dimensions.get('window');
@@ -13,6 +14,8 @@ const { width } = Dimensions.get('window');
 function BaiQuestionario() {
     const { id } = useRoute().params;
     const navigation = useNavigation();
+
+    const [isInstructionModalVisible, setInstructionModalVisible] = useState(true);
 
 
     const [currentIndex, setCurrentIndex] = useState(0);
@@ -75,18 +78,26 @@ function BaiQuestionario() {
                     Alert.alert("Erro ao enviar Dados", error.message);
                 }
             }
-        }, 6000);
+        }, 8000);
 
 
 
         return (
             <View style={styles.mainContainer}>
+                <View style={styles.headerFinish}>
+                    <Text style={styles.title}>Conta Criada com Sucesso!</Text>
+                    <Ionicons name="checkmark-circle-outline" size={60} color={styles.progressColor} />
+                </View>
                 <Animated.View style={[styles.resultContainer, { transform: [{ scale: scaleAnim }] }]}>
                     <Text style={styles.title}>Resultado</Text>
                     <Text style={styles.text}>Pontuação: {total}</Text>
                     <Text style={styles.text}>{interpretation}</Text>
                 </Animated.View>
 
+
+                <Text style={styles.text}>
+                    Você será redirecionado para a tela de login.
+                </Text>
                 <Animated.View style={[styles.footerContainer, { opacity: fadeAnim }]}>
                     <ActivityIndicator size={80} color={styles.progressColor} style={{ marginTop: 20 }} />
                     <View style={styles.footer}>
@@ -103,6 +114,30 @@ function BaiQuestionario() {
 
     return (
         <View style={styles.mainContainer}>
+            <Modal
+                transparent={true}
+                visible={isInstructionModalVisible}
+                animationType="fade"
+                onRequestClose={() => setInstructionModalVisible(false)} // Permite fechar com o botão "voltar" do Android
+            >
+                <View style={styles.modalOverlay}>
+                    <View style={styles.modalContent}>
+                        <Text style={styles.modalTitle}>Instruções - BAI</Text>
+                        <Text style={styles.modalText}>
+                            Este é o Inventário de Ansiedade de Beck (BAI), uma ferramenta para medir a intensidade dos seus sintomas de ansiedade.
+                            {"\n\n"}
+                            Leia cada um dos 21 itens a seguir e indique o quanto você é incomodado por cada sintoma durante o momento de ansiedade.
+                        </Text>
+                        <TouchableOpacity
+                            style={styles.modalButton}
+                            onPress={() => setInstructionModalVisible(false)}
+                        >
+                            <Text style={styles.modalButtonText}>Começar</Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+            </Modal>
+
             <View style={styles.header}>
                 <TouchableOpacity style={styles.iconbutton} onPress={returnToPrevious} disabled={currentIndex === 0}>
                     <Image source={icon.next} />

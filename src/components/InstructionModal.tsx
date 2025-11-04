@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, Modal, TouchableOpacity, StyleSheet } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome5';
-import { Colors } from '../constants/theme';
+import { Colors, Fonts_Styles } from '../constants/theme';
 
 interface InstructionModalProps {
   visible: boolean;
@@ -33,7 +33,7 @@ const InstructionModal: React.FC<InstructionModalProps> = ({ visible, onClose })
           <View style={styles.instructionRow}>
             <Icon name="hand-paper" size={30} color={Colors.primary} style={styles.icon} />
             <Text style={styles.instructionText}>
-              Permaneça <Text style={styles.bold}>parado e em silêncio</Text> durante os 15 segundos da medição.
+              Permaneça <Text style={styles.bold}>parado e em silêncio</Text> durante os 20 segundos da medição.
             </Text>
           </View>
 
@@ -43,7 +43,9 @@ const InstructionModal: React.FC<InstructionModalProps> = ({ visible, onClose })
               Não pressione o dedo com <Text style={styles.bold}>muita força nem muito levemente</Text> contra a câmera.
             </Text>
           </View>
-
+          <Text style={styles.modalfooter}>
+            Faça mais de uma medição para obter resultados mais precisos.
+          </Text>
           <TouchableOpacity
             style={styles.button}
             onPress={onClose}
@@ -122,6 +124,12 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontSize: 16,
   },
+  modalfooter:{
+    fontSize: 16,
+    textAlign: 'center',
+    marginBottom: 20,
+    color: Colors.red,
+  }
 });
 
 export default InstructionModal;

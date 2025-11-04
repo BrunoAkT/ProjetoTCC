@@ -32,11 +32,9 @@ const PermissionItem = ({ title, status, onPress }) => {
     const info = getStatusInfo();
 
     return (
-        // MELHORIA: Usar o styles.option para o container principal
         <TouchableOpacity style={styles.option} onPress={onPress}>
             <View>
                 <Text style={styles.optionTitle}>{title}</Text>
-                {/* MELHORIA: Adicionar texto descritivo */}
                 <Text style={styles.optionDesc}>{info.description}</Text>
             </View>
             <Text style={{ color: info.color, fontWeight: 'bold' }}>{info.text}</Text>
@@ -51,7 +49,6 @@ function Configuration() {
     const Email = user.email;
     const Img = user.img;
 
-    const [showExclusionModal, setShowExclusionModal] = useState(false);
     const [showLogoutModal, setShowLogoutModal] = useState(false);
     const [popUpMonitoring, setPopUpMonitoring] = useState(false);
     const [popUpPermissions, setPopUpPermissions] = useState(false);
@@ -66,8 +63,7 @@ function Configuration() {
                 appState.current.match(/inactive|background/) &&
                 nextAppState === 'active'
             ) {
-                // App voltou para o primeiro plano, re-verificar permissões
-                console.log('App has come to the foreground, checking permissions.');
+                console.log('checking permissions.');
                 checkPermissions();
             }
             appState.current = nextAppState;
@@ -86,14 +82,12 @@ function Configuration() {
         setBluetoothPermission(bluetoothStatus);
     };
 
-    // Função para lidar com o clique em uma permissão
     const handlePermissionRequest = async (permissionType) => {
         const permission = PLATFORM_PERMISSIONS[permissionType];
         const currentStatus = permissionType === 'camera' ? cameraPermission : bluetoothPermission;
 
         if (currentStatus === RESULTS.DENIED) {
             const newStatus = await request(permission);
-            // CORREÇÃO DE BUG: Atualizar o estado correto dinamicamente
             if (permissionType === 'camera') {
                 setCameraPermission(newStatus);
             } else {
@@ -104,36 +98,39 @@ function Configuration() {
         }
     };
 
-    const [MonitoringBle, SetMonitoringBle] = useState(user.BLE_cap);
-    async function MonitoringBLEConfiguration() {
-        console.log(user.BLE_cap)
-        console.log(MonitoringBle)
-        try {
-            const response = await api.put(`/user/BLE/${user.id}`,
-                {
-                    BLE_cap: MonitoringBle
-                },
-                {
-                    headers: {
-                        Authorization: `Bearer ${user.token}`
-                    }
-                })
-            if (response.data) {
-                console.log('sucesso', response.data)
-            }
-        } catch (error) {
-            console.log('falha', error)
-        }
-    }
 
-    const [isFirstRender, setIsFirstRender] = useState(true);
-    useEffect(() => {
-        if (isFirstRender) {
-            setIsFirstRender(false);
-            return;
-        }
-        MonitoringBLEConfiguration()
-    }, [MonitoringBle])
+    // Configuração de Monitoramento BLE (removida temporariamente)
+
+    const [MonitoringBle, SetMonitoringBle] = useState(user.BLE_cap);
+    // async function MonitoringBLEConfiguration() {
+    //     console.log(user.BLE_cap)
+    //     console.log(MonitoringBle)
+    //     try {
+    //         const response = await api.put(`/user/BLE/${user.id}`,
+    //             {
+    //                 BLE_cap: MonitoringBle
+    //             },
+    //             {
+    //                 headers: {
+    //                     Authorization: `Bearer ${user.token}`
+    //                 }
+    //             })
+    //         if (response.data) {
+    //             console.log('sucesso', response.data)
+    //         }
+    //     } catch (error) {
+    //         console.log('falha', error)
+    //     }
+    // }
+
+    // const [isFirstRender, setIsFirstRender] = useState(true);
+    // useEffect(() => {
+    //     if (isFirstRender) {
+    //         setIsFirstRender(false);
+    //         return;
+    //     }
+    //     MonitoringBLEConfiguration()
+    // }, [MonitoringBle])
 
     return (
         <View style={styles.mainContainer}>
@@ -202,34 +199,6 @@ function Configuration() {
                             />
                         </View>
                     </TouchableOpacity>
-                    <TouchableOpacity style={styles.button} onPress={() => setShowExclusionModal(true)}>
-                        <Text style={styles.buttontext}>Desativar conta</Text>
-                        <View style={styles.iconcase}>
-                            <Image
-                                source={icon.next}
-                                style={styles.icon}
-                            />
-                        </View>
-                    </TouchableOpacity>
-
-                    <Modal
-                        transparent={true}
-                        visible={showExclusionModal}
-                        animationType="fade"
-                        onRequestClose={() => setShowExclusionModal(false)}>
-                        <View style={styles.overlay}>
-                            <SafeAreaView style={styles.modalContainer}>
-                                <Text style={styles.optionTitle}>Essa opção irá excluir sua conta. Tem certeza?</Text>
-                                <TouchableOpacity style={styles.option2} onPress={() => console.log('excluir conta')}>
-                                    <Text style={styles.optionTitle}>Sim</Text>
-                                </TouchableOpacity>
-                                <TouchableOpacity style={styles.option2} onPress={() => setShowExclusionModal(false)}>
-                                    <Text style={styles.optionTitle}>Não</Text>
-                                </TouchableOpacity>
-                            </SafeAreaView>
-                        </View>
-                    </Modal>
-
                     <Modal
                         transparent={true}
                         visible={popUpPermissions}

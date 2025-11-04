@@ -79,7 +79,7 @@ export const styles = StyleSheet.create({
         backgroundColor: Colors.gray,
         position: 'absolute',
         right: 10,
-        top: -10,
+        top: -20,
         borderRadius: 10,
         elevation: 10,
         zIndex: 1,

@@ -22,6 +22,12 @@ export const styles = {
         alignItems: 'center',
         justifyContent: 'space-between',
     },
+    headerFinish: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginHorizontal: 20,
+    },
     headerBar: {
         flex: 1,
     },
@@ -63,7 +69,7 @@ export const styles = {
     },
     resultContainer: {
         marginTop: 20,
-        padding: 20,
+        padding: 5,
         borderRadius: 10,
         backgroundColor: Colors.green,
         elevation: 2,
@@ -90,8 +96,47 @@ export const styles = {
     footerContainer: {
         flex: 1,
         backgroundColor: Colors.gray,
-        padding: 40,
+        padding: 20,
         justifyContent: 'center',
     },
-}
+    modalOverlay: {
+        flex: 1,
+        backgroundColor: 'rgba(0, 0, 0, 0.6)',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    modalContent: {
+        backgroundColor: Colors.white,
+        borderRadius: 15,
+        padding: 25,
+        width: '90%',
+        alignItems: 'center',
+        elevation: 10,
+    },
+    modalTitle: {
+        fontFamily: Fonts_Styles.PoppinsBold,
+        fontSize: Fonts_Size.lg,
+        color: Colors.black,
+        marginBottom: 15,
+    },
+    modalText: {
+        fontFamily: Fonts_Styles.PoppinsRegular,
+        fontSize: Fonts_Size.md,
+        color: Colors.text,
+        textAlign: 'center',
+        marginBottom: 25,
+        lineHeight: 22,
+    },
+    modalButton: {
+        backgroundColor: Colors.green,
+        paddingVertical: 12,
+        paddingHorizontal: 40,
+        borderRadius: 30,
+    },
+    modalButtonText: {
+        fontFamily: Fonts_Styles.PoppinsSemiBold,
+        fontSize: Fonts_Size.md,
+        color: Colors.dark_gray,
+    },
+};
 

@@ -78,25 +78,34 @@ export const styles = {
         flexDirection: 'row',
         justifyContent: 'flex-end',
         margin: 10,
-        gap: 10
+        gap: 1,
+        justifyContent: 'center',
+
     },
     inputText: {
         fontFamily: Fonts_Styles.PoppinsRegular,
         color: Colors.gray,
-        fontSize: Fonts_Size.md,
-        alignSelf: 'center'
+        fontSize: Fonts_Size.sm,
+        alignSelf: 'center',
+        marginLeft: 5,
+        lineHeight: Fonts_Size.sm
     },
     inputsm: {
-        backgroundColor: Colors.gray,
-        width: 100,
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        width: '35%',
         height: 40,
-        borderRadius: 10,
-        padding:0,
-        textAlign: 'center'
     },
-    buttonFilter:{
+    buttonFilter: {
         backgroundColor: Colors.green,
         borderRadius: 10,
         padding: 5,
-    }
+    },
+    buttonClear: {
+        padding: 5,
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
+
 }
