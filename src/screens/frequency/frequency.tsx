@@ -236,10 +236,10 @@ function Frequency({ route }) {
   const savedResultRef = useRef(false); // flag para garantir execução única
 
 
-  const [resultRmssd, setResultRmssd] = useState<number | null>(null); // NOVO ESTADO
+  const [resultRmssd, setResultRmssd] = useState<number | null>(null);
   const measurementResultsRef = useRef<{ bpm: number | null; rrIntervals: number[] } | null>(null);
-  const allRmssdValuesRef = useRef<number[]>([]); // NOVO REF
-
+  const allRmssdValuesRef = useRef<number[]>([]);
+  const measurementCountRef = useRef(0);
 
 
   const savePPGValue = useCallback((result: { ac: number, dc: number }) => {
@@ -406,8 +406,11 @@ function Frequency({ route }) {
       const diffPercent = Math.abs(interval - prevInterval) / prevInterval;
 
       // Remove o intervalo se ele for mais de 30% diferente do anterior.
-      // Este é um filtro simples, mas eficaz para remover grandes erros.
-      return diffPercent <= 0.30;
+      if (diffPercent > 0.30) return false;
+
+      if (interval < 272 || interval > 1500) return false;
+
+      return true;
     });
 
     //console.log(`Intervalo RR: ${rrIntervalsClean} ms`);
@@ -432,6 +435,12 @@ function Frequency({ route }) {
   useEffect(() => {
     measurementResultsRef.current = measurementResults;
     if (measurementResults?.rrIntervals && measurementResults.rrIntervals.length > 1) {
+
+      if (measurementCountRef.current < 5) {
+        measurementCountRef.current++;
+        return;
+      }
+
       const instantRmssd = calculateRMSSD(measurementResults.rrIntervals);
       if (instantRmssd > 0) { // Adiciona apenas valores válidos
         allRmssdValuesRef.current.push(instantRmssd);
@@ -445,6 +454,7 @@ function Frequency({ route }) {
       setResultBpm(null); // limpa resultado anterior quando iniciar nova medição
       setResultRmssd(null); // Limpa o resultado anterior
       savedResultRef.current = false;
+      measurementCountRef.current = 0;
       interval = setInterval(() => {
         setTimer((prev) => {
           if (prev <= 1) {
@@ -454,7 +464,11 @@ function Frequency({ route }) {
 
 
             const finalBpm = measurementResultsRef.current?.bpm ?? null;
-            const medianRmssd = getMedian(allRmssdValuesRef.current);
+            let medianRmssd = getMedian(allRmssdValuesRef.current);
+
+              if (medianRmssd > 250) {
+              medianRmssd = 0; // Ou null, dependendo de como você quer tratar
+            }
 
             const rmssdValuesFromThisSession = allRmssdValuesRef.current; // Copia os valores antes de limpar
 

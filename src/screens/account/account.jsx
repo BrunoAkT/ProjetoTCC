@@ -167,7 +167,7 @@ function Account({ hideRegister }) {
                 console.log("Usuário cadastrado com sucesso!", response.data.id);
                 await AsyncStorage.setItem(`dayData${response.data.id}`, dataAtual);
             }
-            navigation.navigate('Bai', { id: response.data.id });
+            navigation.navigate('Bai', { id: response.data.id, from: 'Account' });
         } catch (error) {
             if (error.response?.data.error) {
                 Alert.alert("Erro ao fazer login", error.response.data.error);

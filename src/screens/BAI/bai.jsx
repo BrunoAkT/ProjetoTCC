@@ -12,7 +12,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 const { width } = Dimensions.get('window');
 
 function BaiQuestionario() {
-    const { id } = useRoute().params;
+    const { id, from } = useRoute().params;
     const navigation = useNavigation();
 
     const [isInstructionModalVisible, setInstructionModalVisible] = useState(true);
@@ -67,7 +67,11 @@ function BaiQuestionario() {
                 });
                 if (response.data) {
                     console.log(response.data);
-                    navigation.navigate('Login');
+                    if (from === 'Profile') {
+                        navigation.goBack();
+                    } else {
+                        navigation.navigate('Login');
+                    }
                 }
             } catch (error) {
                 console.log('erro', error)
@@ -96,7 +100,7 @@ function BaiQuestionario() {
 
 
                 <Text style={styles.text}>
-                    Você será redirecionado para a tela de login.
+                    {from === 'Profile' ? 'Você será redirecionado para a tela de perfil.' : 'Você será redirecionado para a tela de login.'}
                 </Text>
                 <Animated.View style={[styles.footerContainer, { opacity: fadeAnim }]}>
                     <ActivityIndicator size={80} color={styles.progressColor} style={{ marginTop: 20 }} />

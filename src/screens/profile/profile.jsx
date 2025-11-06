@@ -10,15 +10,18 @@ import api from "../../constants/api";
 import CheckBox2 from "../../components/CheckBox";
 import { AuthContext } from "../../contexts/auth";
 import { Colors } from "../../constants/theme";
+import { useNavigation } from "@react-navigation/native";
 
 
 
 function Profile() {
     const { user, setUser } = useContext(AuthContext)
+    const navigation = useNavigation();
 
     const Email = user.email;
     const [Nome, setNome] = useState(user.nome)
     const [image, setImage] = useState(user.img);
+    const [baiPoints, setBaiPoints] = useState(user.ansiedade_points);
     const [birthDate, setBirthDate] = useState(user.data_nasc);
     const [weeklyAvgBpm, setWeeklyAvgBpm] = useState(0);
     const [weeklyAvgRmssd, setWeeklyAvgRmssd] = useState(0);
@@ -161,7 +164,7 @@ function Profile() {
     useEffect(() => {
         if (bpmData && bpmData.length > 0) {
             const today = new Date();
-            console.log(today);
+            //console.log(today);
             const sevenDaysAgo = new Date();
             sevenDaysAgo.setDate(today.getDate() - 7);
             sevenDaysAgo.setHours(0, 0, 0, 0);
@@ -317,6 +320,13 @@ function Profile() {
                                         : (
                                             <Image source={icon.avatarplaceholder}></Image>
                                         )}
+                                    <View>
+                                        <TouchableOpacity style={styles.baiButton} onPress={() => {
+                                            navigation.navigate('Bai', { id: user.id, from: 'Profile' });
+                                        }}>
+                                            <Text style={styles.baiButtonText}>BAI: {baiPoints}</Text>
+                                        </TouchableOpacity>
+                                    </View>
                                 </View>
                             </View>
                             <View style={styles.editContainer}>

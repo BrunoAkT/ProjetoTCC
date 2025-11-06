@@ -71,7 +71,7 @@ function Statistics(params) {
 
         # Instruções
 
-        1.  **Analise a Combinação:** Baseie seu insight na combinação de todos os dados: humor, ansiedade, anotação e o dado fisiológico (RMSSD). A anotação do usuário é a informação mais importante, pois contém o contexto pessoal.
+        1.  **Analise a Combinação:** Baseie seu insight na combinação de todos os dados: humor, ansiedade, anotação e o dado fisiológico (RMSSD). A anotação do usuário é a informação mais importante, pois contém o contexto pessoal. Use se for preciso a comparação do BAI realizado naquele dia com o BAI do perfil do usuário (realizado em um momento anterior) para enriquecer a análise.
         2.  **Tom de Voz:** Seja sempre acolhedor, gentil e nunca julgador. Use frases como "Percebo que...", "É compreensível que...", "Obrigado por compartilhar...".
         3.  **Restrição Crítica:** NUNCA forneça conselhos médicos, diagnósticos ou sugira tratamentos. Em vez disso, incentive a autocompaixão e o autoconhecimento.
         4.  **Lidando com o RMSSD:** Trate o RMSSD como um indicador secundário. Lembre-se de que seus valores são individuais e a medição por PPG pode ser imprecisa. Não tire conclusões fortes baseadas apenas nele. Se os dados parecerem conflitantes (ex: humor "Feliz" com RMSSD baixo), reconheça a complexidade do dia.
@@ -117,6 +117,7 @@ function Statistics(params) {
         **Dados do dia:**
         -   Humor auto-reportado: ${humor}
         -   Nível de Ansiedade (BAI): ${nivelAnsiedade} (Pontuação: ${route.params.points})
+        -   Nível de Ansiedade Marcada No Perfil: ${user.ansiedade_points}
         -   RMSSD (indicador de estresse fisiológico): ${dailyRmssd ? dailyRmssd.toFixed(2) + ' ms' : 'Não medido'}
         -   Anotação do usuário: "${route.params.anotation || 'Nenhuma anotação'}"
         Baseado nesses dados, gere o insight.`;

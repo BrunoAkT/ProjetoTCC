@@ -4,13 +4,14 @@ import Frequency from "../screens/frequency/frequency";
 import FrequencyBLE from "../screens/frequencyBLE/frequencyBLE";
 import Exercises from "../screens/exercises/exercises";
 import Statistics from "../screens/statistics/statistics";
+import BaiQuestionario from "../screens/BAI/bai";
 import { Colors, Fonts_Size, Fonts_Styles } from '../constants/theme'
 import { Text, View } from "react-native";
 
 const Stack = createNativeStackNavigator();
 
 
-function RoutesOpen() {
+function RoutesPrivated() {
     return <Stack.Navigator
         screenOptions={{
             headerStyle: { backgroundColor: Colors.dark_gray },
@@ -18,7 +19,8 @@ function RoutesOpen() {
             headerTitleStyle: { fontFamily: Fonts_Styles.PoppinsRegular },
         }}>
         <Stack.Screen name="Dashboard" component={Dashboard} options={{ headerShown: false }} />
-        
+        <Stack.Screen name="Bai" component={BaiQuestionario} options={{ headerShown: false }} />
+
         <Stack.Screen name="Frequency" component={Frequency} options={{
             headerTitle: () => (
                 <View>
@@ -51,4 +53,4 @@ function RoutesOpen() {
         }} />
     </Stack.Navigator>;
 }
-export default RoutesOpen;
+export default RoutesPrivated;

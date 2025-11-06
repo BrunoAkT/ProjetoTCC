@@ -190,5 +190,18 @@ export const styles = {
         color: Colors.black,
         marginTop: 5,
     },
+    baiButton: {
+        backgroundColor: Colors.dark_gray,
+        paddingHorizontal: 15,
+        paddingVertical: 5,
+        borderRadius: 20,
+        alignSelf: 'center',
+    },
+    baiButtonText: {
+        color: Colors.gray,
+        fontSize: 16,
+        fontWeight: 'bold',
+        fontFamily: Fonts_Styles.PoppinsSemiBold,
+    },
 
 }
