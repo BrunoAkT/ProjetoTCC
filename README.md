@@ -37,7 +37,7 @@ Aplicativo mobile desenvolvido em React Native com Expo para monitoramento e que
 3. O resultado do BAI é enviado para a API e você é redirecionado para a tela principal (Dashboard)
 4. Depois, é possível refazer o BAI pelo Perfil, se necessário
 
-## Build (opcional)
+## Build 
 - Build nativa local:
   - Android: `npx expo run:android` (precisa do Android SDK)
 - Com EAS (recomendado para produção):
@@ -56,4 +56,4 @@ Aplicativo mobile desenvolvido em React Native com Expo para monitoramento e que
 - React Native + Expo
 - React Navigation
 - Context API para autenticação
-- Expo Google Fonts, Splash Screen
+- Vision Camera
