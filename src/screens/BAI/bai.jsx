@@ -70,7 +70,10 @@ function BaiQuestionario() {
                     if (from === 'Profile') {
                         navigation.goBack();
                     } else {
-                        navigation.navigate('Login');
+                        navigation.reset({
+                            index: 0,
+                            routes: [{ name: 'Login' }]
+                        });
                     }
                 }
             } catch (error) {
@@ -89,7 +92,7 @@ function BaiQuestionario() {
         return (
             <View style={styles.mainContainer}>
                 <View style={styles.headerFinish}>
-                    <Text style={styles.title}>Conta Criada com Sucesso!</Text>
+                    <Text style={styles.title}>{from === 'Account' ? 'Conta Criada com Sucesso!' : 'Resultado'}</Text>
                     <Ionicons name="checkmark-circle-outline" size={60} color={styles.progressColor} />
                 </View>
                 <Animated.View style={[styles.resultContainer, { transform: [{ scale: scaleAnim }] }]}>

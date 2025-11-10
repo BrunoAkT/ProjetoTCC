@@ -19,7 +19,6 @@ function RoutesPrivated() {
             headerTitleStyle: { fontFamily: Fonts_Styles.PoppinsRegular },
         }}>
         <Stack.Screen name="Dashboard" component={Dashboard} options={{ headerShown: false }} />
-        <Stack.Screen name="Bai" component={BaiQuestionario} options={{ headerShown: false }} />
 
         <Stack.Screen name="Frequency" component={Frequency} options={{
             headerTitle: () => (
@@ -51,6 +50,7 @@ function RoutesPrivated() {
                 </View>
             ),
         }} />
+        <Stack.Screen name="Bai" component={BaiQuestionario} options={{ headerShown: false }} />
     </Stack.Navigator>;
 }
 export default RoutesPrivated;
