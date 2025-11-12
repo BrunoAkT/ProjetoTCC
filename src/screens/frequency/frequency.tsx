@@ -298,7 +298,7 @@ function Frequency({ route }) {
 
         // Se o desvio padrão for baixo, o sinal está estável.
         // O valor 0.005 é empírico e pode ser ajustado.
-        if (stdDev < 0.005) {
+        if (stdDev < 0.05) {
           console.log("[CALIBRAÇÃO] Sinal estabilizado. Iniciando medição.");
           calibrationDataRef.current = []; // Limpa para a próxima
           setIsCalibrated(true);
