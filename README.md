@@ -5,7 +5,9 @@ Aplicativo mobile desenvolvido em React Native com Expo para monitoramento e que
 Estrutura do projeto
 
 Mobile App (este repositório) — React Native + Expo
+
 Web App: https://github.com/BrunoAkT/ProjetoTCC.Web
+
 Back-end API: https://github.com/BrunoAkT/ProjetoTCC.BackEnd
 
 ## Pré-requisitos
@@ -95,5 +97,6 @@ O projeto usa `react-native-dotenv` para gerenciar as variáveis de ambiente. Se
 - React Navigation
 - Context API para autenticação
 - Vision Camera
+
 
 
