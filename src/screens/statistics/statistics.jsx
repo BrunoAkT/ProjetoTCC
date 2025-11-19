@@ -25,7 +25,7 @@ function getMedian(values) {
     }
 }
 
-const SUA_CHAVE_GEMINI = 'AIzaSyDLF2dqusYqGGxF77HsMzgxaWjOjid4sC4'
+const SUA_CHAVE_GEMINI = 'AQUI'
 
 
 
