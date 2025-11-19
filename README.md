@@ -8,6 +8,15 @@ Aplicativo mobile desenvolvido em React Native com Expo para monitoramento e que
 - Android Studio (emulador) ou um dispositivo Android com Expo Go
 - Backend da API rodando e acessível na mesma rede
 
+⚠️ Observação importante sobre o local do projeto
+
+Para evitar erros de build ou caminhos longos demais (comuns no Windows), recomenda-se que o projeto seja instalado em um diretório curto, como:
+
+C:\ProjetoTCC\
+D:\apps\ProjetoTCC\
+
+Evite instalar em locais como Desktop, Documentos ou pastas com muitos níveis, pois isso pode gerar problemas com caminhos extensos durante instalações de dependências nativas.
+
 ## Configuração do projeto
 1. Clone o repositório:
    - `git clone <URL_DO_REPO>`
@@ -19,6 +28,29 @@ Aplicativo mobile desenvolvido em React Native com Expo para monitoramento e que
 3. Configure a API (baseURL):
    - Abra `src/constants/api.js` e ajuste a `baseURL` para o endereço do seu backend (ex.: `http://SEU_IP:3000`).
    - Em Windows, para testar no emulador ou dispositivo, use o IP local da sua máquina (ex.: `http://192.168.0.10:3000`).
+
+### Configuração da Chave de API (Google Gemini)
+
+Para utilizar a funcionalidade de insights gerados por IA, você precisa configurar sua chave da API do Google Gemini.
+
+1.  **Crie um arquivo `.env`** na raiz do projeto (`c:\Users\Bruno\Desktop\ProjetoTCC`).
+
+2.  **Adicione sua chave** dentro do arquivo `.env`:
+    ```
+    GEMINI_API_KEY="SUA_CHAVE_AQUI"
+    ```
+
+3.  **Garanta a segurança:** Adicione a linha `.env` ao seu arquivo `.gitignore` para nunca enviar sua chave ao repositório.
+
+4.  **Use no código:** O projeto já está configurado para ler esta variável. A chave é importada e utilizada no arquivo `src/screens/statistics/statistics.jsx` da seguinte forma:
+    ```javascript
+    import { GEMINI_API_KEY } from '@env';
+    
+    // ...
+    const SUA_CHAVE_GEMINI = GEMINI_API_KEY;
+    ```
+
+O projeto usa `react-native-dotenv` para gerenciar as variáveis de ambiente. Se encontrar problemas, verifique se o plugin está listado em `babel.config.js`.
 
 ## Executando em desenvolvimento
 - Inicie o servidor do Expo:
@@ -57,3 +89,4 @@ Aplicativo mobile desenvolvido em React Native com Expo para monitoramento e que
 - React Navigation
 - Context API para autenticação
 - Vision Camera
+
