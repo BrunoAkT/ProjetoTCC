@@ -1,6 +1,6 @@
 # ProjetoTCC — App Mobile (React Native + Expo)
 
-Aplicativo mobile desenvolvido em React Native com Expo para monitoramento e questionários (ex.: BAI).
+Aplicativo mobile desenvolvido em React Native com Expo para monitoramento de ansiedade e questionários (ex.: BAI).
 
 Estrutura do projeto
 
@@ -97,6 +97,7 @@ O projeto usa `react-native-dotenv` para gerenciar as variáveis de ambiente. Se
 - React Navigation
 - Context API para autenticação
 - Vision Camera
+
 
 
 
